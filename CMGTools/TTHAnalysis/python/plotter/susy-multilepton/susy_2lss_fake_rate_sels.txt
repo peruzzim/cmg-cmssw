@@ -1,0 +1,11 @@
+multiIso: multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0:  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+
+multiIso_AND_MuonId: multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0 && LepGood_mediumMuonId > 0 && LepGood_sip3d<4 && LepGood_tightCharge>0 :  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+
+multiIso_AND_EleId: multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0 && LepGood_mvaIdPhys14 >=0.73+(0.57-0.73)*(abs(LepGood_eta)>0.8)+(+0.05-0.57)*(abs(LepGood_eta)>1.479) && LepGood_sip3d<4 && LepGood_convVeto && LepGood_lostHits == 0 && LepGood_tightCharge>1:  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+
+MuonId: LepGood_mediumMuonId > 0 && LepGood_sip3d<4 && LepGood_tightCharge>0 :  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+
+EleId: LepGood_mvaIdPhys14 >=0.73+(0.57-0.73)*(abs(LepGood_eta)>0.8)+(+0.05-0.57)*(abs(LepGood_eta)>1.479) && LepGood_sip3d<4 && LepGood_convVeto && LepGood_lostHits == 0 && LepGood_tightCharge>1:  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+
+
