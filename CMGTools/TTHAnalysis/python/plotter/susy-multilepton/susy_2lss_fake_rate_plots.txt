@@ -1,0 +1,23 @@
+pt:     LepGood_pt: [ 0,10,13,16,20,25,30,35,45,60,90,120 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+eta:     abs(LepGood_eta): 12,0,2.4 ; XTitle="lepton |#eta|"
+miniRelIso: LepGood_miniRelIso : 100,0,1 ; XTitle="lepton miniRelIso"
+jetPtRatio: LepGood_jetPtRatio : 100,0,1 ; XTitle="lepton jetPtRatio"
+jetPtRel: LepGood_jetPtRel : 100,0,1 ; XTitle="lepton jetPtRel"
+ele_MVAid: (abs(LepGood_pdgId)==11)*LepGood_mvaIdPhys14 : 100,-1,1 ; XTitle="electron ID MVA"
+mu_mediumid: LepGood_mediumMuonId : 2,-0.5,1.5 : XTitle="muon medium ID"
+sip3d: LepGood_sip3d : 10,0,10 : XTitle="lepton SIP 3D"
+losthits: (abs(LepGood_pdgId)==11)*LepGood_lostHits : 10,0,10 : XTitle="lepton lost hits"
+tightcharge: LepGood_tightCharge : 5,-0.5,4.5 : XTitle="lepton tightcharge"
+
+
+miniRelIso_fromMultiIsoM: ((LepGood_miniRelIso<0.14 && abs(LepGood_pdgId)==13) || (LepGood_miniRelIso<0.10 && abs(LepGood_pdgId)==11)) > 0 :  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+
+multiIso: multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0:  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+
+multiIso_AND_MuonId: multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0 && LepGood_mediumMuonId > 0 && LepGood_sip3d<4 && LepGood_tightCharge>0 :  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+
+multiIso_AND_EleId: multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0 && LepGood_mvaIdPhys14 >=0.73+(0.57-0.73)*(abs(LepGood_eta)>0.8)+(+0.05-0.57)*(abs(LepGood_eta)>1.479) && LepGood_sip3d<4 && LepGood_convVeto && LepGood_lostHits == 0 && LepGood_tightCharge>1:  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+
+MuonId: LepGood_mediumMuonId > 0 && LepGood_sip3d<4 && LepGood_tightCharge>0 :  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+
+EleId: LepGood_mvaIdPhys14 >=0.73+(0.57-0.73)*(abs(LepGood_eta)>0.8)+(+0.05-0.57)*(abs(LepGood_eta)>1.479) && LepGood_sip3d<4 && LepGood_convVeto && LepGood_lostHits == 0 && LepGood_tightCharge>1:  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3

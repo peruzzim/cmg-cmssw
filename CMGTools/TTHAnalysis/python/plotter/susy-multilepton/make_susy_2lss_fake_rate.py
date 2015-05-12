@@ -1,56 +1,72 @@
-BASE="python mcEfficiencies.py --s2v --tree treeProducerSusyMultilepton object-studies/lepton-mca.txt object-studies/lepton-perlep.txt --ytitle 'Fake rate' "
-PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso_QCD"
+doeff=0
+pyfile=["mcPlots.py -f --plotmode norm",'mcEfficiencies.py']
+
+RUN="python "+pyfile[doeff]+" --s2v --tree treeProducerSusyMultilepton object-studies/lepton-mca.txt susy-multilepton/2lss-fr-lepton-perlep.txt"
+
+PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
 OUTDIR='plots_test/plots_test'
 
-LowerCut="-R pt20 pt5 'LepGood_pt > 5'"
+LooseLepSel="-A alwaystrue loose_mini_iso 'LepGood_miniRelIso<0.4' -A alwaystrue anylep 'abs(LepGood_pdgId) > 0'"
+SipCut="-A alwaystrue dxy_tight 'LepGood_sip3d < 4'"
 
-LooseLepSel="-A pt20 loose_mini_iso 'LepGood_miniRelIso<0.4'"
-#ADD HERE THE OTHER CUTS OR CHECK PRESELECTION IN TREES
+IsMu="-A alwaystrue ismu 'abs(LepGood_pdgId)==13'"
+PtMu="-A alwaystrue pt5 'LepGood_pt > 5'"
+LooseMuSel=""
+MuQualCuts="-A alwaystrue muID 'LepGood_mediumMuonId > 0'"
 
-AnyLepSel="-A pt20 anylep 'abs(LepGood_pdgId) > 0'"
-IsMu="-A pt20 ismu 'abs(LepGood_pdgId)==13'"
-IsEle="-A pt20 isele 'abs(LepGood_pdgId)==11'"
-MuQualCuts="-A pt20 muID 'LepGood_mediumMuonId > 0'"
-EleQualCuts="-A pt20 eleID '(LepGood_mvaIdPhys14 >=0.73+(0.57-0.73)*(abs(LepGood_eta)>0.8)+(+0.05-0.57)*(abs(LepGood_eta)>1.479) || abs(LepGood_pdgId) == 13)'"
-DxyCut="-A pt20 dxy_tight 'LepGood_sip3d < 4'"
-EleAdditionalCuts="-A pt20 eleaddcuts '(abs(LepGood_pdgId) == 13 || (LepGood_convVeto && LepGood_lostHits == 0))'"
-TightCharge="-A pt20 tightcharge '(LepGood_tightCharge > (abs(LepGood_pdgId) == 11))'"
+IsEle="-A alwaystrue isele 'abs(LepGood_pdgId)==11'"
+PtEle="-A alwaystrue pt7 'LepGood_pt > 7'"
+LooseEleSel="-A alwaystrue elemvaloose 'LepGood_mvaIdPhys14 > -0.11+(-0.35+0.11)*(abs(LepGood_eta)>0.8)+(-0.55+0.35)*(abs(LepGood_eta)>1.479)' -A alwaystrue lhits 'LepGood_lostHits<=1' -A alwaystrue convveto 'LepGood_convVeto'"
+EleQualCuts="-A alwaystrue eleID '(LepGood_mvaIdPhys14 >=0.73+(0.57-0.73)*(abs(LepGood_eta)>0.8)+(+0.05-0.57)*(abs(LepGood_eta)>1.479) || abs(LepGood_pdgId) == 13)'"
+EleAdditionalCuts="-A alwaystrue eleaddcuts '(abs(LepGood_pdgId) == 13 || (LepGood_convVeto && LepGood_lostHits == 0))'"
+TightCharge="-A alwaystrue tightcharge '(LepGood_tightCharge > (abs(LepGood_pdgId) == 11))'"
 
-JetSel="-A pt20 jet 'nJet40 >= 1 && minMllAFAS > 12'"
-#CHECK THIS
+LooseMuSel=' ' .join([LooseLepSel,IsMu,PtMu,LooseMuSel+' '+SipCut])
+LooseEleSel=' ' .join([LooseLepSel,IsEle,PtEle,LooseEleSel+' '+SipCut])
+
+MuIdOnly=' '.join([LooseMuSel,MuQualCuts,TightCharge])
+EleIdOnly=' '.join([LooseEleSel,EleQualCuts,EleAdditionalCuts,TightCharge])
 
 
-LooseMuSel=' ' .join([LooseLepSel,AnyLepSel,IsMu])
-LooseEleSel=' ' .join([LooseLepSel,AnyLepSel,IsEle])
-
-MuIdOnly=' '.join([LooseLepSel,AnyLepSel,IsMu,MuQualCuts,DxyCut,TightCharge])
-EleIdOnly=' '.join([LooseLepSel,AnyLepSel,IsEle,EleQualCuts,DxyCut,EleAdditionalCuts,TightCharge])
-
-MultiIso="-A pt20 multiiso 'multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0'"
-
-#SipDen="-A pt20 siploose 'LepGood_sip3d < 4'"
+#CHECK THESE
+#MultiIso="-A alwaystrue multiiso 'multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0'"
+#JetSel="-A alwaystrue jet 'nJet40 >= 1 && minMllAFAS > 12'"
 #CommonDen="${SipDen} ${JetDen}"
 
+#MuDsets='-p QCDMu_red,QCDMu_bjets,QCDMu_cjets,QCDMu_ljets,TT_red,TT_bjets,TT_cjets,TT_ljets,TT_fake --sp TT_ljets'
+#EleDsets='-p QCDEl_red,QCDEl_bjets,TT_red,TT_bjets,TT_cjets,TT_ljets,TT_fake --sp TT_ljets'
+MuDsets='-p QCDMu_red,TT_red'
+EleDsets='-p QCDEl_red,TT_red'
+if doeff==1:
+    MuDsets+=' --sp TT_red'
+    EleDsets+=' --sp TT_red'
+
 runs=[]
-runs.append(["multiIso_MuIdOnly",'multiIso',MuIdOnly])
-runs.append(["multiIso_EleIdOnly",'multiIso',EleIdOnly])
-runs.append(["multiIso_AND_MuonId_LooseMuSel",'multiIso_AND_MuonId',LooseMuSel])
-runs.append(["multiIso_AND_EleId_LooseEleSel",'multiIso_AND_EleId',LooseEleSel])
-runs.append(["MuonId_LooseMuSel",'MuonId',LooseMuSel])
-runs.append(["EleId_LooseEleSel",'EleId',LooseEleSel])
+runs.append(["LooseMuSel",'MuonId',LooseMuSel,MuDsets])
+runs.append(["LooseEleSel",'EleId',LooseEleSel,EleDsets])
+runs.append(["MuIdOnly",'multiIso',MuIdOnly,MuDsets])
+runs.append(["EleIdOnly",'multiIso',EleIdOnly,EleDsets])
+#runs.append(["MuIdOnly",'miniRelIsoM',MuIdOnly,MuDsets])
+#runs.append(["EleIdOnly",'miniRelIsoT',EleIdOnly,EleDsets])
+#runs.append(["LooseMuSel",'multiIso_AND_MuonId',LooseMuSel,MuDsets])
+#runs.append(["LooseEleSel",'multiIso_AND_EleId',LooseEleSel,EleDsets])
 
 
 for run in runs:
-    run[2] += ' '+LowerCut
-    B0=' '.join([BASE,PATH,"susy-multilepton/susy_2lss_fake_rate_sels.txt","susy-multilepton/susy_2lss_fake_rate_xvars.txt","--groupBy cut","-o "+OUTDIR+'_'+run[0]+'/plots.root'])
-    B0 += " --legend=TL  --yrange 0 0.6 --showRatio --ratioRange 0.31 1.69 --xcut 10 999"
-    B0 += ' -p QCDMu_red'
-    B0 += ' --sP '+run[1]
+    if doeff==1:
+        run[0]=run[1]+'_ON_'+run[0]
+        B0=' '.join([RUN,PATH,"susy-multilepton/susy_2lss_fake_rate_sels.txt","susy-multilepton/susy_2lss_fake_rate_xvars.txt"])
+        B0 += " --legend=TL  --yrange -1 2 --showRatio --ratioRange 0 3 --xcut 10 999 --ytitle 'Fake rate' --groupBy cut"
+        B0 += ' --sP '+run[1]
+        B0 += " -o "+OUTDIR+'_'+run[0]+"/plots.root"
+        B0 += ' --sP pt_.*'
+    else:
+        B0=' '.join([RUN,PATH,"susy-multilepton/susy_2lss_fake_rate_plots.txt"])
+        B0 += " --pdir "+OUTDIR+'_'+run[0]
     B0 += ' '+run[2]
-    B0 += ' --sP pt_.*'
-#    print '( '+B0+' ) &'
-    print B0
+    B0 += ' '+run[3]
 
+    print B0
 
 
 
