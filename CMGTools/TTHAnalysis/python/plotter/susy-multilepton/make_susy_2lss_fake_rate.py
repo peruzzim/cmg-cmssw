@@ -1,7 +1,8 @@
 doeff=0
-pyfile=["mcPlots.py -f --plotmode norm --print 'pdf'",'mcEfficiencies.py']
+plotmode='stack'
+pyfile=["mcPlots.py -f --plotmode "+plotmode+" --print 'pdf'",'mcEfficiencies.py']
 
-RUN="python "+pyfile[doeff]+" --s2v --tree treeProducerSusyMultilepton object-studies/lepton-mca.txt susy-multilepton/susy_2lss_fake_rate_perlep.txt"
+RUN="python "+pyfile[doeff]+" --s2v --tree treeProducerSusyMultilepton susy-multilepton/susy_2lss_fake_rate_mca.txt susy-multilepton/susy_2lss_fake_rate_perlep.txt"
 
 PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
 OUTDIR='plots_test/plots_test'
@@ -38,10 +39,9 @@ EleIdOnlyRelaxSip=' '.join([LooseEleSelRelaxSip,EleQualCuts,EleAdditionalCuts,Ti
 #JetSel="-A alwaystrue jet 'nJet40 >= 1 && minMllAFAS > 12'"
 #CommonDen="${SipDen} ${JetDen}"
 
-#MuDsets='-p QCDMu_red,QCDMu_bjets,QCDMu_cjets,QCDMu_ljets,TT_red,TT_bjets,TT_cjets,TT_ljets,TT_fake --sp TT_ljets'
-#EleDsets='-p QCDEl_red,QCDEl_bjets,TT_red,TT_bjets,TT_cjets,TT_ljets,TT_fake --sp TT_ljets'
-MuDsets='-p QCDMu_red,TT_red,TT_bjets,TT_ljets,TT_true'
-EleDsets='-p QCDEl_red,TT_red,TT_bjets,TT_ljets,TT_true'
+#MuDsets='-p QCDMu_.*,TT_.*'
+MuDsets='-p QCDMu_.* --xp QCDMu_red'
+EleDsets='-p QCDEl_.*,TT_.*'
 if doeff==1:
     MuDsets+=' --sp TT_red'
     EleDsets+=' --sp TT_red'
