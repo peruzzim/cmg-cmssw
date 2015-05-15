@@ -2,6 +2,8 @@
 #from mcPlots import *
 from CMGTools.TTHAnalysis.plotter.mcPlots import *
 
+if "/bin2Dto1Dlib_cc.so" not in ROOT.gSystem.GetLibraries():
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc+" % os.environ['CMSSW_BASE']);
 
 def addROCMakerOptions(parser):
     addMCAnalysisOptions(parser)

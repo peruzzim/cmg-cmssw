@@ -91,4 +91,10 @@ float mtw_wz3l(float pt1, float eta1, float phi1, float m1, float pt2, float eta
     if (abs(mZ1 - mass_2(pt2,eta2,phi2,m2,pt3,eta3,phi3,m3)) < 0.01) return mt_2(pt1,phi1,met,metphi);
     return 0;
 }
+
+float conept(float ptlep, float minireliso, float minirelisocut)
+{
+  return ptlep*(1+std::max(minireliso-minirelisocut,float(0)));
+}
+
 void functions() {}

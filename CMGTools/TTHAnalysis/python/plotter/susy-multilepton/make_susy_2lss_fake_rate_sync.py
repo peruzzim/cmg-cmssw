@@ -2,8 +2,8 @@ plotmode='norm'
 pyfile=["mcPlots.py -f --plotmode "+plotmode+" --print 'pdf'",'mcEfficiencies.py']
 
 #PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
-PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso"
-OUTDIR='plots_test/plots_test'
+PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root -F sf/t {P}/2_leptonFakeRateQCDVars_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+OUTDIR='FRplots_test/plots_test'
 
 cuts={}
 def add_cuts(mylist):
@@ -38,7 +38,6 @@ cuts["etaLT2p4"]="abs(LepGood_eta) < 2.4"
 cuts["etaLT2p5"]="abs(LepGood_eta) < 2.5"
 cuts["ismu"]="abs(LepGood_pdgId)==13"
 cuts["isel"]="abs(LepGood_pdgId)==11"
-cuts["muLooseID"]="LepGood_looseMuonId > 0"
 cuts["muMediumID"]="LepGood_mediumMuonId > 0"
 cuts["elMVAloose"]="LepGood_mvaIdPhys14 > -0.11+(-0.35+0.11)*(abs(LepGood_eta)>0.8)+(-0.55+0.35)*(abs(LepGood_eta)>1.479)"
 cuts["elMVAtight"]="LepGood_mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(LepGood_eta)>0.8)+(+0.05-0.57)*(abs(LepGood_eta)>1.479)"
@@ -51,12 +50,18 @@ cuts["mutrackpterr"]="blablabla"
 
 
 LooseLepSel=["minireliso04","dxy005","dz01"]
-LooseMuSel=LooseLepSel+["pt5","etaLT2p4","muLooseID"]
+LooseMuSel=LooseLepSel+["pt5","etaLT2p4"]
 LooseElSel=LooseLepSel+["pt7","etaLT2p5","elMVAloose","elConvVeto","losthitsLEQ1"]
 
 TightLepSel=["sipLT4","dz01","multiiso"]
 TightMuSel=LooseMuSel+TightLepSel+["pt10","etaLT2p4","muMediumID","tightcharge"]
 TightElSel=LooseElSel+TightLepSel+["pt10","etaLT2p5","elMVAtight","elConvVeto","tightcharge","losthitsEQ0"]
+
+
+cuts["metLT20"]="met_pt<20"
+cuts["mtLT20"]="mt_2(LepGood_pt,LepGood_phi,met_pt,met_phi)<20"
+cuts["jetaway40"]="((LepGood_awayJet_pt>40) && (deltaR(LepGood_eta,LepGood_phi,LepGood_awayJet_eta,LepGood_awayJet_phi)>1.0))"
+QCDmeasReg=["metLT20","mtLT20","jetaway40"]
 
 
 MuDsetsQCD='-p QCDMu_red'
@@ -70,21 +75,33 @@ runs=[]
 #runs.append(["LooseEl",LooseElSel,[],[],ElDsets])
 #runs.append(["TightMu",TightMuSel,[],[],MuDsets])
 #runs.append(["TightEl",TightElSel,[],[],ElDsets])
-runs.append(["FO1Mu",TightMuSel,[],[("multiiso","minireliso04")],MuDsetsQCD])
-runs.append(["FO1El",TightElSel,[],[("multiiso","minireliso04")],ElDsetsQCD])
-runs.append(["FO2El",TightElSel,[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD])
-runs.append(["FO1MuInSitu",TightMuSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],MuDsetsInSitu])
-runs.append(["FO1ElInSitu",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],ElDsetsInSitu])
-runs.append(["FO2ElInSitu",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsInSitu])
+#runs.append(["FO1Mu",TightMuSel,[],[("multiiso","minireliso04")],MuDsetsQCD])
+#runs.append(["FO1El",TightElSel,[],[("multiiso","minireliso04")],ElDsetsQCD])
+#runs.append(["FO2El",TightElSel,[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD])
+#runs.append(["FO1MuInSitu",TightMuSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],MuDsetsInSitu])
+#runs.append(["FO1ElInSitu",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],ElDsetsInSitu])
+#runs.append(["FO2ElInSitu",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsInSitu])
+for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
+    runs.append(["FO1Mu"+"_"+xvar,TightMuSel,[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso",xvar])
+    runs.append(["FO1El"+"_"+xvar,TightElSel,[],[("multiiso","minireliso04")],ElDsetsQCD,"multiiso",xvar])
+    runs.append(["FO2El"+"_"+xvar,TightElSel,[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD,"multiiso_AND_elMVAtight",xvar])
+    runs.append(["FO1MuInSitu"+"_"+xvar,TightMuSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],MuDsetsInSitu,"multiiso",xvar])
+    runs.append(["FO1ElInSitu"+"_"+xvar,TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],ElDsetsInSitu,"multiiso",xvar])
+    runs.append(["FO2ElInSitu"+"_"+xvar,TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsInSitu,"multiiso_AND_elMVAtight",xvar])
 
+runs=runs[:1]
 
 for run in runs:
     doeff = (len(run)>5)
-    RUN="python "+pyfile[doeff]+" --s2v --tree treeProducerSusyMultilepton susy-multilepton/susy_2lss_fake_rate_mca.txt susy-multilepton/susy_2lss_fake_rate_perlep.txt"
+    BASESEL="susy-multilepton/susy_2lss_fake_rate_perlep.txt"
+    if 'InSitu' in run[0]:
+        BASESEL="susy-multilepton/susy_2lss_fake_rate_insitu_sync.txt"
+    RUN="python "+pyfile[doeff]+" --s2v --tree treeProducerSusyMultilepton susy-multilepton/susy_2lss_fake_rate_mca_sync.txt "+BASESEL
     if doeff:
         run[0]=run[5]+'_ON_'+run[0]
-        B0=' '.join([RUN,PATH,"susy-multilepton/susy_2lss_fake_rate_sels.txt","susy-multilepton/susy_2lss_fake_rate_xvars.txt"])
-        B0 += " --legend=TL  --yrange -1 2 --showRatio --ratioRange 0 3 --xcut 10 999 --ytitle 'Fake rate' --groupBy cut"
+        B0=' '.join([RUN,PATH,"susy-multilepton/susy_2lss_fake_rate_sels_sync.txt","susy-multilepton/susy_2lss_fake_rate_xvars_sync.txt"])
+#        B0 += " --legend=TL  --yrange -1 2 --showRatio --ratioRange 0 3 --xcut 10 999 --ytitle 'Fake rate' --groupBy cut"
+        B0 += " --legend=TL --ytitle 'Fake rate' --groupBy cut"
         B0 += ' --sP '+run[5]
         B0 += " -o "+OUTDIR+'_'+run[0]+"/plots.root"
         B0 += ' --sP '+run[6]
