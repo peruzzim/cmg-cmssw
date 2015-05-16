@@ -1,4 +1,4 @@
-baseline_region: if3(nBjet>3,3,nBjet) : 4,-0.5,3.5 ; XTitle="baseline region"
+baseline_region: if3(nBJetMedium25>3,3,nBJetMedium25) : 4,-0.5,3.5 ; XTitle="baseline region"
 
 pt:     LepGood_pt: [ 0,10,13,16,20,25,30,35,45,60,90,120 ] ; XTitle="lepton p_{T} (GeV)", Density=True
 htJet40j:   htJet40j: 18,0,2000    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]",XNDiv=505

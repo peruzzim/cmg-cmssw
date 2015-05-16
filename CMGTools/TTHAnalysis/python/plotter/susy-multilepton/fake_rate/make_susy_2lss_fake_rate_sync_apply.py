@@ -1,5 +1,5 @@
 #PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
-PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root -F sf/t {P}/2_leptonFakeRateQCDVars_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
 OUTDIR='FRAPPLYplots_test/plots_test'
 
 cuts={}
@@ -27,10 +27,10 @@ cuts["pt1LT25"]="LepGood1_pt<25"
 cuts["pt1GT25"]="LepGood1_pt>=25"
 cuts["pt2LT25"]="LepGood2_pt<25"
 cuts["pt2GT25"]="LepGood2_pt>=25"
-cuts["bas0"]="nBjet==0"
-cuts["bas1"]="nBjet==2"
-cuts["bas2"]="nBjet==2"
-cuts["bas3"]="nBjet>=3"
+cuts["bas0"]="nBJetMedium25==0"
+cuts["bas1"]="nBJetMedium25==2"
+cuts["bas2"]="nBJetMedium25==2"
+cuts["bas3"]="nBJetMedium25>=3"
 
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
@@ -42,12 +42,13 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
                 app.append("is"+lepflav)
                 app.append("pt1LT25" if ptreg[0]=="l" else "pt1GT25")
                 app.append("pt2LT25" if ptreg[1]=="l" else "pt2GT25")
+                br=""
                 if baselineregion >= 0:
                     app.append("bas%d" % (baselineregion,))
                     br="_b%d" % (baselineregion,)
-                runs.append(["ApplicationFO1_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s --sp TT_red" % xvar])
+                runs.append(["ApplicationFO1_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p QCDMu_red,QCDEl_red,QCDMu_red_FO1_%s,QCDEl_red_FO1_%s --sp QCDMu_red,QCDEl_red" % (xvar,xvar)])
                 runs.append(["ApplicationFO1InSitu_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s_insitu --sp TT_red" % xvar])
-                runs.append(["ApplicationFO2_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s --sp TT_red" % xvar])
+                runs.append(["ApplicationFO2_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p QCDMu_red,QCDEl_red,QCDMu_red_FO2_%s,QCDEl_red_FO2_%s --sp QCDMu_red,QCDEl_red" % (xvar,xvar)])
                 runs.append(["ApplicationFO2InSitu_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s_insitu --sp TT_red" % xvar])
                     
 
