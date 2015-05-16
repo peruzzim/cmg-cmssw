@@ -1,4 +1,3 @@
-
 #PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
 PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root -F sf/t {P}/2_leptonFakeRateQCDVars_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
 OUTDIR='FRAPPLYplots_test/plots_test'
