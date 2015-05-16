@@ -1,45 +1,9 @@
+baseline_region: if3(nBjet>3,3,nBjet) : 4,-0.5,3.5 ; XTitle="baseline region"
+
 pt:     LepGood_pt: [ 0,10,13,16,20,25,30,35,45,60,90,120 ] ; XTitle="lepton p_{T} (GeV)", Density=True
-eta:     abs(LepGood_eta): 12,0,2.4 ; XTitle="lepton |#eta|"
-
-miniRelIso: LepGood_miniRelIso : 50,0,0.4 ; XTitle="lepton miniRelIso"
-jetPtRatio: LepGood_jetPtRatio : 110,0,1.1 ; XTitle="lepton jetPtRatio"
-jetPtRel: LepGood_jetPtRel : 100,0,20 ; XTitle="lepton jetPtRel"
-ele_MVAid: (abs(LepGood_pdgId)==11)*LepGood_mvaIdPhys14 : 100,-1,1 ; XTitle="electron ID MVA"
-mu_mediumid: LepGood_mediumMuonId : 2,-0.5,1.5 ; XTitle="muon medium ID"
-sip: LepGood_sip3d : 40,0,20 ; XTitle="SIP 3D",Logy
-
-sieie_EB: LepGood_sigmaIEtaIEta*(abs(LepGood_eta)<1.479) : 90,0.002,0.020 ; XTitle="EB electron #sigma_{i#eta i#eta}",IncludeOverflows=False
-sieie_EE: LepGood_sigmaIEtaIEta*(abs(LepGood_eta)>1.479) : 150,0.020,0.050 ; XTitle="EE electron #sigma_{i#eta i#eta}",IncludeOverflows=False
-
-
-miniRelIso_VS_sip: LepGood_miniRelIso\:LepGood_sip3d : 20,0,20 ; XTitle="SIP 3D",Profile1D=True
-jetPtRatio_VS_sip: LepGood_jetPtRatio\:LepGood_sip3d : 20,0,20 ; XTitle="SIP 3D",Profile1D=True
-jetPtRel_VS_sip: LepGood_jetPtRel\:LepGood_sip3d : 20,0,20 ; XTitle="SIP 3D",Profile1D=True
-multiIso_VS_sip: (multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0)\:LepGood_sip3d : 20,0,20 ; XTitle="SIP 3D",YTitle="multiIso",Profile1D=True
-
-ip3d: abs(LepGood_ip3d) : 200,0,0.05 ; XTitle="lepton ip3d",Logy
-
-ip3dOverP: abs(LepGood_ip3d)/(LepGood_pt*TMath\:\:CosH(LepGood_eta)) : 200,0,0.01 ; XTitle="lepton ip3d/|p|",Logy
-
-ip3d_VS_P:     abs(LepGood_ip3d)\:(LepGood_pt*TMath\:\:CosH(LepGood_eta)): [ 0,10,13,16,20,25,30,35,45,60,90,120 ] ; XTitle="lepton |p| (GeV)",Profile1D=True
-
-ip3dOverP_VS_P:     abs(LepGood_ip3d)/(LepGood_pt*TMath\:\:CosH(LepGood_eta))\:(LepGood_pt*TMath\:\:CosH(LepGood_eta)): [ 0,10,13,16,20,25,30,35,45,60,90,120 ] ; XTitle="lepton |p| (GeV)",Profile1D=True
-ip3dTimesP_VS_P:     abs(LepGood_ip3d)*(LepGood_pt*TMath\:\:CosH(LepGood_eta))\:(LepGood_pt*TMath\:\:CosH(LepGood_eta)): [ 0,10,13,16,20,25,30,35,45,60,90,120 ] ; XTitle="lepton |p| (GeV)",Profile1D=True
-
-sip_VS_P:     LepGood_sip3d\:(LepGood_pt*TMath\:\:CosH(LepGood_eta)): [ 0,10,13,16,20,25,30,35,45,60,90,120 ] ; XTitle="lepton |p| (GeV)",Profile1D=True
-
-
-LepGood_jetDR : LepGood_jetDR : 50,0,1 ; XTitle="lep-jet dR"
-LepGood_jetBTagCSV : LepGood_jetBTagCSV : 50,-1,1 ; XTitle="lep-jet CSV"
-LepGood_jetBTagCMVA : LepGood_jetBTagCMVA : 50,-1,1 ; XTitle="lep-jet CMVA"
-
-
-miniRelIso_fromMultiIsoM: ((LepGood_miniRelIso<0.14 && abs(LepGood_pdgId)==13) || (LepGood_miniRelIso<0.10 && abs(LepGood_pdgId)==11)) > 0 :  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
-multiIso: multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0:  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
-multiIso_AND_MuonId: multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0 && LepGood_mediumMuonId > 0 && LepGood_sip3d<4 && LepGood_tightCharge>0 :  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
-multiIso_AND_EleId: multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0 && LepGood_mvaIdPhys14 >=0.73+(0.57-0.73)*(abs(LepGood_eta)>0.8)+(+0.05-0.57)*(abs(LepGood_eta)>1.479) && LepGood_sip3d<4 && LepGood_convVeto && LepGood_lostHits == 0 && LepGood_tightCharge>1:  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
-MuonId: LepGood_mediumMuonId > 0 && LepGood_sip3d<4 && LepGood_tightCharge>0 :  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
-EleId: LepGood_mvaIdPhys14 >=0.73+(0.57-0.73)*(abs(LepGood_eta)>0.8)+(+0.05-0.57)*(abs(LepGood_eta)>1.479) && LepGood_sip3d<4 && LepGood_convVeto && LepGood_lostHits == 0 && LepGood_tightCharge>1:  2,-0.5,1.5;   Title="I_{03}<0.1", MarkerColor=1,  MarkerStyle=21, MarkerSize=1.3
+htJet40j:   htJet40j: 18,0,2000    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]",XNDiv=505
+met:   met_pt: 18,0,800    ; XTitle="E_{T}^{miss}  [GeV]"
+mtWmin: min(mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi)) : 18,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]",NXDiv=505
 
 
 

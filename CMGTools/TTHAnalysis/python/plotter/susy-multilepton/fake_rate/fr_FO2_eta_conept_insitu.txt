@@ -3,6 +3,6 @@ cut-change: LepGood_jetPtRatio(\[\w+\]): 1
 cut-change: LepGood_jetPtRel(\[\w+\]): 999
 cut-change: LepGood_mvaIdPhys14(\[\w+\]): relax_cut_in_eta_bins(LepGood_mvaIdPhys14\1,LepGood_eta\1,1,2,2.4,-0.11,-0.35,-0.55,0.73,0.57,0.05)
 cut-change: LepGood_sip3d(\[\w+\]): if3(LepGood_sip3d\1>4,0,999)
-weight: fakeRateReader(LepGood1_eta,conept(LepGood1_pt,LepGood1_miniRelIso,if3((abs(LepGood1_pdgId)==11),0.10,0.14),LepGood2_eta,conept(LepGood2_pt,LepGood2_miniRelIso,if3((abs(LepGood2_pdgId)==11),0.10,0.14),LepGood1_pdgId,LepGood2_pdgId)
+weight: fakeRateReader(LepGood1_eta,conept(LepGood1_pt,LepGood1_miniRelIso,if3((abs(LepGood1_pdgId)==11),0.10,0.14)),LepGood2_eta,conept(LepGood2_pt,LepGood2_miniRelIso,if3((abs(LepGood2_pdgId)==11),0.10,0.14)),LepGood1_pdgId,LepGood2_pdgId)
 load-histo: FR_mu: $DATA/fake_rate/FR_FO1_Mu_eta_conept_insitu.root : FR_FO1_Mu_eta_conept_insitu
 load-histo: FR_el: $DATA/fake_rate/FR_FO2_El_eta_conept_insitu.root : FR_FO2_El_eta_conept_insitu
