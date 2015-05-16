@@ -27,23 +27,29 @@ cuts["pt1LT25"]="LepGood1_pt<25"
 cuts["pt1GT25"]="LepGood1_pt>=25"
 cuts["pt2LT25"]="LepGood2_pt<25"
 cuts["pt2GT25"]="LepGood2_pt>=25"
+cuts["bas0"]="nBjet==0"
+cuts["bas1"]="nBjet==2"
+cuts["bas2"]="nBjet==2"
+cuts["bas3"]="nBjet>=3"
 
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
 for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
     for ptreg in ["ll","lh","hh"]:
         for lepflav in ["ee","em","mm"]:
+            for baselineregion in [-1,0,1,2,3]:
                 app=[]
                 app.append("is"+lepflav)
                 app.append("pt1LT25" if ptreg[0]=="l" else "pt1GT25")
                 app.append("pt2LT25" if ptreg[1]=="l" else "pt2GT25")
-                runs.append(["ApplicationFO1_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s --sp TT_red" % xvar])
-                runs.append(["ApplicationFO1InSitu_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s_insitu --sp TT_red" % xvar])
-                runs.append(["ApplicationFO2_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s --sp TT_red" % xvar])
-                runs.append(["ApplicationFO2InSitu_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s_insitu --sp TT_red" % xvar])
-
-
-#runs=runs[:1]
+                if baselineregion >= 0:
+                    app.append("bas%d" % (baselineregion,))
+                    br="_b%d" % (baselineregion,)
+                runs.append(["ApplicationFO1_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s --sp TT_red" % xvar])
+                runs.append(["ApplicationFO1InSitu_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s_insitu --sp TT_red" % xvar])
+                runs.append(["ApplicationFO2_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s --sp TT_red" % xvar])
+                runs.append(["ApplicationFO2InSitu_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s_insitu --sp TT_red" % xvar])
+                    
 
 for run in runs:
     RUN="python mcPlots.py -f --plotmode nostack --print 'pdf' --s2v --tree treeProducerSusyMultilepton susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt "+run[1]

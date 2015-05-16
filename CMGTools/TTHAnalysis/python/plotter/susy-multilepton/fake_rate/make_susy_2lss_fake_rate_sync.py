@@ -1,5 +1,6 @@
 #PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
-PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root -F sf/t {P}/2_leptonFakeRateQCDVars_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+FTREEQCD="-F sf/t {P}/2_leptonFakeRateQCDVars_Susy_v1/evVarFriend_{cname}.root"
 OUTDIR='FRplots_test/plots_test'
 
 cuts={}
@@ -60,24 +61,20 @@ cuts["jetaway40"]="((LepGood_awayJet_pt>40) && (deltaR(LepGood_eta,LepGood_phi,L
 QCDmeasReg=["metLT20","mtLT20","jetaway40"]
 
 
-MuDsetsQCD='-p QCDMu_red'
-ElDsetsQCD='-p QCDEl_red'
-MuDsetsInSitu='-p TTJets_red'
-ElDsetsInSitu='-p TTJets_red'
+MuDsetsQCD=FTREEQCD+' -p QCDMu_red'
+ElDsetsQCD=FTREEQCD+' -p QCDEl_red'
+MuDsetsInSitu='-p TT_red '
+ElDsetsInSitu='-p TT_red '
 
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
-#for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
-for xvar in ["eta_pt"]:
+for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
     runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg,[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso",xvar])
     runs.append(["FO1El"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg,[],[("multiiso","minireliso04")],ElDsetsQCD,"multiiso",xvar])
     runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg,[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD,"multiiso_AND_elMVAtight",xvar])
     runs.append(["FO1MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightMuSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],MuDsetsInSitu,"multiiso",xvar])
     runs.append(["FO1ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],ElDsetsInSitu,"multiiso",xvar])
     runs.append(["FO2ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsInSitu,"multiiso_AND_elMVAtight",xvar])
-
-
-runs=runs[:2]
 
 for run in runs:
     doeff = (len(run)>6)

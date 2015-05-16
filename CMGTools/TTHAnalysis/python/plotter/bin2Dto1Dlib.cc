@@ -15,7 +15,7 @@ float bin2Dto1D(float x1, float x2, int binning_code)
 
   if (binning_code==0){
     const int n1_ = 4;
-    float c1[n1_]={0,1,2,2.4};
+    float c1[n1_]={0,1,2,2.5};
     const int n2_ = 6;
     float c2[n2_]={10,15,25,35,50,70};
     bin2Dto1D_copyarray(c1,b1,n1_);
