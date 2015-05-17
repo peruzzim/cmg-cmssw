@@ -1,110 +1,35 @@
-QCD_red  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="all (QCD)"
-QCD_red  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="all (QCD)"
-QCD_red  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="all (QCD)"
-QCD_red  : QCD_Pt80to120_Mu5 : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="all (QCD)"
+QCD_red  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_red  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_red  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_red  : QCD_Pt80to120_Mu5 : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
 
-QCD_red: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="all (QCD)"
-QCD_red: QCD_Pt20to30_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="all (QCD)"
-QCD_red: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="all (QCD)"
-QCD_red: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="all (QCD)"
-QCD_red: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="all (QCD)"
-QCD_red: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="all (QCD)"
-QCD_red: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="all (QCD)"
-
-QCD_red_FO1_eta_pt  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-QCD_red_FO1_eta_pt  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-QCD_red_FO1_eta_pt  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-QCD_red_FO1_eta_pt  : QCD_Pt80to120_Mu5 : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-
-QCD_red_FO1_eta_pt: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-QCD_red_FO1_eta_pt: QCD_Pt20to30_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-QCD_red_FO1_eta_pt: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-QCD_red_FO1_eta_pt: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-QCD_red_FO1_eta_pt: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-QCD_red_FO1_eta_pt: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-QCD_red_FO1_eta_pt: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-
-QCD_red_FO1_eta_conept  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-QCD_red_FO1_eta_conept  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-QCD_red_FO1_eta_conept  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-QCD_red_FO1_eta_conept  : QCD_Pt80to120_Mu5 : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-
-QCD_red_FO1_eta_conept: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-QCD_red_FO1_eta_conept: QCD_Pt20to30_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-QCD_red_FO1_eta_conept: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-QCD_red_FO1_eta_conept: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-QCD_red_FO1_eta_conept: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-QCD_red_FO1_eta_conept: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-QCD_red_FO1_eta_conept: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt"
-
-QCD_red_FO1_eta_jetpt  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-QCD_red_FO1_eta_jetpt  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-QCD_red_FO1_eta_jetpt  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-QCD_red_FO1_eta_jetpt  : QCD_Pt80to120_Mu5 : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-
-QCD_red_FO1_eta_jetpt: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-QCD_red_FO1_eta_jetpt: QCD_Pt20to30_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-QCD_red_FO1_eta_jetpt: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-QCD_red_FO1_eta_jetpt: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-QCD_red_FO1_eta_jetpt: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-QCD_red_FO1_eta_jetpt: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-QCD_red_FO1_eta_jetpt: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt"
-
-QCD_red_FO1_eta_pt_insitu  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-QCD_red_FO1_eta_pt_insitu  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-QCD_red_FO1_eta_pt_insitu  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-QCD_red_FO1_eta_pt_insitu  : QCD_Pt80to120_Mu5 : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-
-QCD_red_FO1_eta_pt_insitu: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-QCD_red_FO1_eta_pt_insitu: QCD_Pt20to30_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-QCD_red_FO1_eta_pt_insitu: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-QCD_red_FO1_eta_pt_insitu: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-QCD_red_FO1_eta_pt_insitu: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-QCD_red_FO1_eta_pt_insitu: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-QCD_red_FO1_eta_pt_insitu: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-
-QCD_red_FO1_eta_conept_insitu  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-QCD_red_FO1_eta_conept_insitu  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-QCD_red_FO1_eta_conept_insitu  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-QCD_red_FO1_eta_conept_insitu  : QCD_Pt80to120_Mu5 : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-
-QCD_red_FO1_eta_conept_insitu: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-QCD_red_FO1_eta_conept_insitu: QCD_Pt20to30_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-QCD_red_FO1_eta_conept_insitu: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-QCD_red_FO1_eta_conept_insitu: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-QCD_red_FO1_eta_conept_insitu: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-QCD_red_FO1_eta_conept_insitu: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-QCD_red_FO1_eta_conept_insitu: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-
-QCD_red_FO1_eta_jetpt_insitu  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
-QCD_red_FO1_eta_jetpt_insitu  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
-QCD_red_FO1_eta_jetpt_insitu  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
-QCD_red_FO1_eta_jetpt_insitu  : QCD_Pt80to120_Mu5 : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
-
-QCD_red_FO1_eta_jetpt_insitu: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
-QCD_red_FO1_eta_jetpt_insitu: QCD_Pt20to30_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
-QCD_red_FO1_eta_jetpt_insitu: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
-QCD_red_FO1_eta_jetpt_insitu: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
-QCD_red_FO1_eta_jetpt_insitu: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
-QCD_red_FO1_eta_jetpt_insitu: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
-QCD_red_FO1_eta_jetpt_insitu: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kBlue,Label="all FR (QCD)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
+QCD_red: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_red: QCD_Pt20to30_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_red: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_red: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_red: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_red: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_red: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
 
 
 TT_red:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlack,Label="non-pr (tt)"
 
-TT_red_FO1_eta_pt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-TT_red_FO1_eta_conept:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multileconepton/fake_rate/fr_FO1_eta_conept.txt"
-TT_red_FO1_eta_jetpt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multilejetpton/fake_rate/fr_FO1_eta_jetpt.txt"
 
-TT_red_FO2_eta_pt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_pt.txt"
-TT_red_FO2_eta_conept:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multileconepton/fake_rate/fr_FO2_eta_conept.txt"
-TT_red_FO2_eta_jetpt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multilejetpton/fake_rate/fr_FO2_eta_jetpt.txt"
+# for fake rate application
 
-TT_red_FO1_eta_pt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-TT_red_FO1_eta_conept_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multileconepton/fake_rate/fr_FO1_eta_conept_insitu.txt"
-TT_red_FO1_eta_jetpt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multilejetpton/fake_rate/fr_FO1_eta_jetpt_insitu.txt"
+TT_red_FO1_eta_pt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="tt FR FO1(p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
+TT_red_FO1_eta_conept:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="tt FR FO1(cone p_{T})",FakeRate="susy-multileconepton/fake_rate/fr_FO1_eta_conept.tx",LineStyle=ROOT.kDashed
+TT_red_FO1_eta_jetpt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="tt FR FO1(jet p_{T})",FakeRate="susy-multilejetpton/fake_rate/fr_FO1_eta_jetpt.txt",LineStyle=ROOT.kDotted
 
-TT_red_FO2_eta_pt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_pt_insitu.txt"
-TT_red_FO2_eta_conept_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multileconepton/fake_rate/fr_FO2_eta_conept_insitu.txt"
-TT_red_FO2_eta_jetpt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="non-pr FR (tt)",FakeRate="susy-multilejetpton/fake_rate/fr_FO2_eta_jetpt_insitu.txt"
+TT_red_FO2_eta_pt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlue,Label="tt FR FO2(p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_pt.txt"
+TT_red_FO2_eta_conept:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlue,Label="tt FR FO2(cone p_{T})",FakeRate="susy-multileconepton/fake_rate/fr_FO2_eta_conept.txt",LineStyle=ROOT.kDashed
+TT_red_FO2_eta_jetpt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlue,Label="tt FR FO2(jet p_{T})",FakeRate="susy-multilejetpton/fake_rate/fr_FO2_eta_jetpt.txt",LineStyle=ROOT.kDotted
+
+TT_red_FO1_eta_pt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kMagenta,Label="tt FR FO1(p_{T}) situ",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
+TT_red_FO1_eta_conept_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kMagenta,Label="tt FR FO1(cone p_{T}) situ",FakeRate="susy-multileconepton/fake_rate/fr_FO1_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
+TT_red_FO1_eta_jetpt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kMagenta,Label="tt FR FO1(jet p_{T}) situ",FakeRate="susy-multilejetpton/fake_rate/fr_FO1_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
+
+TT_red_FO2_eta_pt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kCyan,Label="tt FR FO2(p_{T}) situ",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_pt_insitu.txt"
+TT_red_FO2_eta_conept_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kCyan,Label="tt FR FO2(cone p_{T}) situ",FakeRate="susy-multileconepton/fake_rate/fr_FO2_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
+TT_red_FO2_eta_jetpt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kCyan,Label="tt FR FO2(jet p_{T}) situ",FakeRate="susy-multilejetpton/fake_rate/fr_FO2_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
 
