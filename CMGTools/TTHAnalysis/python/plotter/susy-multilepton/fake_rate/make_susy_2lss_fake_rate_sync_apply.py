@@ -42,14 +42,14 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
                 app.append("is"+lepflav)
                 app.append("pt1LT25" if ptreg[0]=="l" else "pt1GT25")
                 app.append("pt2LT25" if ptreg[1]=="l" else "pt2GT25")
-                br=""
+                br="_incl"
                 if baselineregion >= 0:
                     app.append("bas%d" % (baselineregion,))
                     br="_b%d" % (baselineregion,)
-                runs.append(["ApplicationFO1_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p QCDMu_red,QCDEl_red,QCDMu_red_FO1_%s,QCDEl_red_FO1_%s --sp QCDMu_red,QCDEl_red" % (xvar,xvar)])
-                runs.append(["ApplicationFO1InSitu_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s_insitu --sp TT_red" % xvar])
-                runs.append(["ApplicationFO2_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p QCDMu_red,QCDEl_red,QCDMu_red_FO2_%s,QCDEl_red_FO2_%s --sp QCDMu_red,QCDEl_red" % (xvar,xvar)])
-                runs.append(["ApplicationFO2InSitu_"+xvar+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s_insitu --sp TT_red" % xvar])
+                runs.append(["ApplicationFO1_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s" % xvar])
+                runs.append(["ApplicationFO1InSitu_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s_insitu" % xvar])
+                runs.append(["ApplicationFO2_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s" % xvar])
+                runs.append(["ApplicationFO2InSitu_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s_insitu" % xvar])
                     
 
 for run in runs:

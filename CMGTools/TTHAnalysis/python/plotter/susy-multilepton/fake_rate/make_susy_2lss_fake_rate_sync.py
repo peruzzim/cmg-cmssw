@@ -61,8 +61,8 @@ cuts["jetaway40"]="((LepGood_awayJet_pt>40) && (deltaR(LepGood_eta,LepGood_phi,L
 QCDmeasReg=["metLT20","mtLT20","jetaway40"]
 
 
-MuDsetsQCD=FTREEQCD+' -p QCDMu_red'
-ElDsetsQCD=FTREEQCD+' -p QCDEl_red'
+MuDsetsQCD=FTREEQCD+' -p QCD_red'
+ElDsetsQCD=FTREEQCD+' -p QCD_red'
 MuDsetsInSitu='-p TT_red '
 ElDsetsInSitu='-p TT_red '
 
