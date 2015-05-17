@@ -18,18 +18,18 @@ TT_red:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlack,Label="non
 # for fake rate application
 
 TT_red_FO1_eta_pt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="tt FR FO1(p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-TT_red_FO1_eta_conept:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="tt FR FO1(cone p_{T})",FakeRate="susy-multileconepton/fake_rate/fr_FO1_eta_conept.tx",LineStyle=ROOT.kDashed
-TT_red_FO1_eta_jetpt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="tt FR FO1(jet p_{T})",FakeRate="susy-multilejetpton/fake_rate/fr_FO1_eta_jetpt.txt",LineStyle=ROOT.kDotted
+TT_red_FO1_eta_conept:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="tt FR FO1(cone p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt",LineStyle=ROOT.kDashed
+TT_red_FO1_eta_jetpt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="tt FR FO1(jet p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt",LineStyle=ROOT.kDotted
 
 TT_red_FO2_eta_pt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlue,Label="tt FR FO2(p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_pt.txt"
-TT_red_FO2_eta_conept:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlue,Label="tt FR FO2(cone p_{T})",FakeRate="susy-multileconepton/fake_rate/fr_FO2_eta_conept.txt",LineStyle=ROOT.kDashed
-TT_red_FO2_eta_jetpt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlue,Label="tt FR FO2(jet p_{T})",FakeRate="susy-multilejetpton/fake_rate/fr_FO2_eta_jetpt.txt",LineStyle=ROOT.kDotted
+TT_red_FO2_eta_conept:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlue,Label="tt FR FO2(cone p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_conept.txt",LineStyle=ROOT.kDashed
+TT_red_FO2_eta_jetpt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlue,Label="tt FR FO2(jet p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_jetpt.txt",LineStyle=ROOT.kDotted
 
 TT_red_FO1_eta_pt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kMagenta,Label="tt FR FO1(p_{T}) situ",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-TT_red_FO1_eta_conept_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kMagenta,Label="tt FR FO1(cone p_{T}) situ",FakeRate="susy-multileconepton/fake_rate/fr_FO1_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
-TT_red_FO1_eta_jetpt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kMagenta,Label="tt FR FO1(jet p_{T}) situ",FakeRate="susy-multilejetpton/fake_rate/fr_FO1_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
+TT_red_FO1_eta_conept_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kMagenta,Label="tt FR FO1(cone p_{T}) situ",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
+TT_red_FO1_eta_jetpt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kMagenta,Label="tt FR FO1(jet p_{T}) situ",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
 
 TT_red_FO2_eta_pt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kCyan,Label="tt FR FO2(p_{T}) situ",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_pt_insitu.txt"
-TT_red_FO2_eta_conept_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kCyan,Label="tt FR FO2(cone p_{T}) situ",FakeRate="susy-multileconepton/fake_rate/fr_FO2_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
-TT_red_FO2_eta_jetpt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kCyan,Label="tt FR FO2(jet p_{T}) situ",FakeRate="susy-multilejetpton/fake_rate/fr_FO2_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
+TT_red_FO2_eta_conept_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kCyan,Label="tt FR FO2(cone p_{T}) situ",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
+TT_red_FO2_eta_jetpt_insitu:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kCyan,Label="tt FR FO2(jet p_{T}) situ",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
 

@@ -1,5 +1,6 @@
 #PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
-PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+#PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+PATH="-P /dev/shm/TREES_72X_050515_MiniIso_TTJets -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
 OUTDIR='FRAPPLYplots_test/plots_test'
 
 cuts={}
@@ -46,15 +47,11 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
                 if baselineregion >= 0:
                     app.append("bas%d" % (baselineregion,))
                     br="_b%d" % (baselineregion,)
-#                runs.append(["ApplicationFO1_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s" % xvar])
-#                runs.append(["ApplicationFO1InSitu_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s_insitu" % xvar])
-#                runs.append(["ApplicationFO2_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s" % xvar])
-#                runs.append(["ApplicationFO2InSitu_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO2_%s_insitu" % xvar])
                 runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s,TT_red_FO2_%s,TT_red_FO1_%s_insitu,TT_red_FO2_%s_insitu" % (xvar,xvar,xvar,xvar)])
                     
 
 for run in runs:
-    RUN="python mcPlots.py -f --plotmode nostack --print 'pdf' --s2v --tree treeProducerSusyMultilepton susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt "+run[1]
+    RUN="python mcPlots.py -j 8 -f --plotmode nostack --print 'pdf' --s2v --tree treeProducerSusyMultilepton susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt "+run[1]
     B0=' '.join([RUN,PATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_plots.txt"])
     B0 += " --pdir "+OUTDIR+'_'+run[0]
     B0 += ' '+add_cuts(prepare_cuts(run[2],run[3],run[4]))
