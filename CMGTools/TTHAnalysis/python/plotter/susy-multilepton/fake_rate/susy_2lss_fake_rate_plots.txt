@@ -6,3 +6,4 @@ htJet40j:   htJet40j: 18,0,2000    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]",XNDiv
 met:   met_pt: 18,0,800    ; XTitle="E_{T}^{miss}  [GeV]"
 mtWmin: min(mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi)) : 18,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]",NXDiv=505
 
+pdgIds_debug: abs(LepGood1_pdgId)\:abs(LepGood2_pdgId) : 5,10.5,15.5,5,10.5,15.5 ; XTitle="pdgId lep1",YTitle="pdgId lep2"

@@ -343,14 +343,14 @@ class TreeToYield:
         unbinnedData2D = plotspec.getOption('UnbinnedData2D',False) if plotspec != None else False
         profile1D      = plotspec.getOption('Profile1D',False) if plotspec != None else False
         profile2D      = plotspec.getOption('Profile2D',False) if plotspec != None else False
-        if self._options.doS2V:
-            expr = scalarToVector(expr)
         if not self._isInit: self._init()
         if self._weight:
             if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
             else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
+        expr = self.adaptExpr(expr)
         if self._options.doS2V:
             cut  = scalarToVector(cut)
+            expr = scalarToVector(expr)
         if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
         histo = None
         canKeys = False
@@ -405,12 +405,12 @@ class TreeToYield:
             raise RuntimeError, "Can't make a plot with %d dimensions" % nvars
         histo.Sumw2()
         if unbinnedData2D:
-            self._tree.Draw("%s" % (self.adaptExpr(expr)), cut, "", self._options.maxEntries)
+            self._tree.Draw("%s" % expr, cut, "", self._options.maxEntries)
             graph = ROOT.gROOT.FindObject("Graph").Clone(name)
             return graph
         drawOpt = "goff"
         if profile1D or profile2D: drawOpt += " PROF";
-        self._tree.Draw("%s>>%s" % (self.adaptExpr(expr),"dummy"), cut, drawOpt, self._options.maxEntries)
+        self._tree.Draw("%s>>%s" % (expr,"dummy"), cut, drawOpt, self._options.maxEntries)
         if canKeys and histo.GetEntries() > 0 and histo.GetEntries() < self.getOption('KeysPdfMinN',100) and not self._isdata and self.getOption("KeysPdf",False):
             #print "Histogram for %s/%s has %d entries, so will use KeysPdf " % (self._cname, self._name, histo.GetEntries())
             if "/TH1Keys_cc.so" not in ROOT.gSystem.GetLibraries(): 
