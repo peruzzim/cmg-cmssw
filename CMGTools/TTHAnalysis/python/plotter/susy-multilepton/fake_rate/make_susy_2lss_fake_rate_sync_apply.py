@@ -51,10 +51,8 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
                     
 
 for run in runs:
-    RUN="python mcPlots.py -j 8 -f --plotmode nostack --print 'pdf' --s2v --tree treeProducerSusyMultilepton susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt "+run[1]
-    B0=' '.join([RUN,PATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_plots.txt"])
-    B0 += " --pdir "+OUTDIR+'_'+run[0]
-    B0 += ' '+add_cuts(prepare_cuts(run[2],run[3],run[4]))
-    B0 += ' '+str(run[5])
+    RUN="python mcPlots.py -j 8 -f --plotmode nostack --print 'pdf' --s2v --tree treeProducerSusyMultilepton"
+    B0=' '.join([RUN,PATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/susy_2lss_fake_rate_plots.txt"])
+    B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),"--pdir "+OUTDIR+'_'+run[0],run[5]])
     print B0
 

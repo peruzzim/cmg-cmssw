@@ -1,5 +1,5 @@
 #PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
-PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root %s --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
 FTREEQCD="-F sf/t {P}/2_leptonFakeRateQCDVars_Susy_v1/evVarFriend_{cname}.root"
 OUTDIR='FRplots_test/plots_test'
 
@@ -61,10 +61,10 @@ cuts["jetaway40"]="((LepGood_awayJet_pt>40) && (deltaR(LepGood_eta,LepGood_phi,L
 QCDmeasReg=["metLT20","mtLT20","jetaway40"]
 
 
-MuDsetsQCD=FTREEQCD+' -p QCD_red'
-ElDsetsQCD=FTREEQCD+' -p QCD_red'
-MuDsetsInSitu='-p TT_red '
-ElDsetsInSitu='-p TT_red '
+MuDsetsQCD='-p QCD_red'
+ElDsetsQCD='-p QCD_red'
+MuDsetsInSitu='-p TT_red'
+ElDsetsInSitu='-p TT_red'
 
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
@@ -77,16 +77,16 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
     runs.append(["FO2ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsInSitu,"multiiso_AND_elMVAtight",xvar])
 
 for run in runs:
-    doeff = (len(run)>6)
-    RUN="python mcEfficiencies.py --s2v --tree treeProducerSusyMultilepton susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt "+run[1]
-    run[0]=run[6]+'_ON_'+run[0]
-    B0=' '.join([RUN,PATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_sels_sync.txt","susy-multilepton/fake_rate/susy_2lss_fake_rate_xvars_sync.txt"])
+    RUN="python mcEfficiencies.py --s2v --tree treeProducerSusyMultilepton"
+    MYPATH=PATH
+    if 'QCD' in run[5]:
+        MYPATH = MYPATH % FTREEQCD
+    else:
+        MYPATH = MYPATH % ""
+    B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/susy_2lss_fake_rate_sels_sync.txt","susy-multilepton/fake_rate/susy_2lss_fake_rate_xvars_sync.txt"])
 #    B0 += " --legend=TL  --yrange -1 2 --showRatio --ratioRange 0 3 --xcut 10 999 --ytitle 'Fake rate' --groupBy cut"
-    B0 += " --legend=TL --ytitle 'Fake rate' --groupBy cut"
-    B0 += ' --sP '+run[6]
-    B0 += " -o "+OUTDIR+'_'+run[0]+"/plots.root"
-    B0 += ' --sP '+run[7]
-    B0 += ' '+add_cuts(prepare_cuts(run[2],run[3],run[4]))
-    B0 += ' '+str(run[5])
+    run[0]=run[6]+'_ON_'+run[0]
+    B0 += ' '.join([' ',"--legend=TL --ytitle 'Fake rate' --groupBy cut",'--sP '+run[6],"-o "+OUTDIR+'_'+run[0]+"/plots.root",' --sP '+run[7]])
+    B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),run[5]])
     print B0
 
