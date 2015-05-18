@@ -34,12 +34,11 @@ MODULES.append( ('leptonFakeRateQCDVarsSusy', LeptonFakeRateQCDVars(
                 lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep),
                 lambda jet, lep, dr : jet.pt > (20 if abs(jet.eta)<2.4 else 30) and dr > 0.7) ) )
 
-list_cuts_tightlepid_nomultiiso_noeltightmvaid = [
+list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip = [
             lambda lep : abs(lep.pdgId)>0,
             lambda lep : lep.miniRelIso<0.4,
             lambda lep : lep.dxy<0.05,
             lambda lep : lep.dz<0.1,
-            lambda lep : lep.sip3d<4,
             lambda lep : lep.pt > 10,
             lambda lep : ((abs(lep.eta)<2.4 and abs(lep.pdgId)==13) or (abs(lep.eta)<2.5 and abs(lep.pdgId)==11)),
             lambda lep : (lep.mediumMuonId > 0 or abs(lep.pdgId)!=13),
@@ -51,12 +50,23 @@ list_cuts_tightlepid_nomultiiso_noeltightmvaid = [
 
 from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
 MODULES.append ( ('leptonFakeRateFO1', ObjTagger('FO1','LepGood',
-            list_cuts_tightlepid_nomultiiso_noeltightmvaid+[
+            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip+[
             lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
+            lambda lep : lep.sip3d<4,
             ]) ) )
 MODULES.append ( ('leptonFakeRateFO2', ObjTagger('FO2','LepGood',
-            list_cuts_tightlepid_nomultiiso_noeltightmvaid
-            ) ) )
+            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip+[
+                lambda lep : lep.sip3d<4,
+            ]) ) )
+MODULES.append ( ('leptonFakeRateFO1InSitu', ObjTagger('FO1InSitu','LepGood',
+            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip+[
+            lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
+            lambda lep : lep.sip3d>=4,
+            ]) ) )
+MODULES.append ( ('leptonFakeRateFO2InSitu', ObjTagger('FO2InSitu','LepGood',
+            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip+[
+                lambda lep : lep.sip3d>=4,
+            ]) ) )
 
 
 #from CMGTools.TTHAnalysis.tools.finalMVA_2lss import FinalMVA_2LSS
