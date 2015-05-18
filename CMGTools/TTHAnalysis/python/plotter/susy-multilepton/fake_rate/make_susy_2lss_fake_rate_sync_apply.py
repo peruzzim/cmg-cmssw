@@ -32,6 +32,9 @@ cuts["bas0"]="nBJetMedium25==0"
 cuts["bas1"]="nBJetMedium25==2"
 cuts["bas2"]="nBJetMedium25==2"
 cuts["bas3"]="nBJetMedium25>=3"
+cuts["pt_ll"]="LepGood1_pt<25 && LepGood2_pt<25"
+cuts["pt_lh"]="(LepGood1_pt<25 && LepGood2_pt>=25) || (LepGood1_pt>=25 && LepGood2_pt<25)"
+cuts["pt_hh"]="LepGood1_pt>=25 && LepGood2_pt>=25"
 
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
@@ -41,8 +44,7 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
             for baselineregion in [-1,0,1,2,3]:
                 app=[]
                 app.append("is"+lepflav)
-                app.append("pt1LT25" if ptreg[0]=="l" else "pt1GT25")
-                app.append("pt2LT25" if ptreg[1]=="l" else "pt2GT25")
+                app.append("pt_"+ptreg)
                 br="_incl"
                 if baselineregion >= 0:
                     app.append("bas%d" % (baselineregion,))
