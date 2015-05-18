@@ -417,7 +417,7 @@ class TreeToYield:
                 ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/TH1Keys.cc+" % os.environ['CMSSW_BASE']);
             (nb,xmin,xmax) = bins.split(",")
             histo = ROOT.TH1KeysNew("dummyk","dummyk",int(nb),float(xmin),float(xmax))
-            self._tree.Draw("%s>>%s" % (self.adaptExpr(expr),"dummyk"), cut, "goff", self._options.maxEntries)
+            self._tree.Draw("%s>>%s" % (expr,"dummyk"), cut, "goff", self._options.maxEntries)
             self.negativeCheck(histo)
             return histo.GetHisto().Clone(name)
         #elif not self._isdata and self.getOption("KeysPdf",False):
