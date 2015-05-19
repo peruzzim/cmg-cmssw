@@ -207,6 +207,10 @@ def _susy2lss_multiIso(lep):
         if abs(lep.pdgId) == 13: A,B,C = (0.14,0.68,6.7)
         else:                    A,B,C = (0.10,0.70,7.0)
         return lep.miniRelIso < A and (lep.jetPtRatio > B or lep.jetPtRel > C)
+def _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio(lep):
+        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.68,6.7)
+        else:                    A,B,C = (0.4,0.70,7.0)
+        return lep.miniRelIso < A and (((1+max(lep.miniRelIso-A,0))*lep.jetPtRatio) > B or lep.jetPtRel > C)
 
 def _susy2lss_lepId_CBOld(lep):
         if lep.pt <= 10: return False
