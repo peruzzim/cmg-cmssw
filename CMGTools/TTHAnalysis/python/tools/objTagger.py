@@ -7,13 +7,18 @@ class ObjTagger:
         self.sel = sel
         self.sizelimit = sizelimit
     def listBranches(self):
-        biglist = [ ("n"+self.coll+"_"+self.label, "I"), (self.coll+"_is"+self.label,"I",self.sizelimit,"n"+self.coll) ]
+        biglist = [ ("n"+self.coll,"I"), ("n"+self.coll+"_"+self.label, "I"), (self.coll+"_is"+self.label,"I",100,"n"+self.coll) ]
         return biglist
     def __call__(self,event):
+        try :
+            assert (getattr(event,"n"+self.coll) <= self.sizelimit)
+        except AssertionError:
+            print 'ERROR in ObjTagger: branch size limit is '+str(self.sizelimit)+' while n'+self.coll+'=='+str(getattr(event,"n"+self.coll))
+            raise
         objs = [l for l in Collection(event,self.coll,"n"+self.coll)]
-        ret = {};
+        ret = {"n"+self.coll : getattr(event,"n"+self.coll) }
         ret["n"+self.coll+"_"+self.label]=0
-        ret[self.coll+"_is"+self.label]=[]
+        ret[self.coll+"_is"+self.label]=[0] * getattr(event,"n"+self.coll)
         for i,ob in enumerate(objs):
             ispassing = True
             for selector in self.sel:
@@ -21,11 +26,8 @@ class ObjTagger:
                     ispassing = False
                     break
             if ispassing:
-                if ret["n"+self.coll+"_"+self.label] == self.sizelimit:
-                    print 'WARNING: reached branch size limit for ObjTagger labeled '+self.label
-                    break
                 ret["n"+self.coll+"_"+self.label] += 1
-            ret[self.coll+"_is"+self.label].append(1 if ispassing else 0)
+                ret[self.coll+"_is"+self.label][i] = 1
         return ret
 
 if __name__ == '__main__':
