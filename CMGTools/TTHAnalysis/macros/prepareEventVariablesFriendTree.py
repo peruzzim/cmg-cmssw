@@ -42,6 +42,7 @@ list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip = [
             lambda lep : lep.dz<0.1,
             lambda lep : lep.pt > 10,
             lambda lep : ((abs(lep.eta)<2.4 and abs(lep.pdgId)==13) or (abs(lep.eta)<2.5 and abs(lep.pdgId)==11)),
+            lambda lep : ((abs(lep.pdgId)!=11) or abs(lep.eta)<1.4442 or abs(lep.eta)>1.566),
             lambda lep : (lep.mediumMuonId > 0 or abs(lep.pdgId)!=13),
             lambda lep : (lep.mvaIdPhys14 > -0.11+(-0.35+0.11)*(abs(lep.eta)>0.8)+(-0.55+0.35)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
             lambda lep : (lep.lostHits==0 or abs(lep.pdgId)!=11),
