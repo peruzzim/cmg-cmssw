@@ -21,3 +21,4 @@ ht: htJet40j > 80
 met: met_pt > 30 || htJet40j > 500
 njet: nJet40 >=2
 nBjet: nBJetMedium25 >= 0
+promptfake: ((LepGood1_mcMatchId!=0 && LepGood2_mcMatchId==0) || (LepGood2_mcMatchId!=0 && LepGood1_mcMatchId==0))

@@ -43,8 +43,7 @@ cuts["losthitsEQ0"]="LepGood_lostHits==0"
 cuts["elConvVeto"]="LepGood_convVeto"
 cuts["tightcharge"]="LepGood_tightCharge > (abs(LepGood_pdgId) == 11)"
 cuts["multiiso"]="multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0"
-cuts["mutrackpterr"]="blablabla"
-
+cuts["multiiso_relaxed_forinsitu"]="multiIso_multiWP_conept_relaxminiiso(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0"
 
 LooseLepSel=["minireliso04","dxy005","dz01"]
 LooseMuSel=LooseLepSel+["pt5","etaLT2p4"]
@@ -60,7 +59,6 @@ cuts["mtLT20"]="mt_2(LepGood_pt,LepGood_phi,met_pt,met_phi)<20"
 cuts["jetaway40"]="((LepGood_awayJet_pt>40) && (deltaR(LepGood_eta,LepGood_phi,LepGood_awayJet_eta,LepGood_awayJet_phi)>1.0))"
 QCDmeasReg=["metLT20","mtLT20","jetaway40"]
 
-
 MuDsetsQCD='-p QCD_red'
 ElDsetsQCD='-p QCD_red'
 MuDsetsInSitu='-p TT_red'
@@ -72,9 +70,9 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
     runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg,[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso",xvar])
     runs.append(["FO1El"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg,[],[("multiiso","minireliso04")],ElDsetsQCD,"multiiso",xvar])
     runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg,[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD,"multiiso_AND_elMVAtight",xvar])
-    runs.append(["FO1MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightMuSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],MuDsetsInSitu,"multiiso",xvar])
-    runs.append(["FO1ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],ElDsetsInSitu,"multiiso",xvar])
-    runs.append(["FO2ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsInSitu,"multiiso_AND_elMVAtight",xvar])
+    runs.append(["FO1MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightMuSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_forinsitu")],MuDsetsInSitu,"multiiso",xvar])
+    runs.append(["FO1ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_forinsitu")],ElDsetsInSitu,"multiiso",xvar])
+    runs.append(["FO2ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_forinsitu"),("elMVAtight","elMVAloose")],ElDsetsInSitu,"multiiso_AND_elMVAtight",xvar])
 
 for run in runs:
     RUN="python mcEfficiencies.py --s2v --tree treeProducerSusyMultilepton"
