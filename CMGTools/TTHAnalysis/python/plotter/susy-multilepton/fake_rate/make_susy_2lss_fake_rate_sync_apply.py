@@ -5,21 +5,22 @@ OUTDIR='FRAPPLYplots_test/plots_test'
 
 cuts={}
 def add_cuts(mylist):
-    my = list(set(mylist))
+    my = [x for (i,x) in enumerate(mylist) if x not in mylist[:i]]
     return ' '.join("-A alwaystrue "+cut+" '"+cuts[cut]+"'" for cut in my)
 def remove_cuts(mylist):
-    my = list(set(mylist))
+    my = [x for (i,x) in enumerate(mylist) if x not in mylist[:i]]
     return ' '.join("-X "+cut for cut in my)
 def replace_cuts(mylist):
-    my = list(set(mylist))
+    my = [x for (i,x) in enumerate(mylist) if x not in mylist[:i]]
     return ' '.join("-R "+cut+" "+newcut+" '"+cuts[newcut]+"'" for cut,newcut in mylist)
 def prepare_cuts(add,remove,replace):
-    my = list(set(add))
+    my = [x for (i,x) in enumerate(add) if x not in add[:i]]
     my = [i for i in my if i not in remove]
     for k,l in replace:
         my = [l if k==x else x for x in my]
-        my=list(set(my))
+        my = [x for (i,x) in enumerate(my) if x not in my[:i]]
     return my
+
 
 cuts["isee"]="abs(LepGood1_pdgId) == 11 && abs(LepGood2_pdgId) == 11"
 cuts["ismm"]="abs(LepGood1_pdgId) == 13 && abs(LepGood2_pdgId) == 13"
@@ -29,7 +30,7 @@ cuts["pt1GT25"]="LepGood1_pt>=25"
 cuts["pt2LT25"]="LepGood2_pt<25"
 cuts["pt2GT25"]="LepGood2_pt>=25"
 cuts["bas0"]="nBJetMedium25==0"
-cuts["bas1"]="nBJetMedium25==2"
+cuts["bas1"]="nBJetMedium25==1"
 cuts["bas2"]="nBJetMedium25==2"
 cuts["bas3"]="nBJetMedium25>=3"
 cuts["pt_ll"]="LepGood1_pt<25 && LepGood2_pt<25"

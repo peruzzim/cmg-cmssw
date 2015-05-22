@@ -16,6 +16,8 @@ lep_el_id: ( LepGood1_mvaIdPhys14 >=0.73+(0.57-0.73)*(abs(LepGood1_eta)>0.8)+(+0
 lep_dxy: max(LepGood1_sip3d,LepGood2_sip3d) < 4
 ele_cuts: (abs(LepGood1_pdgId) == 13 || (LepGood1_convVeto && LepGood1_lostHits == 0)) && \
           (abs(LepGood2_pdgId) == 13 || (LepGood2_convVeto && LepGood2_lostHits == 0)) 
+ele gap: (abs(LepGood1_pdgId) != 11 || abs(LepGood1_eta)<1.4442 || abs(LepGood1_eta)>1.566) && \
+         (abs(LepGood2_pdgId) != 11 || abs(LepGood2_eta)<1.4442 || abs(LepGood2_eta)>1.566)
 tight_charge: LepGood1_tightCharge > (abs(LepGood1_pdgId) == 11) && LepGood2_tightCharge > (abs(LepGood2_pdgId) == 11)
 ht: htJet40j > 80
 met: met_pt > 30 || htJet40j > 500

@@ -1,3 +1,4 @@
+dotable = True
 #PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
 PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root %s --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
 FTREEQCD="-F sf/t {P}/2_leptonFakeRateQCDVars_Susy_v1/evVarFriend_{cname}.root"
@@ -5,20 +6,20 @@ OUTDIR='FRplots_test/plots_test'
 
 cuts={}
 def add_cuts(mylist):
-    my = list(set(mylist))
+    my = [x for (i,x) in enumerate(mylist) if x not in mylist[:i]]
     return ' '.join("-A alwaystrue "+cut+" '"+cuts[cut]+"'" for cut in my)
 def remove_cuts(mylist):
-    my = list(set(mylist))
+    my = [x for (i,x) in enumerate(mylist) if x not in mylist[:i]]
     return ' '.join("-X "+cut for cut in my)
 def replace_cuts(mylist):
-    my = list(set(mylist))
+    my = [x for (i,x) in enumerate(mylist) if x not in mylist[:i]]
     return ' '.join("-R "+cut+" "+newcut+" '"+cuts[newcut]+"'" for cut,newcut in mylist)
 def prepare_cuts(add,remove,replace):
-    my = list(set(add))
+    my = [x for (i,x) in enumerate(add) if x not in add[:i]]
     my = [i for i in my if i not in remove]
     for k,l in replace:
         my = [l if k==x else x for x in my]
-        my=list(set(my))
+        my = [x for (i,x) in enumerate(my) if x not in my[:i]]
     return my
 
 
@@ -33,6 +34,7 @@ cuts["pt7"]="LepGood_pt > 7"
 cuts["pt10"]="LepGood_pt > 10"
 cuts["etaLT2p4"]="abs(LepGood_eta) < 2.4"
 cuts["etaLT2p5"]="abs(LepGood_eta) < 2.5"
+cuts["etagap"]="abs(LepGood_pdgId)!=11 || abs(LepGood_eta)<1.4442 || abs(LepGood_eta)>1.566"
 cuts["ismu"]="abs(LepGood_pdgId)==13"
 cuts["isel"]="abs(LepGood_pdgId)==11"
 cuts["muMediumID"]="LepGood_mediumMuonId > 0"
@@ -47,7 +49,7 @@ cuts["multiiso_relaxed_forinsitu"]="multiIso_multiWP_conept_relaxminiiso(LepGood
 
 LooseLepSel=["minireliso04","dxy005","dz01"]
 LooseMuSel=LooseLepSel+["pt5","etaLT2p4"]
-LooseElSel=LooseLepSel+["pt7","etaLT2p5","elMVAloose","elConvVeto","losthitsLEQ1"]
+LooseElSel=LooseLepSel+["pt7","etaLT2p5","etagap","elMVAloose","elConvVeto","losthitsLEQ1"]
 
 TightLepSel=["sipLT4","dz01","multiiso"]
 TightMuSel=LooseMuSel+TightLepSel+["pt10","etaLT2p4","muMediumID","tightcharge"]
@@ -70,9 +72,25 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
     runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg,[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso",xvar])
     runs.append(["FO1El"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg,[],[("multiiso","minireliso04")],ElDsetsQCD,"multiiso",xvar])
     runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg,[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD,"multiiso_AND_elMVAtight",xvar])
-    runs.append(["FO1MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightMuSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_forinsitu")],MuDsetsInSitu,"multiiso",xvar])
-    runs.append(["FO1ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_forinsitu")],ElDsetsInSitu,"multiiso",xvar])
-    runs.append(["FO2ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005","dz01"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_forinsitu"),("elMVAtight","elMVAloose")],ElDsetsInSitu,"multiiso_AND_elMVAtight",xvar])
+    runs.append(["FO1MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightMuSel,["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_forinsitu")],MuDsetsInSitu,"multiiso",xvar])
+    runs.append(["FO1ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_forinsitu")],ElDsetsInSitu,"multiiso",xvar])
+    runs.append(["FO2ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel,["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_forinsitu"),("elMVAtight","elMVAloose")],ElDsetsInSitu,"multiiso_AND_elMVAtight",xvar])
+
+if dotable:
+    for run in runs:
+        RUN="python mcAnalysis.py --s2v --tree treeProducerSusyMultilepton"
+        MYPATH=PATH
+        if 'QCD' in run[5]:
+            MYPATH = MYPATH % FTREEQCD
+        else:
+            MYPATH = MYPATH % ""
+        B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1]])
+        run[0]=run[6]+'_ON_'+run[0]
+        B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),run[5]])
+        print B0
+    exit
+
+
 
 for run in runs:
     RUN="python mcEfficiencies.py --s2v --tree treeProducerSusyMultilepton"
@@ -82,7 +100,6 @@ for run in runs:
     else:
         MYPATH = MYPATH % ""
     B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/susy_2lss_fake_rate_sels_sync.txt","susy-multilepton/fake_rate/susy_2lss_fake_rate_xvars_sync.txt"])
-#    B0 += " --legend=TL  --yrange -1 2 --showRatio --ratioRange 0 3 --xcut 10 999 --ytitle 'Fake rate' --groupBy cut"
     run[0]=run[6]+'_ON_'+run[0]
     B0 += ' '.join([' ',"--legend=TL --ytitle 'Fake rate' --groupBy cut",'--sP '+run[6],"-o "+OUTDIR+'_'+run[0]+"/plots.root",' --sP '+run[7]])
     B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),run[5]])

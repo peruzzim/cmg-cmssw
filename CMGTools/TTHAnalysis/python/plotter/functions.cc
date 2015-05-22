@@ -92,11 +92,6 @@ float mtw_wz3l(float pt1, float eta1, float phi1, float m1, float pt2, float eta
     return 0;
 }
 
-float conept(float ptlep, float minireliso, float minirelisocut)
-{
-  return ptlep*(1+std::max(minireliso-minirelisocut,float(0)));
-}
-
 float relax_cut_in_eta_bins(float val, float eta, float eta1, float eta2, float eta3, float val1, float val2, float val3, float val1t, float val2t, float val3t){
 
   if (abs(eta)<eta1){

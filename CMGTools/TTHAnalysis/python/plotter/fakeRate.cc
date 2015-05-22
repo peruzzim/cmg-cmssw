@@ -762,14 +762,29 @@ float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, f
     }
 }
 
+float conept(float ptlep, float minireliso, float ptratio, float ptrel, int pdgid, int wp)
+{
+  assert (wp==2);
+  assert (abs(pdgid)==11 || abs(pdgid)==13);
+
+  float A = (abs(pdgid)==11) ? 0.10 : 0.14;
+  float B = (abs(pdgid)==11) ? 0.70 : 0.68;
+  float C = (abs(pdgid)==11) ? 7 : 6.7;
+
+  if (ptrel>C) return ptlep*(1+std::max(minireliso-A,float(0)));
+  else return std::max(ptlep,ptratio*ptlep*B);
+
+  //  old definition  
+  //  return ptlep*(1+std::max(minireliso-A,float(0)));
+}
+
 float multiIso_multiWP_conept_relaxminiiso(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatio, float LepGood_jetPtRel, WP::WPId wp) {
   if (wp != WP::M) {
     std::cerr << "ERROR in multiIso_multiWP_conept_relaxminiiso: working point not implemented" << std::endl;
     assert(false);
   }
   float newmini = (LepGood_miniRelIso<0.4) ? 0 : LepGood_miniRelIso;
-  float A = abs(LepGood_pdgId)==13 ? 0.14 : 0.10;
-  float newratio = (1+std::max(float(LepGood_miniRelIso-A),float(0.)))*LepGood_jetPtRatio;
+  float newratio = conept(LepGood_pt,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,LepGood_pdgId,wp)*LepGood_jetPtRatio;
   return multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,newmini,newratio,LepGood_jetPtRel,wp);
 }
 
