@@ -1,7 +1,12 @@
-dotable = True
+import sys
+doeff = (sys.argv[1]=="eff")
+dotable = (sys.argv[1]=="table")
+
 #PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
-PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root %s --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
-FTREEQCD="-F sf/t {P}/2_leptonFakeRateQCDVars_Susy_v1/evVarFriend_{cname}.root"
+#PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root %s --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v1/evVarFriend_{cname}.root %s --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+FTREEQCD=""
+#FTREEQCD="-F sf/t {P}/2_leptonFakeRateQCDVars_Susy_v1/evVarFriend_{cname}.root"
 OUTDIR='FRplots_test/plots_test'
 
 cuts={}
@@ -78,30 +83,30 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
 
 if dotable:
     for run in runs:
-        RUN="python mcAnalysis.py --s2v --tree treeProducerSusyMultilepton"
+        RUN="python mcAnalysis.py -l 1.0 --s2v --tree treeProducerSusyMultilepton"
         MYPATH=PATH
         if 'QCD' in run[5]:
             MYPATH = MYPATH % FTREEQCD
         else:
             MYPATH = MYPATH % ""
-        B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1]])
+        B0=' '.join(['echo',run[0],';',RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1]])
         run[0]=run[6]+'_ON_'+run[0]
         B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),run[5]])
         print B0
-    exit
 
 
 
-for run in runs:
-    RUN="python mcEfficiencies.py --s2v --tree treeProducerSusyMultilepton"
-    MYPATH=PATH
-    if 'QCD' in run[5]:
-        MYPATH = MYPATH % FTREEQCD
-    else:
-        MYPATH = MYPATH % ""
-    B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/susy_2lss_fake_rate_sels_sync.txt","susy-multilepton/fake_rate/susy_2lss_fake_rate_xvars_sync.txt"])
-    run[0]=run[6]+'_ON_'+run[0]
-    B0 += ' '.join([' ',"--legend=TL --ytitle 'Fake rate' --groupBy cut",'--sP '+run[6],"-o "+OUTDIR+'_'+run[0]+"/plots.root",' --sP '+run[7]])
-    B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),run[5]])
-    print B0
+if doeff:
+    for run in runs:
+        RUN="python mcEfficiencies.py --s2v --tree treeProducerSusyMultilepton"
+        MYPATH=PATH
+        if 'QCD' in run[5]:
+            MYPATH = MYPATH % FTREEQCD
+        else:
+            MYPATH = MYPATH % ""
+        B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/susy_2lss_fake_rate_sels_sync.txt","susy-multilepton/fake_rate/susy_2lss_fake_rate_xvars_sync.txt"])
+        run[0]=run[6]+'_ON_'+run[0]
+        B0 += ' '.join([' ',"--legend=TL --ytitle 'Fake rate' --groupBy cut",'--sP '+run[6],"-o "+OUTDIR+'_'+run[0]+"/plots.root",' --sP '+run[7]])
+        B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),run[5]])
+        print B0
 

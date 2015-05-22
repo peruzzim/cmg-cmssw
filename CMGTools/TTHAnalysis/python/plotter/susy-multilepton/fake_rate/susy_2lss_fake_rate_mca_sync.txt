@@ -15,6 +15,21 @@ QCD_red: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
 TT_red:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlack,Label="non-pr (tt)"
 
 
+## COUNTS (weight to 1)
+#QCD_red  : QCD_Mu15          : (LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_red  : QCD_Pt30to50_Mu5  : (LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_red  : QCD_Pt50to80_Mu5  : (LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_red  : QCD_Pt80to120_Mu5 : (LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_red: QCD_Pt20to30_EMEnriched : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_red: QCD_Pt20to30_bcToE : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_red: QCD_Pt30to80_EMEnriched : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_red: QCD_Pt30to80_bcToE : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_red: QCD_Pt80to170_EMEnriched : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_red: QCD_Pt80to170_bcToE : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_red: QCD_Pt170toInf_bcToE : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+#TT_red:  TTJets: 1: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlack,Label="non-pr (tt)"
+
+
 # for fake rate application
 
 TT_red_FO1_eta_pt:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kRed,Label="tt FR FO1(p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
