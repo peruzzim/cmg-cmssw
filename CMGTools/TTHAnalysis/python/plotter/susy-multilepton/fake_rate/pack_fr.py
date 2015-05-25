@@ -55,11 +55,15 @@ if __name__ == "__main__":
     os.mkdir(NEWDIR)
     for ob in ["Mu","El"]:
         for ptchoice in ["pt","conept","jetpt"]:
-            for insitu in [False,True]:
+#            for insitu in [False,True]:
+            for insitu in [False]:
                 if insitu:
                     dset="TT_red"
                 else:
-                    dset = "QCD_red"
+                    if ob=="Mu":
+                        dset = "QCD_Mu"
+                    else:
+                        dset = "QCD_El"
                 assemble2D("FR_FO1_%s_eta_%s%s" % (ob,ptchoice,"_insitu" if insitu else ""),"%s/%s_multiiso_ON_FO1%s%s_eta_%s/plots.root" % (PLOTSPATH,PLOTSPREFIX,ob,"InSitu" if insitu else "",ptchoice),"multiiso_eta_%s_%s" % (ptchoice,dset))
                 if ob=="El":
                     assemble2D("FR_FO2_%s_eta_%s%s" % (ob,ptchoice,"_insitu" if insitu else ""),"%s/%s_multiiso_AND_elMVAtight_ON_FO2%s%s_eta_%s/plots.root" % (PLOTSPATH,PLOTSPREFIX,ob,"InSitu" if insitu else "",ptchoice),"multiiso_AND_elMVAtight_eta_%s_%s" % (ptchoice,dset))
