@@ -1,4 +1,5 @@
-PATH="-P /dev/shm/TREES_72X_050515_MiniIso_TTJets -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root %s --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+#PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v1/evVarFriend_{cname}.root %s --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v1/evVarFriend_{cname}.root %s --mcc susy-multilepton/fake_rate/susy_lepchoice_firsttwo.txt"
 OUTDIR='FRAPPLYplots_test/plots_test'
 
 cuts={}
@@ -40,7 +41,8 @@ runs=[]
 for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
     for ptreg in ["ll","lh","hh"]:
         for lepflav in ["ee","em","mm"]:
-            for baselineregion in [-1,0,1,2,3]:
+#            for baselineregion in [-1,0,1,2,3]:
+            for baselineregion in [-1]:
                 app=[]
                 app.append("is"+lepflav)
                 app.append("pt_"+ptreg)
@@ -49,6 +51,7 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
                     app.append("bas%d" % (baselineregion,))
                     br="_b%d" % (baselineregion,)
                 runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s,TT_red_FO2_%s,TT_red_FO1_%s_insitu,TT_red_FO2_%s_insitu" % (xvar,xvar,xvar,xvar)])
+                runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s,TT_red_FO2_%s" % (xvar,xvar,)])
                     
 
 for run in runs:
