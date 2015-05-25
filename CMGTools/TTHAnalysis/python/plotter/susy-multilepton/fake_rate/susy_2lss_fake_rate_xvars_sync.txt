@@ -1,5 +1,5 @@
-eta_pt: bin2Dto1D(abs(LepGood_eta),LepGood_pt,1) : 15,0.5,15.5 ; XTitle="FR 3x5 eta_pt bin",Density=True
-eta_conept: bin2Dto1D(abs(LepGood_eta),conept(LepGood_pt,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,LepGood_pdgId,2),1) : 15,0.5,15.5 ; XTitle="FR 3x5 eta_conept bin",Density=True
-eta_jetpt: bin2Dto1D(abs(LepGood_eta),LepGood_pt/LepGood_jetPtRatio,1) : 15,0.5,15.5 ; XTitle="FR 3x5 eta_jetpt bin",Density=True
+eta_pt: bin2Dto1D(LepGood_pt,abs(LepGood_eta),0) : 15,0.5,15.5 ; XTitle="FR 3x5 eta_pt bin",Density=True
+eta_conept: bin2Dto1D(conept(LepGood_pt,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,LepGood_pdgId,2),abs(LepGood_eta),0) : 15,0.5,15.5 ; XTitle="FR 3x5 eta_conept bin",Density=True
+eta_jetpt: bin2Dto1D(LepGood_pt/LepGood_jetPtRatio,abs(LepGood_eta),0) : 15,0.5,15.5 ; XTitle="FR 3x5 eta_jetpt bin",Density=True
 
 
