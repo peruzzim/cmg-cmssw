@@ -2,12 +2,9 @@
 
 #this has to be in sync with what is defined in bin2Dto1Dlib.cc
 
-#bins_eta=(0,1,2,2.5)
-#bins_pt=(10,15,25,35,50,70)
-#binning_code=0
 bins_pt=(10,15,25,35,50,70)
 bins_eta=(0,1,2,2.5)
-binning_code=1
+binning_code=0
 
 import os,sys
 sys.argv.append('-b-')
@@ -15,7 +12,8 @@ import ROOT
 ROOT.gROOT.SetBatch(True)
 sys.argv.remove('-b-')
 from array import *
-ROOT.gStyle.SetPaintTextFormat("%.2")
+ROOT.gStyle.SetPaintTextFormat(".2f")
+ROOT.gStyle.SetOptStat(0)
 
 NEWDIR="."
 
@@ -47,12 +45,12 @@ def readPlot1D(th2,filename,plotname):
 def assemble2D(name,filename,plotname):
     out = ROOT.TFile.Open(NEWDIR+"/"+name+".root","RECREATE")
     out.cd()
-    th2 = makeH2D(name,bins_eta,bins_pt)
+    th2 = makeH2D(name,bins_pt,bins_eta)
     readPlot1D(th2,filename,plotname)
     c = ROOT.TCanvas("canv_"+th2.GetName(),"canv_"+th2.GetName())
     c.cd()
     th2.GetZaxis().SetRangeUser(0,1)
-    th2.Draw("TEXT COLZ")
+    th2.Draw("TEXT COLZ E1")
     c.SaveAs(NEWDIR+"/"+name+".pdf")
     out.WriteTObject(th2)
     out.ls()
