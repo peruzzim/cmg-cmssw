@@ -778,14 +778,4 @@ float conept(float ptlep, float minireliso, float ptratio, float ptrel, int pdgi
   //  return ptlep*(1+std::max(minireliso-A,float(0)));
 }
 
-float multiIso_multiWP_conept_relaxminiiso(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatio, float LepGood_jetPtRel, WP::WPId wp) {
-  if (wp != WP::M) {
-    std::cerr << "ERROR in multiIso_multiWP_conept_relaxminiiso: working point not implemented" << std::endl;
-    assert(false);
-  }
-  float newmini = (LepGood_miniRelIso<0.4) ? 0 : LepGood_miniRelIso;
-  float newratio = conept(LepGood_pt,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,LepGood_pdgId,wp)*LepGood_jetPtRatio;
-  return multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,newmini,newratio,LepGood_jetPtRel,wp);
-}
-
 void fakeRate() {}
