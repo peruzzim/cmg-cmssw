@@ -11,6 +11,7 @@ import ROOT
 ROOT.gROOT.SetBatch(True)
 sys.argv.remove('-b-')
 from array import *
+ROOT.gStyle.SetPaintTextFormat("%.2")
 
 NEWDIR="."
 
@@ -44,6 +45,11 @@ def assemble2D(name,filename,plotname):
     out.cd()
     th2 = makeH2D(name,bins_eta,bins_pt)
     readPlot1D(th2,filename,plotname)
+    c = ROOT.TCanvas("canv_"+th2.GetName(),"canv_"+th2.GetName())
+    c.cd()
+    th2.GetZaxis().SetRangeUser(0,1)
+    th2.Draw("TEXT COLZ")
+    c.SaveAs(NEWDIR+"/"+name+".pdf")
     out.WriteTObject(th2)
     out.ls()
     out.Close()
