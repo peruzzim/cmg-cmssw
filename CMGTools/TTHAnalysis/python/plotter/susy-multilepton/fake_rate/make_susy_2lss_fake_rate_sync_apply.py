@@ -1,6 +1,4 @@
-#PATH="-P /afs/cern.ch/work/b/botta/TREES_72X_050515_MiniIso"
-#PATH="-P /data1/p/peruzzi/TREES_72X_050515_MiniIso -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
-PATH="-P /dev/shm/TREES_72X_050515_MiniIso_TTJets -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
+PATH="-P /dev/shm/TREES_72X_050515_MiniIso_TTJets -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root %s --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt"
 OUTDIR='FRAPPLYplots_test/plots_test'
 
 cuts={}
@@ -54,8 +52,9 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
                     
 
 for run in runs:
+    MYPATH = PATH % ("--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_coneptchoice.txt" if "conept" in run[0] else "--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_defaultptchoice.txt")
     RUN="python mcPlots.py -j 8 -f --plotmode nostack --print 'pdf' --s2v --tree treeProducerSusyMultilepton"
-    B0=' '.join([RUN,PATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/susy_2lss_fake_rate_plots.txt"])
+    B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/susy_2lss_fake_rate_plots.txt"])
     B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),"--pdir "+OUTDIR+'_'+run[0],run[5]])
     print B0
 
