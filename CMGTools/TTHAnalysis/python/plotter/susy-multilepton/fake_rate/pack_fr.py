@@ -74,5 +74,4 @@ if __name__ == "__main__":
                 assemble2D("FR_FO1_%s_eta_%s%s" % (ob,ptchoice,"_insitu" if insitu else ""),"%s/%s_multiiso_ON_FO1%s%s_eta_%s/plots.root" % (PLOTSPATH,PLOTSPREFIX,ob,"InSitu" if insitu else "",ptchoice),"multiiso_eta_%s_%s" % (ptchoice,dset))
                 if ob=="El":
                     assemble2D("FR_FO2_%s_eta_%s%s" % (ob,ptchoice,"_insitu" if insitu else ""),"%s/%s_multiiso_AND_elMVAtight_ON_FO2%s%s_eta_%s/plots.root" % (PLOTSPATH,PLOTSPREFIX,ob,"InSitu" if insitu else "",ptchoice),"multiiso_AND_elMVAtight_eta_%s_%s" % (ptchoice,dset))
-                if insitu:
-                    assemble2D("FR_FO3_%s_eta_%s%s" % (ob,ptchoice,"_insitu" if insitu else ""),"%s/%s_multiiso_ON_FO3%s%s_eta_%s/plots.root" % (PLOTSPATH,PLOTSPREFIX,ob,"InSitu" if insitu else "",ptchoice),"multiiso_eta_%s_%s" % (ptchoice,dset))
+                assemble2D("FR_FO3_%s_eta_%s%s" % (ob,ptchoice,"_insitu" if insitu else ""),"%s/%s_multiiso_ON_FO3%s%s_eta_%s/plots.root" % (PLOTSPATH,PLOTSPREFIX,ob,"InSitu" if insitu else "",ptchoice),"multiiso_eta_%s_%s" % (ptchoice,dset))
