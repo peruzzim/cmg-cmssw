@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 
 #this has to be in sync with what is defined in bin2Dto1Dlib.cc
-bins_eta=(0,1,2,2.5)
+
+#bins_eta=(0,1,2,2.5)
+#bins_pt=(10,15,25,35,50,70)
+#binning_code=0
 bins_pt=(10,15,25,35,50,70)
-binning_code=0
+bins_eta=(0,1,2,2.5)
+binning_code=1
 
 import os,sys
 sys.argv.append('-b-')

@@ -704,20 +704,20 @@ float fakeRateReader_2lss_FO(float l1eta, float l1pt, float l2eta, float l2pt, i
             if (pass2)   { fpt = l1pt; feta = std::abs(l1eta); fid = abs(l1pdgId); }
             else         { fpt = l2pt; feta = std::abs(l2eta); fid = abs(l2pdgId); }
             TH2 *hist = (fid == 11 ? FRi_FO_el[ind] : FRi_FO_mu[ind]);
-            int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(fpt)));
-            int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(feta)));
-            double fr = hist->GetBinContent(ptbin,etabin);
+            int etabin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
+            int ptbin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fpt)));
+            double fr = hist->GetBinContent(etabin,ptbin);
             return fr/(1-fr);
         }
         case 2: {
             TH2 *hist1 = (abs(l1pdgId) == 11 ? FRi_FO_el[ind] : FRi_FO_mu[ind]);
-            int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
-            int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
-            double fr1 = hist1->GetBinContent(ptbin1,etabin1);
+            int etabin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1eta)));
+            int ptbin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1pt))));
+            double fr1 = hist1->GetBinContent(etabin1,ptbin1);
             TH2 *hist2 = (abs(l2pdgId) == 11 ? FRi_FO_el[ind] : FRi_FO_mu[ind]);
-            int ptbin2  = std::max(1, std::min(hist2->GetNbinsX(), hist2->GetXaxis()->FindBin(l2pt)));
-            int etabin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2eta))));
-            double fr2 = hist2->GetBinContent(ptbin2,etabin2);
+            int etabin2  = std::max(1, std::min(hist2->GetNbinsX(), hist2->GetXaxis()->FindBin(l2eta)));
+            int ptbin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2pt))));
+            double fr2 = hist2->GetBinContent(etabin2,ptbin2);
             return -fr1*fr2/((1-fr1)*(1-fr2));
         }
         default: return 0;
