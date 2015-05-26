@@ -61,7 +61,7 @@ QCDEl_red: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2, Label="a
 QCDEl_red: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2, Label="all (QCDe)"
 QCDEl_red: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2, Label="all (QCDe)"
 QCDEl_red: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2, Label="all (QCDe)"
-QCDEl_red: QCD_Pt170toInf_bcToE   : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="b-jets (QCDe)"
+QCDEl_red: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2, Label="all (QCDe)"  
 QCDEl_bjets: QCD_Pt20to30_bcToE   : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="b-jets (QCDe)"
 QCDEl_bjets: QCD_Pt30to80_bcToE   : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="b-jets (QCDe)"
 QCDEl_bjets: QCD_Pt80to170_bcToE  : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="b-jets (QCDe)"
