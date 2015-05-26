@@ -1,3 +1,7 @@
+
+QCD_Mu15only  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_El2030EMonly: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+
 QCD_Mu  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
 QCD_Mu  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
 QCD_Mu  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
