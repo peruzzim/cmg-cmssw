@@ -53,7 +53,7 @@ def assemble2D(name,filename,plotname):
         return
     c = ROOT.TCanvas("canv_"+th2.GetName(),"canv_"+th2.GetName())
     c.cd()
-    th2.GetZaxis().SetRangeUser(0,1)
+    th2.GetZaxis().SetRangeUser(0,0.7)
     th2.Draw("TEXT COLZ E1")
     c.SaveAs(NEWDIR+"/"+name+".pdf")
     out.WriteTObject(th2)
