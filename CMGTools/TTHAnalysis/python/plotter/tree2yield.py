@@ -285,9 +285,10 @@ class TreeToYield:
             else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
             if self._options.doS2V:
                 cut  = scalarToVector(cut)
+            print cut
             ROOT.gROOT.cd()
             if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
-            histo = ROOT.TH1F("dummy","dummy",1,0.0,1.0); histo.Sumw2()
+            histo = ROOT.TH1D("dummy","dummy",1,0.0,1.0); histo.Sumw2()
             nev = tree.Draw("0.5>>dummy", cut, "goff", self._options.maxEntries)
             self.negativeCheck(histo)
             return [ histo.GetBinContent(1), histo.GetBinError(1) ]
@@ -361,13 +362,13 @@ class TreeToYield:
                 if profile1D: 
                     histo = ROOT.TProfile("dummy","dummy",len(edges)-1,array('f',edges))
                 else:
-                    histo = ROOT.TH1F("dummy","dummy",len(edges)-1,array('f',edges))
+                    histo = ROOT.TH1D("dummy","dummy",len(edges)-1,array('f',edges))
             else:
                 (nb,xmin,xmax) = bins.split(",")
                 if profile1D:
                     histo = ROOT.TProfile("dummy","dummy",int(nb),float(xmin),float(xmax))
                 else:
-                    histo = ROOT.TH1F("dummy","dummy",int(nb),float(xmin),float(xmax))
+                    histo = ROOT.TH1D("dummy","dummy",int(nb),float(xmin),float(xmax))
                     canKeys = True
             unbinnedData2D = False
         elif nvars == 2 or (nvars == 3 and profile2D):
