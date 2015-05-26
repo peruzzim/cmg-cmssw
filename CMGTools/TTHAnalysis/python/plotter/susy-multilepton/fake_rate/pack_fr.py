@@ -46,7 +46,11 @@ def assemble2D(name,filename,plotname):
     out = ROOT.TFile.Open(NEWDIR+"/"+name+".root","RECREATE")
     out.cd()
     th2 = makeH2D(name,bins_pt,bins_eta)
-    readPlot1D(th2,filename,plotname)
+    try:
+        readPlot1D(th2,filename,plotname)
+    except RuntimeError:
+        print "Impossible to open file "+filename+", skipping..."
+        return
     c = ROOT.TCanvas("canv_"+th2.GetName(),"canv_"+th2.GetName())
     c.cd()
     th2.GetZaxis().SetRangeUser(0,1)
