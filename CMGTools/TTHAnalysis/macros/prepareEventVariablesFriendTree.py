@@ -56,37 +56,36 @@ MODULES.append ( ('leptonFakeRateFO1', ObjTagger('FO1','LepGood',
                 lambda lep : lep.sip3d<4,
                 lambda lep : abs(lep.dxy)<0.05,
             ]) ) )
-MODULES.append ( ('leptonFakeRateFO1Mu', ObjTagger('FO1Mu','LepGood',
-            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
-                lambda lep : abs(lep.pdgId)==13,
-                lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
-                lambda lep : lep.sip3d<4,
-                lambda lep : abs(lep.dxy)<0.05,
-            ]) ) )
-MODULES.append ( ('leptonFakeRateFO1El', ObjTagger('FO1El','LepGood',
-            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
-                lambda lep : abs(lep.pdgId)==11,
-                lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
-                lambda lep : lep.sip3d<4,
-                lambda lep : abs(lep.dxy)<0.05,
-            ]) ) )
 MODULES.append ( ('leptonFakeRateFO2', ObjTagger('FO2','LepGood',
             list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
                 lambda lep : lep.sip3d<4,
                 lambda lep : abs(lep.dxy)<0.05,
             ]) ) )
+MODULES.append ( ('leptonFakeRateFO3', ObjTagger('FO3','LepGood',
+            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
+                lambda lep : _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio(lep),
+                lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
+                lambda lep : lep.sip3d<4,
+                lambda lep : abs(lep.dxy)<0.05,
+            ]) ) )
 MODULES.append ( ('leptonFakeRateFO1InSitu', ObjTagger('FO1InSitu','LepGood',
+            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
+                lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
+                lambda lep : lep.sip3d>=4,
+                lambda lep : lep.mcMatchId==0,
+            ]) ) )
+MODULES.append ( ('leptonFakeRateFO2InSitu', ObjTagger('FO2InSitu','LepGood',
+            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
+                lambda lep : lep.sip3d>=4,
+                lambda lep : lep.mcMatchId==0,
+            ]) ) )
+MODULES.append ( ('leptonFakeRateFO3InSitu', ObjTagger('FO3InSitu','LepGood',
             list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
                 lambda lep : _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio(lep),
                 lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
                 lambda lep : lep.sip3d>=4,
+                lambda lep : lep.mcMatchId==0,
             ]) ) )
-MODULES.append ( ('leptonFakeRateFO2InSitu', ObjTagger('FO2InSitu','LepGood',
-            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
-                lambda lep : _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio(lep),
-                lambda lep : lep.sip3d>=4,
-            ]) ) )
-
 
 #from CMGTools.TTHAnalysis.tools.finalMVA_2lss import FinalMVA_2LSS
 #MODULES.append( ('2lss_mva', FinalMVA_2LSS()) )
