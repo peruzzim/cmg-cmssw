@@ -4,8 +4,8 @@ minMllAS8:  minMllAFAS > 8
 #exclusive:  nLepGood10 == 2
 anyll: abs(LepGood1_pdgId) > 0 && abs(LepGood2_pdgId) > 0
 same-sign: LepGood1_charge*LepGood2_charge > 0
-lep1_pt10: LepGood1_pt > 10
-lep2_pt10: LepGood2_pt > 10
+lep1_pt10: LepGood1_ConePt > 10
+lep2_pt10: LepGood2_ConePt > 10
 lep iso: multiIso_multiWP(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,LepGood1_miniRelIso,LepGood1_jetPtRatio,LepGood1_jetPtRel,2) > 0 && \
          multiIso_multiWP(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,LepGood2_miniRelIso,LepGood2_jetPtRatio,LepGood2_jetPtRel,2) > 0
 lep mu id: LepGood1_mediumMuonId > 0 && LepGood2_mediumMuonId > 0 
