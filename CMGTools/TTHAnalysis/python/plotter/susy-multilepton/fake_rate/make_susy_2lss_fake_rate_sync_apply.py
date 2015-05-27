@@ -22,6 +22,7 @@ def prepare_cuts(add,remove,replace):
 cuts["isee"]="abs(LepGood1_pdgId) == 11 && abs(LepGood2_pdgId) == 11"
 cuts["ismm"]="abs(LepGood1_pdgId) == 13 && abs(LepGood2_pdgId) == 13"
 cuts["isem"]="(abs(LepGood1_pdgId) == 11 || abs(LepGood1_pdgId) == 13) && (abs(LepGood2_pdgId) == 11 || abs(LepGood2_pdgId) == 13)"
+cuts["isinclflav"]="((abs(LepGood1_pdgId) == 11 || abs(LepGood1_pdgId) == 13) && (abs(LepGood2_pdgId) == 11 || abs(LepGood2_pdgId) == 13))"
 cuts["pt1LT25"]="LepGood1_ConePt<25"
 cuts["pt1GT25"]="LepGood1_ConePt>=25"
 cuts["pt2LT25"]="LepGood2_ConePt<25"
@@ -33,13 +34,16 @@ cuts["bas3"]="nBJetMedium25>=3"
 cuts["pt_ll"]="LepGood1_ConePt<25 && LepGood2_ConePt<25"
 cuts["pt_lh"]="(LepGood1_ConePt<25 && LepGood2_ConePt>=25) || (LepGood1_ConePt>=25 && LepGood2_ConePt<25)"
 cuts["pt_hh"]="LepGood1_ConePt>=25 && LepGood2_ConePt>=25"
+cuts["pt_inclpt"]="1"
 
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
 for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
-    for ptreg in ["ll","lh","hh"]:
-        for lepflav in ["ee","em","mm"]:
+#    for ptreg in ["inclpt","ll","lh","hh"]:
+#        for lepflav in ["inclflav","ee","em","mm"]:
 #            for baselineregion in [-1,0,1,2,3]:
+    for ptreg in ["inclpt"]:
+        for lepflav in ["inclflav"]:
             for baselineregion in [-1]:
                 app=[]
                 app.append("is"+lepflav)
@@ -48,12 +52,11 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
                 if baselineregion >= 0:
                     app.append("bas%d" % (baselineregion,))
                     br="_b%d" % (baselineregion,)
-                runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s,TT_red_FO2_%s,TT_red_FO1_%s_insitu,TT_red_FO2_%s_insitu" % (xvar,xvar,xvar,xvar)])
-#                runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s,TT_red_FO2_%s,TT_red_FO3_%s,TT_red_FO1_%s_insitu,TT_red_FO2_%s_insitu,TT_red_FO3_%s_insitu" % (xvar,xvar,xvar,xvar,xvar,xvar)])
+                runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s,TT_red_FO2_%s,TT_red_FO3_%s,TT_red_FO1_%s_insitu,TT_red_FO2_%s_insitu,TT_red_FO3_%s_insitu" % (xvar,xvar,xvar,xvar,xvar,xvar)])
                     
 
 for run in runs:
-    PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/1_lepJetReClean_Susy_v4/evVarFriend_{cname}.root %s --mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_lepchoice_sync.txt"
+    PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/1_lepJetReClean_Susy_v4/evVarFriend_{cname}.root -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v7/evVarFriend_{cname}.root --mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_lepchoice_sync.txt %s"
     MYPATH = PATH % ("--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_coneptchoice.txt" if "conept" in run[0] else "--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_defaultptchoice.txt")
     RUN="python mcPlots.py -e -j 8 -l 0.01 -f --plotmode nostack --print 'pdf' --s2v --tree treeProducerSusyMultilepton"
     B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/susy_2lss_fake_rate_plots.txt"])
@@ -61,7 +64,7 @@ for run in runs:
     print B0
 
 #for run in runs:
-#    PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/1_lepJetReClean_Susy_v4/evVarFriend_{cname}.root %s --mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_lepchoice_sync.txt"
+#    PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/1_lepJetReClean_Susy_v4/evVarFriend_{cname}.root -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v7/evVarFriend_{cname}.root --mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_lepchoice_sync.txt %s"
 #    MYPATH = PATH % ("--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_coneptchoice.txt" if "conept" in run[0] else "--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_defaultptchoice.txt")
 #    RUN="python mcAnalysis.py -j 8 -l 0.01 --s2v --tree treeProducerSusyMultilepton"
 #    B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1]])
