@@ -4,7 +4,7 @@ dotable = ("table" in sys.argv[1:])
 dodump = ("dump" in sys.argv[1:])
 doplot = ("plot" in sys.argv[1:])
 
-PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v3/evVarFriend_{cname}.root %s %s --mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_lepchoice_sync.txt"
+PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v7/evVarFriend_{cname}.root %s %s --mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_lepchoice_sync.txt"
 FTREEQCD=""
 FTREETT="-F sf/t {P}/1_lepJetReClean_Susy_v4/evVarFriend_{cname}.root"
 OUTDIR='FRplots_test/plots_test'
