@@ -1,9 +1,9 @@
 baseline_region: if3(nBJetMedium25>3,3,nBJetMedium25) : 4,-0.5,3.5 ; XTitle="baseline region"
 
-leplead_pt:     LepGood1_pt: 30,0,150 ; XTitle="lead lepton p_{T} (GeV)",Density=True
-leptrail_pt:     LepGood2_pt: 30,0,150 ; XTitle="trail lepton p_{T} (GeV)",Density=True
-htJet40j:   htJet40j: 20,0,1000    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]",XNDiv=505
-met:   met_pt: 20,0,200    ; XTitle="E_{T}^{miss}  [GeV]"
-mtWmin: min(mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi)) : 20,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]",NXDiv=505
-
-pdgIds_debug: abs(LepGood1_pdgId)\:abs(LepGood2_pdgId) : 5,10.5,15.5,5,10.5,15.5 ; XTitle="pdgId lep1",YTitle="pdgId lep2"
+#leplead_pt:     LepGood1_pt: 30,0,150 ; XTitle="lead lepton p_{T} (GeV)",Density=True
+#leptrail_pt:     LepGood2_pt: 30,0,150 ; XTitle="trail lepton p_{T} (GeV)",Density=True
+#htJet40j:   htJet40j: 20,0,1000    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]",XNDiv=505
+#met:   met_pt: 20,0,200    ; XTitle="E_{T}^{miss}  [GeV]"
+#mtWmin: min(mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi)) : 20,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]",NXDiv=505
+#
+#pdgIds_debug: abs(LepGood1_pdgId)\:abs(LepGood2_pdgId) : 5,10.5,15.5,5,10.5,15.5 ; XTitle="pdgId lep1",YTitle="pdgId lep2"

@@ -54,8 +54,10 @@ cuts["multiiso_relaxed_miniiso"]="multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepG
 cuts["multiiso_relaxed_miniiso_conept"]="multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,(LepGood_miniRelIso>=0.4),LepGood_jetPtRatio*LepGood_ConePt/LepGood_pt,LepGood_jetPtRel,2) > 0"
 cuts["nFO1is1"]="nLepGood_FO1==1"
 cuts["nFO2is1"]="nLepGood_FO2==1"
+cuts["nFO3is1"]="nLepGood_FO3==1"
 cuts["nFO1InSituis1"]="nLepGood_FO1InSitu==1"
 cuts["nFO2InSituis1"]="nLepGood_FO2InSitu==1"
+cuts["nFO3InSituis1"]="nLepGood_FO3InSitu==1"
 cuts["isfake"]="LepGood_mcMatchId==0"
 
 LooseLepSel=["minireliso04","dxy005","dz01"]
@@ -95,8 +97,8 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
     runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg+["nFO1is1"],[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso",xvar])
     runs.append(["FO1El"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO1is1"],[],[("multiiso","minireliso04")],ElDsetsQCD,"multiiso",xvar])
     runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO2is1"],[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD,"multiiso_AND_elMVAtight",xvar])
-    runs.append(["FO3Mu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightMuSel,[],[("multiiso","multiiso_relaxed_forinsitu_conept")],MuDsetsQCD,"multiiso",xvar])
-    runs.append(["FO3El"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightElSel,[],[("multiiso","multiiso_relaxed_forinsitu_conept")],ElDsetsQCD,"multiiso",xvar])
+    runs.append(["FO3Mu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightMuSel,[],[("multiiso","multiiso_relaxed_miniiso_conept")],MuDsetsQCD,"multiiso",xvar])
+    runs.append(["FO3El"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_perlep.txt",TightElSel,[],[("multiiso","multiiso_relaxed_miniiso_conept")],ElDsetsQCD,"multiiso",xvar])
     runs.append(["FO1MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightMuSel+["nFO1InSituis1","isfake"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],MuDsetsInSitu,"multiiso",xvar])
     runs.append(["FO1ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel+["nFO1InSituis1","isfake"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],ElDsetsInSitu,"multiiso",xvar])
     runs.append(["FO2ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_sync.txt",TightElSel+["nFO2InSituis1","isfake"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsInSitu,"multiiso_AND_elMVAtight",xvar])
@@ -118,7 +120,7 @@ if (dotable or dodump):
 
 if doplot:
     for run in runs:
-        RUN="python mcPlots.py -f --print pdf --plotmode nostack -l 0.01 --s2v --tree treeProducerSusyMultilepton"
+        RUN="python mcPlots.py -f -e --print pdf --plotmode nostack -l 0.01 --s2v --tree treeProducerSusyMultilepton"
         MYPATH=PATH
         MYPATH = MYPATH % (FTREEQCD if "QCD" in run[5] else FTREETT,"--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_coneptchoice.txt" if "conept" in run[0] else "--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_defaultptchoice.txt")
         B0=' '.join(['echo',run[0],';',RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/susy_2lss_fake_rate_plots_debug_sync.txt"])
