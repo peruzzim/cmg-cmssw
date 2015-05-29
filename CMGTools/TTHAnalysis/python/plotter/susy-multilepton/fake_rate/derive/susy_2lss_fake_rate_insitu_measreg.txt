@@ -26,5 +26,5 @@ nBjet: nBJetMedium25 >= 0
 #unwrapper
 alwaystrue: (LepGood_pt>-1)
 
-isthefake: LepGood_mcMatchId==0 && (LepGood1_mcMatchId!=0 || abs(LepGood1_pt-LepGood_pt-1)<0.001) && (LepGood2_mcMatchId!=0 || abs(LepGood2_pt-LepGood_pt-1)<0.001)
+isthefake: LepGood_mcMatchId==0 && (LepGood1_mcMatchId!=0 || abs(LepGood1_pt/LepGood_pt-1)<0.001) && (LepGood2_mcMatchId!=0 || abs(LepGood2_pt/LepGood_pt-1)<0.001)
 
