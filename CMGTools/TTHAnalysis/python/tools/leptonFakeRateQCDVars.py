@@ -21,7 +21,7 @@ class LeptonFakeRateQCDVars:
         if (ptrel>C):
             return ptlep*(1+max(minireliso-A,0))
         else:
-            return max(ptlep,ptratio*ptlep*B)
+            return max(ptlep,ptlep/ptratio*B)
     def __call__(self,event):
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         jetsc = [j for j in Collection(event,"Jet","nJet")]
@@ -34,6 +34,7 @@ class LeptonFakeRateQCDVars:
         for il,lep in enumerate(leps):
             if not self.leptonSel(lep): continue
             ret["LepGood_CorrConePt"][il] = self.conept(lep.pt,lep.miniRelIso,lep.jetPtRatio,lep.jetPtRel,lep.pdgId,2)
+#            print ret["LepGood_CorrConePt"][il]/lep.pt,lep.miniRelIso,lep.jetPtRatio,lep.jetPtRel,lep.pdgId
             jets = [ j for j in jetsc+jetsd+jetsf if self.jetSel(j,lep,deltaR(j,lep)) ]
             if len(jets) == 0: continue 
             jet = max(jets, key=self.jetSort)
