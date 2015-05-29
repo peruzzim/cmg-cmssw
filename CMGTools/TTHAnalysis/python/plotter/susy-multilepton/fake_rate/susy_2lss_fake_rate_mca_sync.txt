@@ -1,15 +1,4 @@
 
-QCD_Mu15only  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
-
-QCD_El2030EMonly: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El2030bconly: QCD_Pt20to30_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El3080EMonly: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El3080bconly: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El80170EMonly: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El80170bconly: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El170infbconly: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-
-
 QCD_Mu  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
 QCD_Mu  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
 QCD_Mu  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
@@ -25,39 +14,34 @@ QCD_El: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
 
 
 
-TT_red:  TTJets: xsec: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlack,Label="non-pr (tt)"
+TT:  TTJets: xsec: 1 ; FillColor=ROOT.kBlack,Label="non-pr (tt)"
+TT_unw:  TTJets: 2544700 : 1 ; FillColor=ROOT.kBlack,Label="non-pr (tt)"
 
-
-## COUNTS (weight to 1)
-#QCD_red  : QCD_Mu15          : (LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
-#QCD_red  : QCD_Pt30to50_Mu5  : (LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
-#QCD_red  : QCD_Pt50to80_Mu5  : (LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
-#QCD_red  : QCD_Pt80to120_Mu5 : (LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
-#QCD_red: QCD_Pt20to30_EMEnriched : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-#QCD_red: QCD_Pt20to30_bcToE : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-#QCD_red: QCD_Pt30to80_EMEnriched : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-#QCD_red: QCD_Pt30to80_bcToE : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-#QCD_red: QCD_Pt80to170_EMEnriched : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-#QCD_red: QCD_Pt80to170_bcToE : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-#QCD_red: QCD_Pt170toInf_bcToE : 1 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-#TT_red:  TTJets: 1: LepGood_mcMatchId == 0 ; FillColor=ROOT.kBlack,Label="tt"
 
 
 # for fake rate application
 
-TT_red_FO1_eta_pt:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kRed,Label="FO1(p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt.txt"
-TT_red_FO1_eta_conept:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kRed,Label="FO1(cone p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept.txt",LineStyle=ROOT.kDashed
-TT_red_FO1_eta_jetpt:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kRed,Label="FO1(jet p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt.txt",LineStyle=ROOT.kDotted
+TT_red_FO1_eta_pt:  TTJets: xsec: 1 ; FillColor=ROOT.kRed,Label="FO1(p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO1_eta_pt.txt"
+TT_red_FO1_eta_conept:  TTJets: xsec: 1 ; FillColor=ROOT.kRed,Label="FO1(cone p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO1_eta_conept.txt",LineStyle=ROOT.kDashed
+TT_red_FO1_eta_jetpt:  TTJets: xsec: 1 ; FillColor=ROOT.kRed,Label="FO1(jet p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO1_eta_jetpt.txt",LineStyle=ROOT.kDotted
 
-TT_red_FO2_eta_pt:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kBlue,Label="FO2(p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_pt.txt"
-TT_red_FO2_eta_conept:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kBlue,Label="FO2(cone p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_conept.txt",LineStyle=ROOT.kDashed
-TT_red_FO2_eta_jetpt:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kBlue,Label="FO2(jet p_{T})",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_jetpt.txt",LineStyle=ROOT.kDotted
+TT_red_FO2_eta_pt:  TTJets: xsec: 1 ; FillColor=ROOT.kBlue,Label="FO2(p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO2_eta_pt.txt"
+TT_red_FO2_eta_conept:  TTJets: xsec: 1 ; FillColor=ROOT.kBlue,Label="FO2(cone p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO2_eta_conept.txt",LineStyle=ROOT.kDashed
+TT_red_FO2_eta_jetpt:  TTJets: xsec: 1 ; FillColor=ROOT.kBlue,Label="FO2(jet p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO2_eta_jetpt.txt",LineStyle=ROOT.kDotted
 
-TT_red_FO1_eta_pt_insitu:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kMagenta,Label="FO1(p_{T}) S",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_pt_insitu.txt"
-TT_red_FO1_eta_conept_insitu:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kMagenta,Label="FO1(cone p_{T}) S",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
-TT_red_FO1_eta_jetpt_insitu:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kMagenta,Label="FO1(jet p_{T}) S",FakeRate="susy-multilepton/fake_rate/fr_FO1_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
+TT_red_FO3_eta_pt:  TTJets: xsec: 1 ; FillColor=ROOT.kBlue,Label="FO3(p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO3_eta_pt.txt"
+TT_red_FO3_eta_conept:  TTJets: xsec: 1 ; FillColor=ROOT.kBlue,Label="FO3(cone p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO3_eta_conept.txt",LineStyle=ROOT.kDashed
+TT_red_FO3_eta_jetpt:  TTJets: xsec: 1 ; FillColor=ROOT.kBlue,Label="FO3(jet p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO3_eta_jetpt.txt",LineStyle=ROOT.kDotted
 
-TT_red_FO2_eta_pt_insitu:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kCyan,Label="FO2(p_{T}) S",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_pt_insitu.txt"
-TT_red_FO2_eta_conept_insitu:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kCyan,Label="FO2(cone p_{T}) S",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
-TT_red_FO2_eta_jetpt_insitu:  TTJets: xsec: (LepGood1_mcMatchId == 0 && LepGood2_mcMatchId != 0) || (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId == 0) ; FillColor=ROOT.kCyan,Label="FO2(jet p_{T}) S",FakeRate="susy-multilepton/fake_rate/fr_FO2_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
+TT_red_FO1_eta_pt_insitu:  TTJets: xsec: 1 ; FillColor=ROOT.kMagenta,Label="FO1(p_{T}) S",FakeRate="susy-multilepton/fake_rate/apply/fr_FO1_eta_pt_insitu.txt"
+TT_red_FO1_eta_conept_insitu:  TTJets: xsec: 1 ; FillColor=ROOT.kMagenta,Label="FO1(cone p_{T}) S",FakeRate="susy-multilepton/fake_rate/apply/fr_FO1_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
+TT_red_FO1_eta_jetpt_insitu:  TTJets: xsec: 1 ; FillColor=ROOT.kMagenta,Label="FO1(jet p_{T}) S",FakeRate="susy-multilepton/fake_rate/apply/fr_FO1_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
+
+TT_red_FO2_eta_pt_insitu:  TTJets: xsec: 1 ; FillColor=ROOT.kCyan,Label="FO2(p_{T}) S",FakeRate="susy-multilepton/fake_rate/apply/fr_FO2_eta_pt_insitu.txt"
+TT_red_FO2_eta_conept_insitu:  TTJets: xsec: 1 ; FillColor=ROOT.kCyan,Label="FO2(cone p_{T}) S",FakeRate="susy-multilepton/fake_rate/apply/fr_FO2_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
+TT_red_FO2_eta_jetpt_insitu:  TTJets: xsec: 1 ; FillColor=ROOT.kCyan,Label="FO2(jet p_{T}) S",FakeRate="susy-multilepton/fake_rate/apply/fr_FO2_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
+
+TT_red_FO3_eta_pt_insitu:  TTJets: xsec: 1 ; FillColor=ROOT.kCyan,Label="FO3(p_{T}) S",FakeRate="susy-multilepton/fake_rate/apply/fr_FO3_eta_pt_insitu.txt"
+TT_red_FO3_eta_conept_insitu:  TTJets: xsec: 1 ; FillColor=ROOT.kCyan,Label="FO3(cone p_{T}) S",FakeRate="susy-multilepton/fake_rate/apply/fr_FO3_eta_conept_insitu.txt",LineStyle=ROOT.kDashed
+TT_red_FO3_eta_jetpt_insitu:  TTJets: xsec: 1 ; FillColor=ROOT.kCyan,Label="FO3(jet p_{T}) S",FakeRate="susy-multilepton/fake_rate/apply/fr_FO3_eta_jetpt_insitu.txt",LineStyle=ROOT.kDotted
 

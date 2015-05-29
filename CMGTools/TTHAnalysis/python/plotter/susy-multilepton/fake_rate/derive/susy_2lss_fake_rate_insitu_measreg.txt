@@ -1,18 +1,15 @@
-alwaystrue: (LepGood_pt>-1)
-
+# this goes before any usage of indices 1,2
 at least 2 good leptons: nLepGood10 >= 2
 
 promptfake: ((LepGood1_mcMatchId!=0 && LepGood2_mcMatchId==0) || (LepGood2_mcMatchId!=0 && LepGood1_mcMatchId==0))
 
 minMllAS8:  minMllAFAS > 8
-minMllOS12: minMllAFOS <= 0 || minMllAFOS > 12
-zveto3l:    mZ1 < 76 || mZ1 > 106
 #exclusive:  nLepGood10 == 2
 
 anyll: abs(LepGood1_pdgId) > 0 && abs(LepGood2_pdgId) > 0
 same-sign: LepGood1_charge*LepGood2_charge > 0
-lep1_pt10: LepGood1_pt > 10
-lep2_pt10: LepGood2_pt > 10
+
+lep12_pt10: (LepGood1_ConePt > 10 && LepGood2_ConePt > 10)
 
 lep1_qual_always: ( ( LepGood1_mediumMuonId > 0 || abs(LepGood1_pdgId) == 11) && (abs(LepGood1_pdgId) == 13 || (LepGood1_convVeto && LepGood1_lostHits == 0)) && (abs(LepGood1_pdgId) != 11 || abs(LepGood1_eta)<1.4442 || abs(LepGood1_eta)>1.566) && (LepGood1_tightCharge > (abs(LepGood1_pdgId) == 11)) && abs(LepGood1_dz)<0.1 )
 lep2_qual_always: ( ( LepGood2_mediumMuonId > 0 || abs(LepGood2_pdgId) == 11) && (abs(LepGood2_pdgId) == 13 || (LepGood2_convVeto && LepGood2_lostHits == 0)) && (abs(LepGood2_pdgId) != 11 || abs(LepGood2_eta)<1.4442 || abs(LepGood2_eta)>1.566) && (LepGood2_tightCharge > (abs(LepGood2_pdgId) == 11)) && abs(LepGood2_dz)<0.1)
@@ -24,3 +21,10 @@ ht: htJet40j > 80
 met: met_pt > 30 || htJet40j > 500
 njet: nJet40 >=2
 nBjet: nBJetMedium25 >= 0
+
+
+#unwrapper
+alwaystrue: (LepGood_pt>-1)
+
+isthefake: LepGood_mcMatchId==0 && (LepGood1_mcMatchId!=0 || abs(LepGood1_pt-LepGood_pt-1)<0.001) && (LepGood2_mcMatchId!=0 || abs(LepGood2_pt-LepGood_pt-1)<0.001)
+

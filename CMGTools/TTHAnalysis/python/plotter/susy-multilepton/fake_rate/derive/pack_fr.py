@@ -61,15 +61,15 @@ def assemble2D(name,filename,plotname):
     out.Close()
     
 if __name__ == "__main__":
-    PLOTSPATH="FRplots_test"
-    PLOTSPREFIX="plots_test"
+    PLOTSPATH="FR"
+    PLOTSPREFIX="derive"
     NEWDIR=PLOTSPATH+"_packed"
     os.mkdir(NEWDIR)
     for ob in ["Mu","El"]:
         for ptchoice in ["pt","conept","jetpt"]:
             for insitu in [False,True]:
                 if insitu:
-                    dset="TT_red"
+                    dset="TT"
                 else:
                     if ob=="Mu":
                         dset = "QCD_Mu"

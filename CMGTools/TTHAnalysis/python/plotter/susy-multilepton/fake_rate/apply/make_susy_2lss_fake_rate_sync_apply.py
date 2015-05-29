@@ -1,4 +1,4 @@
-OUTDIR='FRAPPLYplots_test/plots_test'
+OUTDIR='FR/closure'
 
 cuts={}
 def add_cuts(mylist):
@@ -35,6 +35,9 @@ cuts["pt_ll"]="LepGood1_ConePt<25 && LepGood2_ConePt<25"
 cuts["pt_lh"]="(LepGood1_ConePt<25 && LepGood2_ConePt>=25) || (LepGood1_ConePt>=25 && LepGood2_ConePt<25)"
 cuts["pt_hh"]="LepGood1_ConePt>=25 && LepGood2_ConePt>=25"
 cuts["pt_inclpt"]="1"
+cuts["fakeismu"] = "( (LepGood1_mcMatchId!=0 || abs(LepGood1_pdgId)==13) && (LepGood2_mcMatchId!=0 || abs(LepGood2_pdgId)==13) )"
+cuts["fakeisel"] = "( (LepGood1_mcMatchId!=0 || abs(LepGood1_pdgId)==11) && (LepGood2_mcMatchId!=0 || abs(LepGood2_pdgId)==11) )"
+
 
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
@@ -43,23 +46,25 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
 #        for lepflav in ["inclflav","ee","em","mm"]:
 #            for baselineregion in [-1,0,1,2,3]:
     for ptreg in ["inclpt"]:
-        for lepflav in ["inclflav"]:
+#        for lepflav in ["inclflav"]:
+        lepflav="inclflav"
+        for w in ['mu','el']:
             for baselineregion in [-1]:
                 app=[]
                 app.append("is"+lepflav)
                 app.append("pt_"+ptreg)
+                app.append("fakeis"+w)
                 br="_incl"
                 if baselineregion >= 0:
                     app.append("bas%d" % (baselineregion,))
                     br="_b%d" % (baselineregion,)
-                runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate/susy_2lss_fake_rate_multiiso.txt",app,[],[],"-p TT_red,TT_red_FO1_%s,TT_red_FO2_%s,TT_red_FO3_%s,TT_red_FO1_%s_insitu,TT_red_FO2_%s_insitu,TT_red_FO3_%s_insitu" % (xvar,xvar,xvar,xvar,xvar,xvar)])
-                    
+                runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br+"_"+w,"susy-multilepton/fake_rate/apply/susy_2lss_fake_rate_applreg.txt",app,[],[],"-p TT_red,TT_red_FO1_%s,TT_red_FO2_%s,TT_red_FO3_%s,TT_red_FO1_%s_insitu,TT_red_FO2_%s_insitu,TT_red_FO3_%s_insitu" % (xvar,xvar,xvar,xvar,xvar,xvar)])
 
 for run in runs:
-    PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/1_lepJetReClean_Susy_v4/evVarFriend_{cname}.root -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v7/evVarFriend_{cname}.root --mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_insitu_lepchoice_sync.txt %s"
+    PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/1_lepJetReClean_Susy_v4/evVarFriend_{cname}.root -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v8/evVarFriend_{cname}.root --mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_looseveto_lepchoice.txt %s"
     MYPATH = PATH % ("--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_coneptchoice.txt" if "conept" in run[0] else "--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_defaultptchoice.txt")
     RUN="python mcPlots.py -e -j 8 -l 0.01 -f --plotmode nostack --print 'pdf' --s2v --tree treeProducerSusyMultilepton"
-    B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/susy_2lss_fake_rate_plots.txt"])
+    B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/apply/susy_2lss_fake_rate_plots.txt"])
     B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),"--pdir "+OUTDIR+'_'+run[0],run[5]])
     print B0
 
