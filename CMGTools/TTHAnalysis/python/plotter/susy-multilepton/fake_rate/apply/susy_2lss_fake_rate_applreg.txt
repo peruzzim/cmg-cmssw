@@ -1,5 +1,9 @@
-alwaystrue: 1
 >= 2 good leptons: nLepGood10 >= 2
+
+promptfake: ((LepGood1_mcMatchId!=0 && LepGood2_mcMatchId==0) || (LepGood2_mcMatchId!=0 && LepGood1_mcMatchId==0))
+
+alwaystrue: 1
+
 minMllAS8:  minMllAFAS > 8
 #exclusive:  nLepGood10 == 2
 anyll: abs(LepGood1_pdgId) > 0 && abs(LepGood2_pdgId) > 0
@@ -22,4 +26,4 @@ met: met_pt > 30 || htJet40j > 500
 njet: nJet40 >=2
 nBjet: nBJetMedium25 >= 0
 
-promptfake: ((LepGood1_mcMatchId!=0 && LepGood2_mcMatchId==0) || (LepGood2_mcMatchId!=0 && LepGood1_mcMatchId==0))
+
