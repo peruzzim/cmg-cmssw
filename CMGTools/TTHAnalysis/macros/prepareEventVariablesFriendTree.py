@@ -34,7 +34,7 @@ MODULES.append( ('leptonFakeRateQCDVarsSusy', LeptonFakeRateQCDVars(
                 lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep),
                 lambda jet, lep, dr : jet.pt > 40 and abs(jet.eta)<2.4 and dr > 1.0) ) )
 
-from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio
+from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio,_susy2lss_multiIso_withMiniIsoRelaxed_CutForFO4
 list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy = [
             lambda lep : (abs(lep.pdgId)==11 or abs(lep.pdgId)==13),
             lambda lep : lep.miniRelIso<0.4,
@@ -47,6 +47,7 @@ list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy = [
             lambda lep : (lep.lostHits==0 or abs(lep.pdgId)!=11),
             lambda lep : lep.convVeto,
             lambda lep : lep.tightCharge > (abs(lep.pdgId) == 11),
+            lambda lep: lep.mcMatchId == 0
             ]
 
 from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
@@ -68,23 +69,33 @@ MODULES.append ( ('leptonFakeRateFO3', ObjTagger('FO3','LepGood',
                 lambda lep : lep.sip3d<4,
                 lambda lep : abs(lep.dxy)<0.05,
             ]) ) )
+MODULES.append ( ('leptonFakeRateFO4', ObjTagger('FO4','LepGood',
+            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
+                lambda lep : _susy2lss_multiIso_withMiniIsoRelaxed_CutForFO4(lep),
+                lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
+                lambda lep : lep.sip3d<4,
+                lambda lep : abs(lep.dxy)<0.05,
+            ]) ) )
 MODULES.append ( ('leptonFakeRateFO1InSitu', ObjTagger('FO1InSitu','LepGood',
             list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
                 lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
                 lambda lep : lep.sip3d>=4,
-                lambda lep : lep.mcMatchId==0,
             ]) ) )
 MODULES.append ( ('leptonFakeRateFO2InSitu', ObjTagger('FO2InSitu','LepGood',
             list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
                 lambda lep : lep.sip3d>=4,
-                lambda lep : lep.mcMatchId==0,
             ]) ) )
 MODULES.append ( ('leptonFakeRateFO3InSitu', ObjTagger('FO3InSitu','LepGood',
             list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
                 lambda lep : _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio(lep),
                 lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
                 lambda lep : lep.sip3d>=4,
-                lambda lep : lep.mcMatchId==0,
+            ]) ) )
+MODULES.append ( ('leptonFakeRateFO4InSitu', ObjTagger('FO4InSitu','LepGood',
+            list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy+[
+                lambda lep : _susy2lss_multiIso_withMiniIsoRelaxed_CutForFO4(lep),
+                lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
+                lambda lep : lep.sip3d>=4,
             ]) ) )
 
 #from CMGTools.TTHAnalysis.tools.finalMVA_2lss import FinalMVA_2LSS

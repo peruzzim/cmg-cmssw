@@ -1,4 +1,5 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
+from CMGTools.TTHAnalysis.tools.conept import conept
 
 class LeptonFakeRateQCDVars:
     def __init__(self,leptonSel,jetSel, jetSort = lambda jet:jet.pt, label=None, isMC=True):
@@ -11,17 +12,6 @@ class LeptonFakeRateQCDVars:
     def listBranches(self):
         label = self.label
         return [ ("nLepGood","I") ] + [ ("LepGood_awayJet%s_%s"%(self.label,var),"F",8,"nLepGood") for var in self.jetvars ] + [ ("LepGood_CorrConePt","F",8,"nLepGood") ]
-    def conept(self,ptlep,minireliso,ptratio,ptrel,pdgid,wp):
-        assert (wp==2)
-        if (abs(pdgid)!=11 and abs(pdgid)!=13):
-            return ptlep
-        A = 0.10 if (abs(pdgid)==11) else 0.14
-        B = 0.70 if (abs(pdgid)==11) else 0.68
-        C = 7.0 if (abs(pdgid)==11) else 6.7
-        if (ptrel>C):
-            return ptlep*(1+max(minireliso-A,0))
-        else:
-            return max(ptlep,ptlep/ptratio*B)
     def __call__(self,event):
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         jetsc = [j for j in Collection(event,"Jet","nJet")]
@@ -33,7 +23,7 @@ class LeptonFakeRateQCDVars:
             ret["LepGood_CorrConePt"] = [-99.0] * event.nLepGood
         for il,lep in enumerate(leps):
             if not self.leptonSel(lep): continue
-            ret["LepGood_CorrConePt"][il] = self.conept(lep.pt,lep.miniRelIso,lep.jetPtRatio,lep.jetPtRel,lep.pdgId,2)
+            ret["LepGood_CorrConePt"][il] = conept(lep.pt,lep.miniRelIso,lep.jetPtRatio,lep.jetPtRel,lep.pdgId,2)
 #            print ret["LepGood_CorrConePt"][il]/lep.pt,lep.miniRelIso,lep.jetPtRatio,lep.jetPtRel,lep.pdgId
             jets = [ j for j in jetsc+jetsd+jetsf if self.jetSel(j,lep,deltaR(j,lep)) ]
             if len(jets) == 0: continue 

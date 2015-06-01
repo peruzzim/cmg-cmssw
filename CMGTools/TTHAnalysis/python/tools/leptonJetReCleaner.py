@@ -1,4 +1,5 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
+from CMGTools.TTHAnalysis.tools.conept import conept
 
 class LeptonJetReCleaner:
     def __init__(self,label,looseLeptonSel,tightLeptonSel,cleanJet,isMC=True):
@@ -341,7 +342,11 @@ def _susy2lss_multiIso(lep):
 def _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio(lep):
         if abs(lep.pdgId) == 13: A,B,C = (0.4,0.68,6.7)
         else:                    A,B,C = (0.4,0.70,7.0)
-        return lep.miniRelIso < A and (((1+max(lep.miniRelIso-A,0))*lep.jetPtRatio) > B or lep.jetPtRel > C)
+        return lep.miniRelIso < A and (conept(lep.pt,lep.miniRelIso,lep.jetPtRatio,lep.jetPtRel,lep.pdgId,2)/lep.pt*lep.jetPtRatio > B or lep.jetPtRel > C)
+def _susy2lss_multiIso_withMiniIsoRelaxed_CutForFO4(lep):
+        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.68,6.7)
+        else:                    A,B,C = (0.4,0.70,7.0)
+        return lep.miniRelIso < A and (1/lep.jetPtRatio < (1/B + lep.miniRelIso))
 
 def _susy2lss_lepId_CBOld(lep):
         if lep.pt <= 10: return False
