@@ -24,14 +24,18 @@ TH2 * FR_mu_FO2_QCD    = 0;
 TH2 * FR_mu_FO2_insitu = 0;
 TH2 * FR_mu_FO3_QCD    = 0;
 TH2 * FR_mu_FO3_insitu = 0;
+TH2 * FR_mu_FO4_QCD    = 0;
+TH2 * FR_mu_FO4_insitu = 0;
 TH2 * FR_el_FO1_QCD    = 0;
 TH2 * FR_el_FO1_insitu = 0;
 TH2 * FR_el_FO2_QCD    = 0;
 TH2 * FR_el_FO2_insitu = 0;
 TH2 * FR_el_FO3_QCD    = 0;
 TH2 * FR_el_FO3_insitu = 0;
-TH2 * FRi_FO_mu[6];
-TH2 * FRi_FO_el[6];
+TH2 * FR_el_FO4_QCD    = 0;
+TH2 * FR_el_FO4_insitu = 0;
+TH2 * FRi_FO_mu[8];
+TH2 * FRi_FO_el[8];
 
 bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
     TH2 **histo = 0, **hptr2 = 0;
@@ -52,12 +56,16 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     else if (histoName == "FR_mu_FO2_insitu")  { histo = &FR_mu_FO2_insitu ;  hptr2 = & FRi_FO_mu[3]; }
     else if (histoName == "FR_mu_FO3_QCD")  { histo = &FR_mu_FO3_QCD ;  hptr2 = & FRi_FO_mu[4]; }
     else if (histoName == "FR_mu_FO3_insitu")  { histo = &FR_mu_FO3_insitu ;  hptr2 = & FRi_FO_mu[5]; }
+    else if (histoName == "FR_mu_FO4_QCD")  { histo = &FR_mu_FO4_QCD ;  hptr2 = & FRi_FO_mu[6]; }
+    else if (histoName == "FR_mu_FO4_insitu")  { histo = &FR_mu_FO4_insitu ;  hptr2 = & FRi_FO_mu[7]; }
     else if (histoName == "FR_el_FO1_QCD")  { histo = &FR_el_FO1_QCD ;  hptr2 = & FRi_FO_el[0]; }
     else if (histoName == "FR_el_FO1_insitu")  { histo = &FR_el_FO1_insitu ;  hptr2 = & FRi_FO_el[1]; }
     else if (histoName == "FR_el_FO2_QCD")  { histo = &FR_el_FO2_QCD ;  hptr2 = & FRi_FO_el[2]; }
     else if (histoName == "FR_el_FO2_insitu")  { histo = &FR_el_FO2_insitu ;  hptr2 = & FRi_FO_el[3]; }
     else if (histoName == "FR_el_FO3_QCD")  { histo = &FR_el_FO3_QCD ;  hptr2 = & FRi_FO_el[4]; }
     else if (histoName == "FR_el_FO3_insitu")  { histo = &FR_el_FO3_insitu ;  hptr2 = & FRi_FO_el[5]; }
+    else if (histoName == "FR_el_FO4_QCD")  { histo = &FR_el_FO4_QCD ;  hptr2 = & FRi_FO_el[6]; }
+    else if (histoName == "FR_el_FO4_insitu")  { histo = &FR_el_FO4_insitu ;  hptr2 = & FRi_FO_el[7]; }
     if (histo == 0)  {
         std::cerr << "ERROR: histogram " << histoName << " is not defined in fakeRate.cc." << std::endl;
         return 0;
@@ -702,7 +710,7 @@ float fakeRateBin_Muons_pt(float bin) {
 
 float fakeRateReader_2lss_FO(float l1eta, float l1pt, float l2eta, float l2pt, int l1pdgId, int l2pdgId, int pass1, int pass2, int fo123, int isinsitu)
 {
-  assert (fo123==1 || fo123==2 || fo123==3);
+  assert (fo123==1 || fo123==2 || fo123==3 || fo123==4);
   assert (isinsitu==0 || isinsitu==1);
   int ind = 2*(fo123-1)+isinsitu;
   int nfail = 2-pass1-pass2;

@@ -19,3 +19,4 @@ multiiso:   multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRe
 
 multiiso_AND_elMVAtight:  multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2) > 0 && ((abs(LepGood_pdgId)!=11) || (LepGood_mvaIdPhys14 >=0.73+(0.57-0.73)*(abs(LepGood_eta)>0.8)+(+0.05-0.57)*(abs(LepGood_eta)>1.479))) : 2,-0.5,1.5;   Title="multiIso + elMVAtight"
 
+multiiso_relaxed_miniiso_conept: (multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,(LepGood_miniRelIso>=0.4),LepGood_jetPtRatio*LepGood_CorrConePt/LepGood_pt,LepGood_jetPtRel,2) > 0) : 2,-0.5,1.5;  XTitle="multiiso_relaxed_miniiso_conept"
