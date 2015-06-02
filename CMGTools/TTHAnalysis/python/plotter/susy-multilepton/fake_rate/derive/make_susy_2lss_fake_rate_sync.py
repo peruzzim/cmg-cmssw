@@ -82,7 +82,8 @@ ElDsetsInSitu='-p TT'
 
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
-for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
+for xvar in ["eta_conept"]:
+#for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
 
     runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg+["nFO1is1"],[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso",xvar])
     runs.append(["FO1El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO1is1"],[],[("multiiso","minireliso04")],ElDsetsQCD,"multiiso",xvar])

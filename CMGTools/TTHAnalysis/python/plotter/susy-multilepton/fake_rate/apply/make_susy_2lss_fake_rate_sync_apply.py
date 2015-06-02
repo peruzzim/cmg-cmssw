@@ -42,12 +42,14 @@ cuts["isfake"] = "(LepGood1_mcMatchId!=0 || abs(LepGood1_pt/LepGood_pt-1)<0.001)
 
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
-for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
-#    for ptreg in ["inclpt","ll","lh","hh"]:
+#for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
+for xvar in ["eta_conept"]:
+    for ptreg in ["inclpt","ll","lh","hh"]:
 #        for lepflav in ["inclflav","ee","em","mm"]:
 #            for baselineregion in [-1,0,1,2,3]:
-    for ptreg in ["inclpt"]:
+#    for ptreg in ["inclpt"]:
 #        for lepflav in ["inclflav"]:
+#        for lepflav in ["inclflav","ee","em","mm"]:
         lepflav="inclflav"
         for w in ['mu','el']:
             for baselineregion in [-1]:
@@ -60,7 +62,11 @@ for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
                 if baselineregion >= 0:
                     app.append("bas%d" % (baselineregion,))
                     br="_b%d" % (baselineregion,)
-                runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br+"_"+w,"susy-multilepton/fake_rate/apply/susy_2lss_fake_rate_applreg.txt",app,[],[],"-p TT,TT_red_FO1_%s,TT_red_FO2_%s,TT_red_FO3_%s,TT_red_FO1_%s_insitu,TT_red_FO2_%s_insitu,TT_red_FO3_%s_insitu" % (xvar,xvar,xvar,xvar,xvar,xvar)])
+#                runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br+"_"+w,"susy-multilepton/fake_rate/apply/susy_2lss_fake_rate_applreg.txt",app,[],[],"-p TT,TT_red_FO1_%s,TT_red_FO2_%s,TT_red_FO3_%s,TT_red_FO4_%s,TT_red_FO1_%s_insitu,TT_red_FO2_%s_insitu,TT_red_FO3_%s_insitu,TT_red_FO4_%s_insitu" % (xvar,xvar,xvar,xvar,xvar,xvar,xvar,xvar)])
+                if w=='mu':
+                    runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br+"_"+w,"susy-multilepton/fake_rate/apply/susy_2lss_fake_rate_applreg.txt",app,[],[],"-p TT,TT_red_FO1_%s,TT_red_FO4_%s_insitu" % (xvar,xvar)])
+                else:
+                    runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br+"_"+w,"susy-multilepton/fake_rate/apply/susy_2lss_fake_rate_applreg.txt",app,[],[],"-p TT,TT_red_FO2_%s,TT_red_FO4_%s_insitu" % (xvar,xvar)])
 
 isplot = 'table' not in sys.argv[1:]
 
