@@ -703,7 +703,7 @@ class PlotMaker:
                                     plot = pmap[p]
                                     c1.SetRightMargin(0.20)
                                     plot.SetContour(100)
-                                    plot.Draw("COLZ")
+                                    plot.Draw("COLZ TEXT45")
                                     c1.Print("%s/%s_%s.%s" % (fdir, pspec.name, p, ext))
                             else:
                                 c1.Print("%s/%s.%s" % (fdir, pspec.name, ext))
