@@ -32,7 +32,7 @@ MODULES.append( ('leptonFakeRateQCDVarsTTH', LeptonFakeRateQCDVars(
 #--- Susy multilep instances
 MODULES.append( ('leptonFakeRateQCDVarsSusy', LeptonFakeRateQCDVars(
                 lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep),
-                lambda jet, lep, dr : jet.pt > 40 and abs(jet.eta)<2.4 and dr > 1.0) ) )
+                lambda jet, lep, dr : jet.pt > 40 and abs(jet.eta)<2.4 and dr > 1.0 and jet.id ) ) )
 
 from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio,_susy2lss_multiIso_withMiniIsoRelaxed_CutForFO4
 list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy = [
