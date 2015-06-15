@@ -1,16 +1,26 @@
 
-QCD_Mu  : QCD_Mu15          : xsec*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_Mu  : QCD_Pt30to50_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_Mu  : QCD_Pt50to80_Mu5  : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_Mu  : QCD_Pt80to120_Mu5 : xsec*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_Mu  : QCD_Mu15          : 866600000*0.00044*1.0*(LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_Mu  : QCD_Pt30to50_Mu5  : 164300000*0.00816*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_Mu  : QCD_Pt50to80_Mu5  : 21810000*0.01522*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_Mu  : QCD_Pt80to120_Mu5 : 2999000*0.02424*1.2*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
 
-QCD_El: QCD_Pt20to30_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El: QCD_Pt20to30_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El: QCD_Pt30to80_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El: QCD_Pt30to80_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El: QCD_Pt80to170_EMEnriched : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El: QCD_Pt80to170_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
-QCD_El: QCD_Pt170toInf_bcToE : xsec : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+#WARNING NO SCALING!!!
+#QCD_Mu  : QCD_Mu15          : 477793*(LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_Mu  : QCD_Mu15          : 866600000*0.00044*(LepGood_pt>15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_Mu  : QCD_Pt30to50_Mu5  : 164300000*0.00816*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_Mu  : QCD_Pt50to80_Mu5  : 21810000*0.01522*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+#QCD_Mu  : QCD_Pt80to120_Mu5 : 2999000*0.02424*(LepGood_pt<15) : 1; FillColor=ROOT.kPink-2,Label="QCD"
+
+QCD_El: QCD_Pt20to30_EMEnriched : 677300000*0.007 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_El: QCD_Pt20to30_bcToE : 675900000*0.00075 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_El: QCD_Pt30to80_EMEnriched : 185900000*0.056 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_El: QCD_Pt30to80_bcToE : 185900000*0.00272 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_El: QCD_Pt80to170_EMEnriched : 3529000*0.158 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_El: QCD_Pt80to170_bcToE : 3495000*0.01225 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+QCD_El: QCD_Pt170toInf_bcToE : 128500*0.0406 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
+
+#WARNING NO SCALING
+#QCD_El: QCD_Pt30to80_EMEnriched : 200084 : 1 ; FillColor=ROOT.kPink-2,Label="QCD"
 
 
 

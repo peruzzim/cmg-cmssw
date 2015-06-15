@@ -4,9 +4,9 @@ dotable = ("table" in sys.argv[1:])
 dodump = ("dump" in sys.argv[1:])
 doplot = ("plot" in sys.argv[1:])
 
-PATH="-P /data1/p/peruzzi/TREES_72X_210515_MiniIsoRelaxDxy -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v9/evVarFriend_{cname}.root %s --mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_looseveto_lepchoice.txt %s"
+PATH="-P /data1/p/peruzzi/TREES_72X_070615_MiniIso -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v10/evVarFriend_{cname}.root %s --mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_looseveto_lepchoice.txt %s"
 FTREEQCD=""
-FTREETT="-F sf/t {P}/1_lepJetReClean_Susy_v4/evVarFriend_{cname}.root"
+FTREETT="-F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root"
 OUTDIR='FR/derive'
 
 cuts={}
@@ -80,26 +80,37 @@ ElDsetsQCD='-p QCD_El'
 MuDsetsInSitu='-p TT'
 ElDsetsInSitu='-p TT'
 
+
+#cuts["fordebug"]="abs(LepGood_eta)>2.0 && LepGood_pt>50"
+#cuts["fordebug"]="abs(LepGood_eta)>2.0 && LepGood_pt>35 && LepGood_pt<50"
+
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
-for xvar in ["eta_conept"]:
+#for xvar in ["eta_conept"]:
+for xvar in ["eta_pt"]:
+#for xvar in ["eta_pt","eta_conept"]:
 #for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
+
+# DEBUG
+#    runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg+["nFO1is1","fordebug"],[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso",xvar])
+#    runs.append(["FO1MuNum"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg+["nFO1is1"],[],[],MuDsetsQCD,"multiiso",xvar])
+#    runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO2is1","fordebug"],[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD,"multiiso_AND_elMVAtight",xvar])
 
     runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg+["nFO1is1"],[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso",xvar])
     runs.append(["FO1El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO1is1"],[],[("multiiso","minireliso04")],ElDsetsQCD,"multiiso",xvar])
-    runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO2is1"],[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD,"multiiso_AND_elMVAtight",xvar])
-    runs.append(["FO3Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg+["nFO3is1"],[],[("multiiso","multiiso_relaxed_miniiso_conept")],MuDsetsQCD,"multiiso",xvar])
-    runs.append(["FO3El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO3is1"],[],[("multiiso","multiiso_relaxed_miniiso_conept")],ElDsetsQCD,"multiiso",xvar])
-    runs.append(["FO4Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg+["nFO4is1"],[],[("multiiso","multiIso_singleWP_relaxFO4")],MuDsetsQCD,"multiiso",xvar])
-    runs.append(["FO4El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO4is1"],[],[("multiiso","multiIso_singleWP_relaxFO4")],ElDsetsQCD,"multiiso",xvar])
-
-    runs.append(["FO1MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightMuSel+["nFO1InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],MuDsetsInSitu,"multiiso",xvar])
-    runs.append(["FO1ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightElSel+["nFO1InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],ElDsetsInSitu,"multiiso",xvar])
-    runs.append(["FO2ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightElSel+["nFO2InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsInSitu,"multiiso_AND_elMVAtight",xvar])
-    runs.append(["FO3MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightMuSel+["nFO3InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_miniiso_conept")],MuDsetsInSitu,"multiiso",xvar])
-    runs.append(["FO3ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightElSel+["nFO3InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_miniiso_conept")],ElDsetsInSitu,"multiiso",xvar])
-    runs.append(["FO4MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightMuSel+["nFO4InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiIso_singleWP_relaxFO4")],MuDsetsInSitu,"multiiso",xvar])
-    runs.append(["FO4ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightElSel+["nFO4InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiIso_singleWP_relaxFO4")],ElDsetsInSitu,"multiiso",xvar])
+#    runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO2is1"],[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD,"multiiso_AND_elMVAtight",xvar])
+#    runs.append(["FO3Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg+["nFO3is1"],[],[("multiiso","multiiso_relaxed_miniiso_conept")],MuDsetsQCD,"multiiso",xvar])
+#    runs.append(["FO3El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO3is1"],[],[("multiiso","multiiso_relaxed_miniiso_conept")],ElDsetsQCD,"multiiso",xvar])
+#    runs.append(["FO4Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg+["nFO4is1"],[],[("multiiso","multiIso_singleWP_relaxFO4")],MuDsetsQCD,"multiiso",xvar])
+#    runs.append(["FO4El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["nFO4is1"],[],[("multiiso","multiIso_singleWP_relaxFO4")],ElDsetsQCD,"multiiso",xvar])
+#
+#    runs.append(["FO1MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightMuSel+["nFO1InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],MuDsetsInSitu,"multiiso",xvar])
+#    runs.append(["FO1ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightElSel+["nFO1InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","minireliso04")],ElDsetsInSitu,"multiiso",xvar])
+#    runs.append(["FO2ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightElSel+["nFO2InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsInSitu,"multiiso_AND_elMVAtight",xvar])
+#    runs.append(["FO3MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightMuSel+["nFO3InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_miniiso_conept")],MuDsetsInSitu,"multiiso",xvar])
+#    runs.append(["FO3ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightElSel+["nFO3InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiiso_relaxed_miniiso_conept")],ElDsetsInSitu,"multiiso",xvar])
+#    runs.append(["FO4MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightMuSel+["nFO4InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiIso_singleWP_relaxFO4")],MuDsetsInSitu,"multiiso",xvar])
+#    runs.append(["FO4ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightElSel+["nFO4InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiIso_singleWP_relaxFO4")],ElDsetsInSitu,"multiiso",xvar])
 
 
 if (dotable or dodump):
