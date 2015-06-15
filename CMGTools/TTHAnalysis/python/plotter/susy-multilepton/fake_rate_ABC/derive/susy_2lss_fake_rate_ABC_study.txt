@@ -13,6 +13,10 @@ reg_eta_mypt_tightaway: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGoo
 #reg_awayCSV_tightaway: LepGood_awayJet_btagCSV\:if3(LepGood_awayJet_btagCSV>0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,50,0,1; XTitle="ABCRegion", YTitle="Away jet CSV"
 
 
+reg_eta_mypt_antiBaway: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt"
+
+
+
 #
 #purity_b_reg_eta_mypt_allaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:LepGood_ABCRegion : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
 #purity_b_reg_eta_mypt_looseaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True

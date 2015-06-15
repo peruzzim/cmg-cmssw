@@ -83,7 +83,7 @@ runs.append(["FO9El","susy-multilepton/fake_rate_ABC/derive/susy_2lss_fake_rate_
 
 if doplot:
     for run in runs:
-        RUN="python mcPlots.py -f -e --print pdf --plotmode stack -l 0.01 --s2v --tree treeProducerSusyMultilepton"
+        RUN="python mcPlots.py --neg -f -e --print pdf --plotmode stack -l 0.01 --s2v --tree treeProducerSusyMultilepton"
         MYPATH=PATH
         MYPATH = MYPATH % (FTREEQCD if "QCD" in run[5] else FTREETT,)
         B0=' '.join(['echo',run[0],';',RUN,MYPATH,"susy-multilepton/fake_rate_ABC/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate_ABC/derive/susy_2lss_fake_rate_ABC_study.txt"])

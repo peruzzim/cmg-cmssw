@@ -2,7 +2,9 @@
 
 #this has to be in sync with what is defined in bin2Dto1Dlib.cc
 
-bins_pt=(10,15,25,35,50,70)
+debug = False
+
+bins_pt=(10,25,35,70)
 bins_eta=(0,1,2,2.5)
 binning_code=0
 
@@ -46,8 +48,9 @@ def readPlot1D(alpha2d,beta2d,filename,plotnameL,plotnameT):
     slicefile.Close()
 
 def calculateABC(plotL,plotT):
-#    plotL.Print()
-#    plotT.Print()
+    if debug:
+        plotL.Print()
+        plotT.Print()
     thLA=plotL.ProjectionY(plotL.GetName()+'_pyA',2,2)
     thLB=plotL.ProjectionY(plotL.GetName()+'_pyB',3,3)
     thLC=plotL.ProjectionY(plotL.GetName()+'_pyC',4,4)
@@ -70,12 +73,15 @@ def calculateABC(plotL,plotT):
         a.ResizeTo(2,1)
         a[0][0]=thLA.GetBinContent(bin)
         a[1][0]=thTA.GetBinContent(bin)
-#        m.Print()
-#        a.Print()
+        if debug:
+            m.Print()
+            a.Print()
         m.Invert()
         b = m*a
         alpha.SetBinContent(bin,b[0][0])
         beta.SetBinContent(bin,b[1][0])
+        if debug:
+            print 'alpha, beta =',alpha,beta
     return (alpha,beta)
 
 def assemble2D(name,filename,plotnameL,plotnameT):
@@ -107,4 +113,5 @@ if __name__ == "__main__":
     NEWDIR=PLOTSPATH+"_packed"
     os.mkdir(NEWDIR)
     for ob in ["Mu","El"]:
-        assemble2D("FR_FO9_%s" % (ob,),"%s/%s_FO9%s/susy_2lss_fake_rate_ABC_study.root" % (PLOTSPATH,PLOTSPREFIX,ob),"reg_eta_mypt_allaway_background","reg_eta_mypt_tightaway_background")
+        assemble2D("FR_FO9_%s_antitight" % (ob,),"%s/%s_FO9%s/susy_2lss_fake_rate_ABC_study.root" % (PLOTSPATH,PLOTSPREFIX,ob),"reg_eta_mypt_antiBaway_background","reg_eta_mypt_tightaway_background")
+        assemble2D("FR_FO9_%s_alltight" % (ob,),"%s/%s_FO9%s/susy_2lss_fake_rate_ABC_study.root" % (PLOTSPATH,PLOTSPREFIX,ob),"reg_eta_mypt_allaway_background","reg_eta_mypt_tightaway_background")

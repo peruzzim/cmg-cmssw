@@ -1,5 +1,8 @@
-baseline_region: if3(nBJetMedium25>3,3,nBJetMedium25) : 4,-0.5,3.5 ; XTitle="baseline region"
 
+myfakeyield: getABCRegion(LepGood2_miniRelIso,LepGood2_multiIso,LepGood2_sip3d,4,4,30)\:getABCRegion(LepGood1_miniRelIso,LepGood1_multiIso,LepGood1_sip3d,4,4,30) : 4,-1.5,2.5,4,-1.5,2.5 ; XTitle="ABC1",YTitle="ABC2"
+
+baseline_region: if3(nBJetMedium25>3,3,nBJetMedium25) : 4,-0.5,3.5 ; XTitle="baseline region"
+##
 #leplead_pt:     if3(LepGood1_pt>LepGood2_pt,LepGood1_pt,LepGood2_pt): 30,0,150 ; XTitle="lead lepton p_{T} (GeV)"
 #leptrail_pt:     if3(LepGood1_pt>LepGood2_pt,LepGood2_pt,LepGood1_pt): 30,0,150 ; XTitle="trail lepton p_{T} (GeV)"
 #htJet40j:   htJet40j: 20,0,1000    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]"

@@ -803,6 +803,12 @@ float fakeRateReader_2lss_FO_ABC(float l1eta, float l1pt, float l2eta, float l2p
     res *= fr;
   }
 
+
+//  if (fabs(res)>5){
+//    std::cout << "large weight " << res << endl;
+//    std::cout << l1eta << " " <<  l1pt<< " " << l2eta<< " " << l2pt<< " " <<  l1pdgId<< " " <<  l2pdgId<< " " <<  l1ABC<< " " <<  l2ABC << std::endl;
+//  }
+
   //  std::cout << "returning " << res << std::endl;
   return res;
 }

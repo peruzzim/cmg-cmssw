@@ -36,7 +36,7 @@ cuts["pt_ll"]="LepGood1_pt<25 && LepGood2_pt<25"
 cuts["pt_lh"]="(LepGood1_pt<25 && LepGood2_pt>=25) || (LepGood1_pt>=25 && LepGood2_pt<25)"
 cuts["pt_hh"]="LepGood1_pt>=25 && LepGood2_pt>=25"
 cuts["pt_inclpt"]="1"
-cuts["isnotpromptprompt"]="(LepGood1_mcMatchId!=0 || LepGood2_mcMatchId!=0)"
+cuts["isnotpromptprompt"]="(LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0)"
 
 # to be fixed for new closure test
 cuts["fakeismu"] = "( (LepGood1_mcMatchId!=0 || abs(LepGood1_pdgId)==13) && (LepGood2_mcMatchId!=0 || abs(LepGood2_pdgId)==13) )"
@@ -57,13 +57,14 @@ for xvar in ["eta_pt"]:
         if baselineregion >= 0:
             app.append("bas%d" % (baselineregion,))
             br="_b%d" % (baselineregion,)
-        runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate_ABC/apply/susy_2lss_fake_rate_applreg.txt",app,[],[],"-p TT,TT_red_FO1_%s,TT_red_FO9_%s" % (xvar,xvar)])
+        runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate_ABC/apply/susy_2lss_fake_rate_applreg.txt",app,[],[],"-p TT,TT_red_FO9_%s" % (xvar,)])
+#        runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate_ABC/apply/susy_2lss_fake_rate_applreg.txt",app,[],[],"-p TT,TT_red_FO1_%s,TT_red_FO9_%s" % (xvar,xvar)])
 
 isplot = 'table' not in sys.argv[1:]
 
 for run in runs:
     PATH="-P /data1/p/peruzzi/TREES_72X_070615_MiniIsoRelaxDxy -F sf/t {P}/1_lepJetReClean_Susy_v1/evVarFriend_{cname}.root -F sf/t {P}/3_QCDVarsSusy_FakeRateFO_v10_dxy/evVarFriend_{cname}.root --mcc susy-multilepton/fake_rate_ABC/susy_2lss_fake_rate_looseveto_lepchoice.txt --mcc susy-multilepton/fake_rate_ABC/susy_2lss_fake_rate_customchoices.txt"
-    RUN="python %s -j 8 -l 0.01 --s2v --tree treeProducerSusyMultilepton" % ("mcPlots.py -e -f --plotmode nostack --print 'pdf'" if isplot else "mcAnalysis.py")
+    RUN="python %s --neg -j 8 -l 0.01 --s2v --tree treeProducerSusyMultilepton" % ("mcPlots.py -e -f --plotmode nostack --print 'pdf'" if isplot else "mcAnalysis.py ")
     B0=' '.join([RUN,PATH,"susy-multilepton/fake_rate_ABC/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate_ABC/apply/susy_2lss_fake_rate_plots.txt" if isplot else ""])
     B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),"--pdir "+OUTDIR+'_'+run[0] if isplot else "",run[5]])
     print B0
