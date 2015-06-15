@@ -21,6 +21,9 @@ TT_unw:  TTJets: 2544700 : 1 ; FillColor=ROOT.kBlack,Label="non-pr (tt)"
 
 # for fake rate application
 
+TT_red_FO9_eta_pt : TTJets: xsec: 1 ; FillColor=ROOT.kRed,Label="FO9(p_{T})","FakeRate="susy-multilepton/fake_rate_ABC/apply/fr_FO9_eta_pt.txt"
+
+
 TT_red_FO1_eta_pt:  TTJets: xsec: 1 ; FillColor=ROOT.kRed,Label="FO1(p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO1_eta_pt.txt"
 TT_red_FO1_eta_conept:  TTJets: xsec: 1 ; FillColor=ROOT.kRed,Label="FO1(cone p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO1_eta_conept.txt",LineStyle=ROOT.kDashed
 TT_red_FO1_eta_jetpt:  TTJets: xsec: 1 ; FillColor=ROOT.kRed,Label="FO1(jet p_{T})",FakeRate="susy-multilepton/fake_rate/apply/fr_FO1_eta_jetpt.txt",LineStyle=ROOT.kDotted

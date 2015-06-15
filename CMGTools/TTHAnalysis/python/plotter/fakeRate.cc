@@ -853,11 +853,7 @@ float multiIso_singleWP_relaxFO4(int LepGood_pdgId, float LepGood_pt, float LepG
   else assert(false);
 }
 
-int getABCRegion(float LepGood_miniRelIso, int LepGood_multiIso, float LepGood_sip3d){
-
-  const float sipcut = 4;
-  const float sipcutlow = 4;
-  const float sipcuthigh = 30;
+int getABCRegion(float LepGood_miniRelIso, int LepGood_multiIso, float LepGood_sip3d, float sipcut, float sipcutlow, float sipcuthigh){
 
   if (LepGood_miniRelIso<0.4 && LepGood_multiIso && LepGood_sip3d<sipcut) return 0;
   if (LepGood_miniRelIso<0.4 && LepGood_sip3d>sipcutlow && LepGood_sip3d<sipcuthigh) return 1;
