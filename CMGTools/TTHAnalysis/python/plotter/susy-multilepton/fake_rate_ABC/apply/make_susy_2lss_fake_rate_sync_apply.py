@@ -24,17 +24,17 @@ cuts["isee"]="abs(LepGood1_pdgId) == 11 && abs(LepGood2_pdgId) == 11"
 cuts["ismm"]="abs(LepGood1_pdgId) == 13 && abs(LepGood2_pdgId) == 13"
 cuts["isem"]="(abs(LepGood1_pdgId) == 11 || abs(LepGood1_pdgId) == 13) && (abs(LepGood2_pdgId) == 11 || abs(LepGood2_pdgId) == 13)"
 cuts["isinclflav"]="((abs(LepGood1_pdgId) == 11 || abs(LepGood1_pdgId) == 13) && (abs(LepGood2_pdgId) == 11 || abs(LepGood2_pdgId) == 13))"
-cuts["pt1LT25"]="LepGood1_ConePt<25"
-cuts["pt1GT25"]="LepGood1_ConePt>=25"
-cuts["pt2LT25"]="LepGood2_ConePt<25"
-cuts["pt2GT25"]="LepGood2_ConePt>=25"
+cuts["pt1LT25"]="LepGood1_pt<25"
+cuts["pt1GT25"]="LepGood1_pt>=25"
+cuts["pt2LT25"]="LepGood2_pt<25"
+cuts["pt2GT25"]="LepGood2_pt>=25"
 cuts["bas0"]="nBJetMedium25==0"
 cuts["bas1"]="nBJetMedium25==1"
 cuts["bas2"]="nBJetMedium25==2"
 cuts["bas3"]="nBJetMedium25>=3"
-cuts["pt_ll"]="LepGood1_ConePt<25 && LepGood2_ConePt<25"
-cuts["pt_lh"]="(LepGood1_ConePt<25 && LepGood2_ConePt>=25) || (LepGood1_ConePt>=25 && LepGood2_ConePt<25)"
-cuts["pt_hh"]="LepGood1_ConePt>=25 && LepGood2_ConePt>=25"
+cuts["pt_ll"]="LepGood1_pt<25 && LepGood2_pt<25"
+cuts["pt_lh"]="(LepGood1_pt<25 && LepGood2_pt>=25) || (LepGood1_pt>=25 && LepGood2_pt<25)"
+cuts["pt_hh"]="LepGood1_pt>=25 && LepGood2_pt>=25"
 cuts["pt_inclpt"]="1"
 cuts["isnotpromptprompt"]="(LepGood1_mcMatchId!=0 || LepGood2_mcMatchId!=0)"
 
@@ -57,7 +57,7 @@ for xvar in ["eta_pt"]:
         if baselineregion >= 0:
             app.append("bas%d" % (baselineregion,))
             br="_b%d" % (baselineregion,)
-        runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate_ABC/apply/susy_2lss_fake_rate_applreg.txt",app,[],[],"-p TT,TT_red_FO9_%s" % (xvar,)])
+        runs.append(["Application_"+xvar+"_"+lepflav+"_"+ptreg+br,"susy-multilepton/fake_rate_ABC/apply/susy_2lss_fake_rate_applreg.txt",app,[],[],"-p TT,TT_red_FO1_%s,TT_red_FO9_%s" % (xvar,xvar)])
 
 isplot = 'table' not in sys.argv[1:]
 

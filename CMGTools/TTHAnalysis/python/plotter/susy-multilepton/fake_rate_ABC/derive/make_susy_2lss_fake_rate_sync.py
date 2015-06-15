@@ -35,9 +35,9 @@ cuts["dz01"]="abs(LepGood_dz)<0.1"
 cuts["sipLT4"]="LepGood_sip3d<4"
 cuts["sipLT10"]="LepGood_sip3d<10"
 cuts["sipGT4"]="LepGood_sip3d>4"
-cuts["pt5"]="LepGood_ConePt > 5"
-cuts["pt7"]="LepGood_ConePt > 7"
-cuts["pt10"]="LepGood_ConePt > 10"
+cuts["pt5"]="LepGood_pt > 5"
+cuts["pt7"]="LepGood_pt > 7"
+cuts["pt10"]="LepGood_pt > 10"
 cuts["etaLT2p4"]="abs(LepGood_eta) < 2.4"
 cuts["etaLT2p5"]="abs(LepGood_eta) < 2.5"
 cuts["etagap"]="abs(LepGood_pdgId)!=11 || abs(LepGood_eta)<1.4442 || abs(LepGood_eta)>1.566"
@@ -78,6 +78,7 @@ runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
 
 runs.append(["FO9Mu","susy-multilepton/fake_rate_ABC/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+QCDmeasReg+["ABCregion"],["sipLT4"],[("multiiso","minireliso04")],MuDsetsQCD])
+runs.append(["FO9El","susy-multilepton/fake_rate_ABC/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+QCDmeasReg+["ABCregion"],["sipLT4"],[("multiiso","minireliso04")],ElDsetsQCD])
 
 
 if doplot:

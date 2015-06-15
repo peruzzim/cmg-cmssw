@@ -6,8 +6,8 @@ minMllAS8:  minMllAFAS > 8
 #exclusive:  nLepGood10 == 2
 anyll: abs(LepGood1_pdgId) > 0 && abs(LepGood2_pdgId) > 0
 same-sign: LepGood1_charge*LepGood2_charge > 0
-lep1_pt10: LepGood1_ConePt > 10
-lep2_pt10: LepGood2_ConePt > 10
+lep1_pt10: LepGood1_pt > 10
+lep2_pt10: LepGood2_pt > 10
 
 
 #lep miniiso: LepGood1_miniRelIso<0.4 && LepGood2_miniRelIso<0.4

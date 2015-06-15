@@ -2,4 +2,4 @@ LepGood_ABCRegion(\[\w+\]): getABCRegion(LepGood_miniRelIso\1,LepGood_multiIso\1
 LepGood_ABCRegion : getABCRegion(LepGood_miniRelIso,LepGood_multiIso,LepGood_sip3d,4,4,30); AlsoData
 LepGood_multiIso(\[\w+\]): multiIso_multiWP(LepGood_pdgId\1,LepGood_pt\1,LepGood_eta\1,LepGood_miniRelIso\1,LepGood_jetPtRatio\1,LepGood_jetPtRel\1,2)>0; AlsoData
 LepGood_multiIso : multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,2)>0; AlsoData
-LepGood_ConePt : LepGood_pt; AlsoData
+LepGood_ConePt : LepGood_pt/LepGood_jetPtRatio; AlsoData

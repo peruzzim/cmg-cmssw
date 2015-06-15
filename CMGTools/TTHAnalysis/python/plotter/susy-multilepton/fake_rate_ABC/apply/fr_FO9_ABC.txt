@@ -1,8 +1,6 @@
-cut-change: LepGood_ABCRegion(\[\w+\]): if3(LepGood_ABCRegion\1>=0,0,LepGood_ABCRegion\1) 
-
-weight: fakeRateReader_2lss_FO_ABC(LepGood1_eta,LepGood1_pt,LepGood2_eta,LepGood2_pt,LepGood1_pdgId,LepGood2_pdgId,getABCRegion(LepGood1_miniRelIso,LepGood1_multiIso,LepGood1_sip3d,4,4,30),getABCRegion(LepGood2_miniRelIso,LepGood2_multiIso,LepGood2_sip3d,4,4,30))
-
-load-histo: FR_ABC_mu_alpha: susy-multilepton/fake_rate/fr_histos_ABC/FR_FO9_Mu.root : FR_FO9_Mu_alpha
-load-histo: FR_ABC_mu_beta: susy-multilepton/fake_rate/fr_histos_ABC/FR_FO9_Mu.root : FR_FO9_Mu_beta
-load-histo: FR_ABC_el_alpha: susy-multilepton/fake_rate/fr_histos_ABC/FR_FO9_El.root : FR_FO9_El_alpha
-load-histo: FR_ABC_el_beta: susy-multilepton/fake_rate/fr_histos_ABC/FR_FO9_El.root : FR_FO9_El_beta
+cut-change: getABCRegion: getRelaxedABCRegion
+weight: fakeRateReader_2lss_FO_ABC(LepGood1_eta,LepGood1_ConePt,LepGood2_eta,LepGood2_ConePt,LepGood1_pdgId,LepGood2_pdgId,getABCRegion(LepGood1_miniRelIso,LepGood1_multiIso,LepGood1_sip3d,4,4,30),getABCRegion(LepGood2_miniRelIso,LepGood2_multiIso,LepGood2_sip3d,4,4,30))
+load-histo: FR_ABC_mu_alpha: GOODFR_packed/FR_FO9_Mu.root : FR_FO9_Mu_alpha
+load-histo: FR_ABC_mu_beta: GOODFR_packed/FR_FO9_Mu.root : FR_FO9_Mu_beta
+load-histo: FR_ABC_el_alpha: GOODFR_packed/FR_FO9_El.root : FR_FO9_El_alpha
+load-histo: FR_ABC_el_beta: GOODFR_packed/FR_FO9_El.root : FR_FO9_El_beta

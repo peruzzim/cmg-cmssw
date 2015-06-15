@@ -741,18 +741,17 @@ float fakeRateReader_2lss_FO(float l1eta, float l1pt, float l2eta, float l2pt, i
 	    double fr = hist->GetBinContent(ptbin,etabin);
             return fr/(1-fr);
         }
-//      case 2: {
-//	  assert(false);
-//            TH2 *hist1 = (abs(l1pdgId) == 11 ? FRi_FO_el[ind] : FRi_FO_mu[ind]);
-//	    int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
-//	    int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
-//	    double fr1 = hist1->GetBinContent(ptbin1,etabin1);
-//           TH2 *hist2 = (abs(l2pdgId) == 11 ? FRi_FO_el[ind] : FRi_FO_mu[ind]);
-//	   int ptbin2  = std::max(1, std::min(hist2->GetNbinsX(), hist2->GetXaxis()->FindBin(l2pt)));
-//	   int etabin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2eta))));
-//	   double fr2 = hist2->GetBinContent(ptbin2,etabin2);
-//            return -fr1*fr2/((1-fr1)*(1-fr2));
-//      }
+      case 2: {
+            TH2 *hist1 = (abs(l1pdgId) == 11 ? FRi_FO_el[ind] : FRi_FO_mu[ind]);
+	    int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
+	    int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
+	    double fr1 = hist1->GetBinContent(ptbin1,etabin1);
+           TH2 *hist2 = (abs(l2pdgId) == 11 ? FRi_FO_el[ind] : FRi_FO_mu[ind]);
+	   int ptbin2  = std::max(1, std::min(hist2->GetNbinsX(), hist2->GetXaxis()->FindBin(l2pt)));
+	   int etabin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2eta))));
+	   double fr2 = hist2->GetBinContent(ptbin2,etabin2);
+            return -fr1*fr2/((1-fr1)*(1-fr2));
+      }
         default: return 0;
     }
 }
@@ -766,7 +765,11 @@ typedef struct {
 
 float fakeRateReader_2lss_FO_ABC(float l1eta, float l1pt, float l2eta, float l2pt, int l1pdgId, int l2pdgId, int l1ABC, int l2ABC)
 {
-  assert (l1ABC>=0 && l2ABC>=0);
+
+  //  std::cout << "called " << l1ABC << " " << l2ABC << std::endl;
+
+  if (l1ABC<0 || l2ABC<0) return 0;
+
   int dibin = 3*l1ABC+l2ABC+1;
   assert (dibin>0 && dibin<10);
 
@@ -800,6 +803,7 @@ float fakeRateReader_2lss_FO_ABC(float l1eta, float l1pt, float l2eta, float l2p
     res *= fr;
   }
 
+  //  std::cout << "returning " << res << std::endl;
   return res;
 }
 
@@ -855,10 +859,27 @@ float multiIso_singleWP_relaxFO4(int LepGood_pdgId, float LepGood_pt, float LepG
 
 int getABCRegion(float LepGood_miniRelIso, int LepGood_multiIso, float LepGood_sip3d, float sipcut, float sipcutlow, float sipcuthigh){
 
-  if (LepGood_miniRelIso<0.4 && LepGood_multiIso && LepGood_sip3d<sipcut) return 0;
-  if (LepGood_miniRelIso<0.4 && LepGood_sip3d>sipcutlow && LepGood_sip3d<sipcuthigh) return 1;
-  if (LepGood_miniRelIso<0.4 && LepGood_sip3d<sipcut) return 2;
-  return -1;
+  int r = -1;
+
+  if (LepGood_miniRelIso<0.4 && LepGood_multiIso && LepGood_sip3d<sipcut) r = 0;
+  else if (LepGood_miniRelIso<0.4 && LepGood_sip3d>sipcutlow && LepGood_sip3d<sipcuthigh) r = 1;
+  else if (LepGood_miniRelIso<0.4 && LepGood_sip3d<sipcut) r = 2;
+  else r = -1;
+
+  return r;
+
+}
+
+int getRelaxedABCRegion(float LepGood_miniRelIso, int LepGood_multiIso, float LepGood_sip3d, float sipcut, float sipcutlow, float sipcuthigh){
+
+  int r = -1;
+
+  if (LepGood_miniRelIso<0.4 && LepGood_multiIso && LepGood_sip3d<sipcut) r = 0;
+  else if (LepGood_miniRelIso<0.4 && LepGood_sip3d>sipcutlow && LepGood_sip3d<sipcuthigh) r = 0;
+  else if (LepGood_miniRelIso<0.4 && LepGood_sip3d<sipcut) r = 0;
+  else r = -1;
+
+  return r;
 
 }
 
