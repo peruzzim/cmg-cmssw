@@ -6,9 +6,10 @@ if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries():
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
 
 from CMGTools.TTHAnalysis.plotter.mcCorrections import SimpleCorrection
+from CMGTools.TTHAnalysis.plotter.cutsFile import *
 
 class FakeRate:
-    def __init__(self,file):
+    def __init__(self,file,lumi=None):
         stream = open(file,'r')
         self._file = file
         self._weight = None
@@ -29,6 +30,15 @@ class FakeRate:
             elif fields[0] == "load-histo":
                 data = "%s/src/CMGTools/TTHAnalysis/data/" % os.environ['CMSSW_BASE'];
                 ROOT.loadFRHisto(fields[1],fields[2].replace("$DATA",data),fields[3] if len(fields) >= 4 else fields[1])
+            elif fields[0] == 'norm-lumi-override':
+                if self._weight is None: raise RuntimeError, "norm-lumi-override must follow weight declaration in fake rate file "+file
+                if not lumi: raise RuntimeError, "lumi not set in options, cannot apply norm-lumi-override"
+                print "WARNING: normalization overridden from %s/fb to %s/fb in fake rate file %s" % (lumi,fields[1],file)
+                self._weight = '((%s)*(%s)/(%s))' % (self._weight,fields[1],lumi)
+            elif fields[0] == 'cut-file':
+                if self._weight is None: raise RuntimeError, "cut-file must follow weight declaration in fake rate file "+file
+                addcuts = CutsFile(fields[1],options=None,ignoreEmptyOptionsEnforcement=True)
+                self._weight = '((%s)*(%s))' % (self._weight,addcuts.allCuts(doProduct=True))
             else:
                 raise RuntimeError, "Unknown directive "+fields[0]
         if self._weight is None: raise RuntimeError, "Missing weight definition in fake rate file "+file
