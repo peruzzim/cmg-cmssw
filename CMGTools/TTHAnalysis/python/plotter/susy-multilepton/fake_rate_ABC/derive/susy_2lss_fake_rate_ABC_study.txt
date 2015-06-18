@@ -1,36 +1,27 @@
 eta_mypt: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0) : 15,0.5,15.5 ; XTitle="Pt", YTitle="Eta"
 
 reg_eta_mypt_allaway: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:LepGood_ABCRegion : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt"
-#reg_awayflav_allaway: LepGood_awayJet_mcFlavour\:LepGood_ABCRegion : 4,-1.5,2.5,51,-25.5,25.5; XTitle="ABCRegion", YTitle="Away jet flavour"
-#reg_awayCSV_allaway: LepGood_awayJet_btagCSV\:LepGood_ABCRegion : 4,-1.5,2.5,50,0,1; XTitle="ABCRegion", YTitle="Away jet CSV"
 
 reg_eta_mypt_looseaway: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt"
-#reg_awayflav_looseaway: LepGood_awayJet_mcFlavour\:if3(LepGood_awayJet_btagCSV>0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,51,-25.5,25.5; XTitle="ABCRegion", YTitle="Away jet flavour"
-#reg_awayCSV_looseaway: LepGood_awayJet_btagCSV\:if3(LepGood_awayJet_btagCSV>0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,50,0,1; XTitle="ABCRegion", YTitle="Away jet CSV"
-
+reg_eta_mypt_mediumaway: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.814,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt"
 reg_eta_mypt_tightaway: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt"
-#reg_awayflav_tightaway: LepGood_awayJet_mcFlavour\:if3(LepGood_awayJet_btagCSV>0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,51,-25.5,25.5; XTitle="ABCRegion", YTitle="Away jet flavour"
-#reg_awayCSV_tightaway: LepGood_awayJet_btagCSV\:if3(LepGood_awayJet_btagCSV>0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,50,0,1; XTitle="ABCRegion", YTitle="Away jet CSV"
+reg_eta_mypt_antilooseaway: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt"
+reg_eta_mypt_antimediumaway: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.814,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt"
+reg_eta_mypt_antitightaway: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt"
 
 
-reg_eta_mypt_antiBaway: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt"
+purity_b_reg_eta_mypt_looseaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
+purity_b_reg_eta_mypt_mediumaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.814,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
+purity_b_reg_eta_mypt_tightaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
+purity_b_reg_eta_mypt_antilooseaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
+purity_b_reg_eta_mypt_antimediumaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.814,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
+purity_b_reg_eta_mypt_antitightaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
 
 
+purity_l_reg_eta_mypt_looseaway: (LepGood_mcMatchAny!=5 && LepGood_mcMatchAny!=4 && LepGood_mcMatchAny!=0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
+purity_l_reg_eta_mypt_mediumaway: (LepGood_mcMatchAny!=5 && LepGood_mcMatchAny!=4 && LepGood_mcMatchAny!=0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.814,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
+purity_l_reg_eta_mypt_tightaway: (LepGood_mcMatchAny!=5 && LepGood_mcMatchAny!=4 && LepGood_mcMatchAny!=0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
+purity_l_reg_eta_mypt_antilooseaway: (LepGood_mcMatchAny!=5 && LepGood_mcMatchAny!=4 && LepGood_mcMatchAny!=0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
+purity_l_reg_eta_mypt_antimediumaway: (LepGood_mcMatchAny!=5 && LepGood_mcMatchAny!=4 && LepGood_mcMatchAny!=0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.814,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
+purity_l_reg_eta_mypt_antitightaway: (LepGood_mcMatchAny!=5 && LepGood_mcMatchAny!=4 && LepGood_mcMatchAny!=0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV<0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
 
-#
-#purity_b_reg_eta_mypt_allaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:LepGood_ABCRegion : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#purity_b_reg_eta_mypt_looseaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#purity_b_reg_eta_mypt_tightaway: (LepGood_mcMatchAny==5)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#
-#purity_c_reg_eta_mypt_allaway: (LepGood_mcMatchAny==4)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:LepGood_ABCRegion : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#purity_c_reg_eta_mypt_looseaway: (LepGood_mcMatchAny==4)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#purity_c_reg_eta_mypt_tightaway: (LepGood_mcMatchAny==4)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#
-#purity_l_reg_eta_mypt_allaway: (LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchAny != 0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:LepGood_ABCRegion : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#purity_l_reg_eta_mypt_looseaway: (LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchAny != 0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#purity_l_reg_eta_mypt_tightaway: (LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchAny != 0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#
-#
-#purity_f_reg_eta_mypt_allaway: (LepGood_mcMatchAny==0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:LepGood_ABCRegion : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#purity_f_reg_eta_mypt_looseaway: (LepGood_mcMatchAny==0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.423,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True
-#purity_f_reg_eta_mypt_tightaway: (LepGood_mcMatchAny==0)\:bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0)\:if3(LepGood_awayJet_btagCSV>0.914,LepGood_ABCRegion,-1) : 4,-1.5,2.5,15,0.5,15.5 ; XTitle="ABCRegion", YTitle="eta_mypt", Profile2D=True

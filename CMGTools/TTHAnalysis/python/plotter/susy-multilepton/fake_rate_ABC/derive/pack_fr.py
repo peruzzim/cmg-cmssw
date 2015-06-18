@@ -113,5 +113,4 @@ if __name__ == "__main__":
     NEWDIR=PLOTSPATH+"_packed"
     os.mkdir(NEWDIR)
     for ob in ["Mu","El"]:
-        assemble2D("FR_FO9_%s_antitight" % (ob,),"%s/%s_FO9%s/susy_2lss_fake_rate_ABC_study.root" % (PLOTSPATH,PLOTSPREFIX,ob),"reg_eta_mypt_antiBaway_background","reg_eta_mypt_tightaway_background")
-        assemble2D("FR_FO9_%s_alltight" % (ob,),"%s/%s_FO9%s/susy_2lss_fake_rate_ABC_study.root" % (PLOTSPATH,PLOTSPREFIX,ob),"reg_eta_mypt_allaway_background","reg_eta_mypt_tightaway_background")
+        assemble2D("FR_FO9_%s_antiMM" % (ob,),"%s/%s_FO9%s/susy_2lss_fake_rate_ABC_study.root" % (PLOTSPATH,PLOTSPREFIX,ob),"reg_eta_mypt_antimediumaway_background","reg_eta_mypt_mediumaway_background")
