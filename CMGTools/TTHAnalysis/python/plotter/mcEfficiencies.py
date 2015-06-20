@@ -146,6 +146,8 @@ def makeEff(mca,cut,idplot,xvarplot,notDoProfile=False):
                      mybins,
                      options) 
     print pspec.name
+    print mybins
+    print options
     return mca.getPlots(pspec,cut,makeSummary=True)
 
 if __name__ == "__main__":
@@ -166,11 +168,7 @@ if __name__ == "__main__":
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
     parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
-    parser.add_option("--numIsInDen", dest="numIsInDen", action="store_true", default=False, help="Numerator is included in the denominator (to be used for correct uncertainty propagation with normEffUncToLumi)")
     (options, args) = parser.parse_args()
-    if options.numIsInDen and (not options.normEffUncToLumi):
-        print 'THIS IS NOT YET IMPLEMENTED'
-        exit
     options.globalRebin = 1
     options.allowNegative = True # with the fine bins used in ROCs, one otherwise gets nonsensical results
     mca  = MCAnalysis(args[0],options)
@@ -193,6 +191,8 @@ if __name__ == "__main__":
         for proc in procs:
             eff = pmap[proc]
             if not eff: continue
+            eff.Print()
+#            PrintHisto(eff)
             if options.xcut:
                 ax = eff.GetXaxis()
                 for b in xrange(1,eff.GetNbinsX()+1):
@@ -236,19 +236,21 @@ if __name__ == "__main__":
                         ratiobin = effratio.FindBin(eff.GetXaxis().GetBinCenter(bx))
                     else:
                         ratiobin = effratio.FindBin(eff.GetXaxis().GetBinCenter(bx),eff.GetYaxis().GetBinCenter(by))
-                    effratio.SetBinContent(ratiobin,passing/failing)
-                    if options.numIsInDen:
-                        effratio.SetBinError(ratiobin,sqrt(passing*failing*((passing+failing)**(-3))))
-                    else:
-                        effratio.SetBinError(ratiobin,effratio.GetBinContent(ratiobin)*sqrt(1/passing+1/failing))
+                    effratio.SetBinContent(ratiobin,passing/(passing+failing))
+                    effratio.SetBinError(ratiobin,sqrt(passing*failing*((passing+failing)**(-3))))
 #                    print 'bx',ROOT.Long(bx)
 #                    print 'num',passing
-#                    print 'den',failing
+#                    print 'den',passing+failing
 #                    print 'ratio',effratio.GetBinContent(ratiobin)
 #                    print 'err',effratio.GetBinError(ratiobin)
 #                    print 'relerr',effratio.GetBinError(ratiobin)/effratio.GetBinContent(ratiobin)
                 eff = effratio
                 pmap[proc] = effratio
+#            else:
+#                for bx in xrange(eff.GetNbinsX()):
+#                    print bx
+#                    print eff.GetBinContent(bx+1)
+#                    print eff.GetBinError(bx+1)
             eff.SetName("_".join([y.name,x.name,proc]))
             outfile.WriteTObject(eff)
     if len(procs)>=1 and "cut" in options.groupBy:

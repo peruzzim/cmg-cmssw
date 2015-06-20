@@ -82,14 +82,18 @@ ElDsetsInSitu=' -p TT '
 
 runs=[]
 #[NAME,CUTS_TXT_FILE,SELECTION_CUTS,REMOVED_CUTS,REPLACED_CUTS,DATASETS,NUM_FOR_FR_STUDY(doeff==1 + define in sels.txt),XVAR_FOR_FR_STUDY(doeff==1 + define in xvars.txt)]
+
+#runs.append(["FO1Mu"+"_"+"eta_conept","susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+["nFO1is1"],[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso","eta_conept"])
+#runs.append(["FO1MuNUM"+"_"+"eta_conept","susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+["nFO1is1"],[],[],MuDsetsQCD,"multiiso","eta_conept"])
+
 for xvar in ["eta_conept"]:
 #for xvar in ["eta_pt"]:
 #for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
+    True
+    runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+["nFO1is1"],[],[("multiiso","minireliso04")]," -p QCD_Mu -p TT_derive -p WJets_derive ","multiiso",xvar])
+    runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+["nFO2is1"],[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")]," -p QCD_El -p TT_derive -p WJets_derive ","multiiso_AND_elMVAtight",xvar])
 
-#    runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+["nFO1is1"],[],[("multiiso","minireliso04")]," -p QCD_Mu -p TT_derive -p WJets_derive ","multiiso",xvar])
-#    runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+["nFO2is1"],[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")]," -p QCD_El -p TT_derive -p WJets_derive ","multiiso_AND_elMVAtight",xvar])
-
-    runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+["nFO1is1"],[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso",xvar])
+#    runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+["nFO1is1"],[],[("multiiso","minireliso04")],MuDsetsQCD,"multiiso",xvar])
 #    runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+["nFO2is1"],[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")],ElDsetsQCD,"multiiso_AND_elMVAtight",xvar])
 #    runs.append(["FO4MuInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightMuSel+["nFO4InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiIso_singleWP_relaxFO4")],MuDsetsInSitu,"multiiso",xvar])
 #    runs.append(["FO4ElInSitu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_insitu_measreg.txt",TightElSel+["nFO4InSituis1"],["dxy005"],[("sipLT4","sipGT4"),("multiiso","multiIso_singleWP_relaxFO4")],ElDsetsInSitu,"multiiso",xvar])
@@ -130,7 +134,8 @@ if doplot:
 
 if doeff:
     for run in runs:
-        RUN="python mcEfficiencies.py --s2v -l 1.0 --tree treeProducerSusyMultilepton --normEffUncToLumi --numIsInDen"
+#        RUN="python mcEfficiencies.py --s2v -l 1.0 --tree treeProducerSusyMultilepton"
+        RUN="python mcEfficiencies.py --s2v -l 1.0 --tree treeProducerSusyMultilepton --normEffUncToLumi"
         MYPATH=PATH
         MYPATH = MYPATH % (FTREEQCD if "QCD" in run[5] else FTREETT,"--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_coneptchoice.txt" if "conept" in run[0] else "--mcc susy-multilepton/fake_rate/susy_2lss_fake_rate_defaultptchoice.txt")
         B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_sels_sync.txt","susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_xvars_sync.txt"])
