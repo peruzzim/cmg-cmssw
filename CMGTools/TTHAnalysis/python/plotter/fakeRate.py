@@ -45,7 +45,7 @@ class FakeRate:
 	            raise RuntimeError, "Unknown directive "+fields[0]
             if file==files[0]:
                 if self._weight is None: raise RuntimeError, "Missing weight definition in fake rate file "+file
-        if len(self._cutMods) == 0: print "WARNING: no directives to change cuts in fake rate file "+filestring
+#        if len(self._cutMods) == 0: print "WARNING: no directives to change cuts in fake rate file "+filestring
     def weight(self): 
         return self._weight
     def mods(self): 

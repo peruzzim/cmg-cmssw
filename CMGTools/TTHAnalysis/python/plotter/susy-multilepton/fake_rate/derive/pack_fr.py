@@ -54,6 +54,8 @@ def assemble2D(name,filename,plotname):
     c = ROOT.TCanvas("canv_"+th2.GetName(),"canv_"+th2.GetName())
     c.cd()
     th2.GetZaxis().SetRangeUser(0,0.7)
+    th2.GetXaxis().SetTitle("Lepton p_{T} (GeV)")
+    th2.GetYaxis().SetTitle("Lepton |#eta|")
     th2.Draw("TEXT COLZ E1")
     c.SaveAs(NEWDIR+"/"+name+".pdf")
     out.WriteTObject(th2)
@@ -61,6 +63,8 @@ def assemble2D(name,filename,plotname):
     out.Close()
     
 if __name__ == "__main__":
+    ROOT.gStyle.SetOptStat(0)
+    ROOT.gStyle.SetOptTitle(0)
     PLOTSPATH="FR"
     PLOTSPREFIX="derive"
     NEWDIR=PLOTSPATH+"_packed"
