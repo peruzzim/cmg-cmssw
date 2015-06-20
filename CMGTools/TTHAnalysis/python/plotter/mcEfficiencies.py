@@ -241,12 +241,12 @@ if __name__ == "__main__":
                         effratio.SetBinError(ratiobin,sqrt(passing*failing*((passing+failing)**(-3))))
                     else:
                         effratio.SetBinError(ratiobin,effratio.GetBinContent(ratiobin)*sqrt(1/passing+1/failing))
-                    print 'bx',ROOT.Long(bx)
-                    print 'num',passing
-                    print 'den',failing
-                    print 'ratio',effratio.GetBinContent(ratiobin)
-                    print 'err',effratio.GetBinError(ratiobin)
-                    print 'relerr',effratio.GetBinError(ratiobin)/effratio.GetBinContent(ratiobin)
+#                    print 'bx',ROOT.Long(bx)
+#                    print 'num',passing
+#                    print 'den',failing
+#                    print 'ratio',effratio.GetBinContent(ratiobin)
+#                    print 'err',effratio.GetBinError(ratiobin)
+#                    print 'relerr',effratio.GetBinError(ratiobin)/effratio.GetBinContent(ratiobin)
                 eff = effratio
                 pmap[proc] = effratio
             eff.SetName("_".join([y.name,x.name,proc]))
