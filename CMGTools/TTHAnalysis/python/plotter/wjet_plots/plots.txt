@@ -1,0 +1,21 @@
+one: 1: 2,0,2 ; XTitle="1",Legend='TR',LegendCutoff=1e-2
+nvtx: nVert: 40,0.5,40.5 ; XTitle="N(vertices)", Legend='TR',LegendCutoff=1e-2
+met: met: 24,0,300    ; XTitle="E_{T}^{miss}  [GeV]",LegendCutoff=1e-2 
+##mZ1_wide_log: m2l: 60,0,180 ; XTitle="best m(l^{+}l^{-})  [GeV]",Legend='TR',Logy,LegendCutoff=1e-3
+##mZ1: mZ1: 40,0,300 ; XTitle="best m(l^{+}l^{-})  [GeV]", Legend='TR', LegendCutoff=1e-2
+mtW1: mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 18,0,300; XTitle="M_{T}(l_{1}\,E_{T}^{miss}) [GeV]",Legend='TR', LegendCutoff=1e-2
+lepiso: LepGood1_miniRelIso : 20,0,0.2 ; XTitle="miniIso", Legend='TR', LegendCutoff=1e-2
+sip: LepGood1_sip3d : 20,0,10 ; XTitle="sip",Legend='TR', LegendCutoff=1e-2
+##bestMWjj: bestMWjj: 20, 0, 200; XTitle="best m(W#rightarrowjj) [GeV]" , Legend='TR', LegendCutoff=1e-3
+##bestMTopHad: bestMTopHad: 35, 0, 350; XTitle="best m(t#rightarrowjjb) [GeV]", Legend='TR', LegendCutoff=1e-3
+###mtw_wz3l: mtw_wz3l(pt1, eta1, phi1, m1, pt2, eta2, phi2, m2, pt3, eta3, phi3, m3, mZ1, met, metphi): 18,0,200; XTitle="M_{T}(W\#rightarrowl lv) [GeV],"Legend='TR', LegendCutoff=1e-3
+##pt2l: pt2l: 60,0,150 ; XTitle="di-lepton p_{T}   [GeV]",Legend='TR', LegendCutoff=1e-3
+nJet25 : nJet25 : 5,-0.5,4.5 ; XTitle='N(jet\, p_{T} > 25)', Legend='TR', LegendCutoff=1e-2, Logy
+nJet30 : nJet30 : 5,-0.5,4.5 ; XTitle='N(jet\, p_{T} > 30)', Legend='TR', LegendCutoff=1e-2, Logy
+nJet40 : nJet40 : 5,-0.5,4.5 ; XTitle='N(jet\, p_{T} > 40)', Legend='TR', LegendCutoff=1e-2, Logy
+nBJetMedium25 : nBJetMedium25 : 5,-0.5,4.5 ; XTitle='N(bJet\, p_{T} > 25 \,medium)', Legend='TR', LegendCutoff=1e-2, Logy
+nBJetMedium40 : nBJetMedium40 : 5,-0.5,4.5 ; XTitle='N(bJet\, p_{T} > 40 \,medium)', Legend='TR', LegendCutoff=1e-2, Logy
+nBJetLoose25 : nBJetLoose25 : 5,-0.5,4.5 ; XTitle='N(bJet\, p_{T} > 25 \,loose)', Legend='TR', LegendCutoff=1e-2, Logy
+nBJetLoose40 : nBJetLoose40 : 5,-0.5,4.5 ; XTitle='N(bJet\, p_{T} > 40\, loose)', Legend='TR', LegendCutoff=1e-2, Logy
+htJet40: htJet40: 40,100,800; XTitle="H_{T}  [GeV]", Legend='TR', LegendCutoff=1e-2
+##m2l_flip: (m2l-60)*(1-abs(LepGood1_pdgId+LepGood2_pdgId)): 35,-140,140; XTitle="m(ll)-60 w/ flip", Logy, LegendCutoff=1e-4, Legend='TL'

@@ -1,0 +1,19 @@
+WJets    : WJetsToLNu_50ns :  xsec; FillColor=ROOT.kCyan+2
+TT:        TTJets : xsec; FillColor=ROOT.kBlue
+QCDMu: QCD_Mu15_50ns : xsec; FillColor=ROOT.kOrange
+
+# --- DATA
+#data :	DoubleEG_Run2015B_17Jul2015_runs_251244_251562
+#data : 	DoubleEG_Run2015B_v1_runs_251643_251883
+#data : 	DoubleMuon_Run2015B_17Jul2015_runs_251244_251562
+#data : 	DoubleMuon_Run2015B_v1_runs_251643_251883
+#data : 	MuonEG_Run2015B_17Jul2015_runs_251244_251562
+#data : 	MuonEG_Run2015B_v1_runs_251643_251883
+data : 	SingleElectron_Run2015B_17Jul2015_runs_251244_251562
+data : 	SingleElectron_Run2015B_v1_runs_251643_251883
+data : 	SingleMuon_Run2015B_17Jul2015_runs_251244_251562
+data : 	SingleMuon_Run2015B_v1_runs_251643_251883
+
+
+
+

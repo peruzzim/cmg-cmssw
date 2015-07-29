@@ -1,0 +1,12 @@
+alwaystrue: 1
+trigger : HLT_SingleMu50ns || HLT_SingleEl50ns
+mu: abs(LepGood1_pdgId)==13
+mutight: LepGood1_mediumMuonId > 0 
+mudxy: abs(LepGood1_dxy)<0.05
+#musip: LepGood1_sip3d<4
+lepton1 : LepGood1_pt >= 25 && LepGood1_relIso03 < 0.2
+mt: mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) > 30
+#ht: htJet40j > 80
+#met: met_pt > 30
+#njet: nJet40 >=2
+#nBjet: nBJetMedium25 >= 0
