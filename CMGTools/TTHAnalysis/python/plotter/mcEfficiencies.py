@@ -145,10 +145,86 @@ def makeEff(mca,cut,idplot,xvarplot,notDoProfile=False):
                      "%s:%s" % (idplot.expr,xvarplot.expr),
                      mybins,
                      options) 
-    print pspec.name
-    print mybins
-    print options
     return mca.getPlots(pspec,cut,makeSummary=True)
+
+
+def runEffPlots(mca,procs,cut,ids,xvars,opts):
+    ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
+    ROOT.gStyle.SetErrorX(0.5)
+    ROOT.gStyle.SetOptStat(0)
+    isnotprofile = options.normEffUncToLumi or options.outputNumDenHistos
+    effplots = [ (y,x,makeEff(mca,cut,y,x,isnotprofile)) for y in ids for x in xvars ]
+    for (y,x,pmap) in effplots:
+        for proc in procs:
+            eff = pmap[proc]
+            if not eff: continue
+            if options.xcut:
+                ax = eff.GetXaxis()
+                for b in xrange(1,eff.GetNbinsX()+1):
+                    if ax.GetBinCenter(b) < options.xcut[0] or ax.GetBinCenter(b) > options.xcut[1]:
+                        eff.SetBinContent(b,0)
+                        eff.SetBinError(b,0)
+
+            eff_pass = None
+            eff_fail = None
+            eff_num = None
+            eff_den = None
+            if isnotprofile:
+                assert (("TH3" in eff.ClassName()) or ("TH2" in eff.ClassName()))
+                is1d = "TH3" not in eff.ClassName()
+                binsfail = []
+                binspass = []
+                if is1d:
+                    binsfail = [eff.GetBin(i1,1) for i1 in range(1,eff.GetNbinsX()+1)]
+                    binspass = [eff.GetBin(i1,2) for i1 in range(1,eff.GetNbinsX()+1)]
+                else:
+                    binsfail = [eff.GetBin(i1,i2,1) for i1 in range(1,eff.GetNbinsX()+1) for i2 in range(1,eff.GetNbinsY()+1)]
+                    binspass = [eff.GetBin(i1,i2,2) for i1 in range(1,eff.GetNbinsX()+1) for i2 in range(1,eff.GetNbinsY()+1)]
+
+                if options.normEffUncToLumi:
+                    for bin in binspass+binsfail:
+                        eff.SetBinError(bin,sqrt(eff.GetBinContent(bin)))
+
+                outfile.WriteTObject(eff)
+
+                effratio = eff.ProjectionX("_px") if is1d else eff.Project3D("yx")
+                effratio.Reset()
+
+                namestring = "_".join([y.name,x.name,proc])
+                
+                if options.outputNumDenHistos:
+                    eff_pass = effratio.Clone(namestring+"_pass")
+                    eff_fail = effratio.Clone(namestring+"_fail")
+
+                for b1 in xrange(len(binsfail)):
+                    passing = eff.GetBinContent(binspass[b1])
+                    failing = eff.GetBinContent(binsfail[b1])
+                    passing_err = eff.GetBinError(binspass[b1])
+                    failing_err = eff.GetBinError(binsfail[b1])
+                    bx = ROOT.Long(0)
+                    by = ROOT.Long(0)
+                    bz = ROOT.Long(0)
+                    eff.GetBinXYZ(binspass[b1],bx,by,bz)
+                    if is1d:
+                        ratiobin = effratio.FindBin(eff.GetXaxis().GetBinCenter(bx))
+                    else:
+                        ratiobin = effratio.FindBin(eff.GetXaxis().GetBinCenter(bx),eff.GetYaxis().GetBinCenter(by))
+                    effratio.SetBinContent(ratiobin,passing/(passing+failing))
+                    effratio.SetBinError(ratiobin,sqrt(((passing*failing_err)**2)+((failing*passing_err)**2))/((passing+failing)**2))
+                    if options.outputNumDenHistos:
+                        eff_pass.SetBinContent(ratiobin,passing)
+                        eff_fail.SetBinContent(ratiobin,failing)
+                        eff_pass.SetBinError(ratiobin,passing_err)
+                        eff_fail.SetBinError(ratiobin,failing_err)
+                if options.outputNumDenHistos:
+                    eff_num = eff_pass.Clone(namestring+"_num")
+                    eff_den = eff_pass.Clone(namestring+"_den")
+                    eff_den.Add(eff_fail)
+                eff = effratio
+
+            eff.SetName("_".join([y.name,x.name,proc]))
+            pmap[proc] = [eff,eff_pass,eff_fail,eff_num,eff_den]
+    return effplots
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -184,85 +260,17 @@ if __name__ == "__main__":
             os.system("mkdir -p "+dirname)
             if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+os.path.dirname(outname))
     outfile  = ROOT.TFile(outname,"RECREATE")
-    ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
-    ROOT.gStyle.SetErrorX(0.5)
-    ROOT.gStyle.SetOptStat(0)
-    isnotprofile = options.normEffUncToLumi or options.outputNumDenHistos
-    effplots = [ (y,x,makeEff(mca,cut,y,x,isnotprofile)) for y in ids for x in xvars ]
+    effplots = runEffPlots(mca,procs,cut,ids,xvars,options)
     for (y,x,pmap) in effplots:
         for proc in procs:
-            eff = pmap[proc]
+            eff = pmap[proc][0]
             if not eff: continue
-            eff.Print()
-#            PrintHisto(eff)
-            if options.xcut:
-                ax = eff.GetXaxis()
-                for b in xrange(1,eff.GetNbinsX()+1):
-                    if ax.GetBinCenter(b) < options.xcut[0] or ax.GetBinCenter(b) > options.xcut[1]:
-                        eff.SetBinContent(b,0)
-                        eff.SetBinError(b,0)
-
-            if isnotprofile:
-                assert (("TH3" in eff.ClassName()) or ("TH2" in eff.ClassName()))
-                is1d = "TH3" not in eff.ClassName()
-                eff.Print()
-                print 'is1d is ',is1d
-                binsfail = []
-                binspass = []
-                if is1d:
-                    binsfail = [eff.GetBin(i1,1) for i1 in range(1,eff.GetNbinsX()+1)]
-                    binspass = [eff.GetBin(i1,2) for i1 in range(1,eff.GetNbinsX()+1)]
-                else:
-                    binsfail = [eff.GetBin(i1,i2,1) for i1 in range(1,eff.GetNbinsX()+1) for i2 in range(1,eff.GetNbinsY()+1)]
-                    binspass = [eff.GetBin(i1,i2,2) for i1 in range(1,eff.GetNbinsX()+1) for i2 in range(1,eff.GetNbinsY()+1)]
-
-                if options.normEffUncToLumi:
-                    for bin in binspass+binsfail:
-                        eff.SetBinError(bin,sqrt(eff.GetBinContent(bin)))
-
-                outfile.WriteTObject(eff)
-
-                effratio = eff.ProjectionX("_px") if is1d else eff.Project3D("yx")
-                effratio.Reset()
-
-                namestring = "_".join([y.name,x.name,proc])
-
-                if options.outputNumDenHistos:
-                    eff_pass = effratio.Clone(namestring+"_pass")
-                    eff_fail = effratio.Clone(namestring+"_fail")
-
-                for b1 in xrange(len(binsfail)):
-                    passing = eff.GetBinContent(binspass[b1])
-                    failing = eff.GetBinContent(binsfail[b1])
-                    passing_err = eff.GetBinError(binspass[b1])
-                    failing_err = eff.GetBinError(binsfail[b1])
-                    bx = ROOT.Long(0)
-                    by = ROOT.Long(0)
-                    bz = ROOT.Long(0)
-                    eff.GetBinXYZ(binspass[b1],bx,by,bz)
-                    if is1d:
-                        ratiobin = effratio.FindBin(eff.GetXaxis().GetBinCenter(bx))
-                    else:
-                        ratiobin = effratio.FindBin(eff.GetXaxis().GetBinCenter(bx),eff.GetYaxis().GetBinCenter(by))
-                    effratio.SetBinContent(ratiobin,passing/(passing+failing))
-                    effratio.SetBinError(ratiobin,sqrt(((passing*failing_err)**2)+((failing*passing_err)**2))/((passing+failing)**2))
-                    if options.outputNumDenHistos:
-                        eff_pass.SetBinContent(ratiobin,passing)
-                        eff_fail.SetBinContent(ratiobin,failing)
-                        eff_pass.SetBinError(ratiobin,passing_err)
-                        eff_fail.SetBinError(ratiobin,failing_err)
-                if options.outputNumDenHistos:
-                    eff_num = eff_pass.Clone(namestring+"_num")
-                    eff_den = eff_pass.Clone(namestring+"_den")
-                    eff_den.Add(eff_fail)
-                    outfile.WriteTObject(eff_pass)
-                    outfile.WriteTObject(eff_fail)
-                    outfile.WriteTObject(eff_num)
-                    outfile.WriteTObject(eff_den)
-                eff = effratio
-                pmap[proc] = effratio
-            eff.SetName("_".join([y.name,x.name,proc]))
             outfile.WriteTObject(eff)
+            if options.outputNumDenHistos:
+                outfile.WriteTObject(pmap[proc][1])
+                outfile.WriteTObject(pmap[proc][2])
+                outfile.WriteTObject(pmap[proc][3])
+                outfile.WriteTObject(pmap[proc][4])
     if len(procs)>=1 and "cut" in options.groupBy:
         for x in xvars:
             for y,ex,pmap in effplots:
@@ -270,7 +278,7 @@ if __name__ == "__main__":
                 effs = []
                 myname = outname.replace(".root","_%s_%s.root" % (y.name,x.name))
                 for proc in procs:
-                    eff = pmap[proc]
+                    eff = pmap[proc][0]
                     if not eff: continue
                     eff.SetLineColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
                     eff.SetMarkerColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
@@ -287,7 +295,7 @@ if __name__ == "__main__":
                 myname = outname.replace(".root","_%s_%s.root" % (proc,x.name))
                 for y,ex,pmap in effplots:
                     if ex != x: continue
-                    eff = pmap[proc]
+                    eff = pmap[proc][0]
                     if not eff: continue
                     eff.SetLineColor(y.getOption("MarkerColor",SAFE_COLOR_LIST[len(effs)]))
                     eff.SetMarkerColor(y.getOption("MarkerColor",SAFE_COLOR_LIST[len(effs)]))
