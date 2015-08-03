@@ -168,6 +168,7 @@ if __name__ == "__main__":
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
     parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
+    parser.add_option("--outputNumDenHistos", dest="outputNumDenHistos", action="store_true", default=False, help="Output the numerator and denominator histograms separately")
     (options, args) = parser.parse_args()
     options.globalRebin = 1
     options.allowNegative = True # with the fine bins used in ROCs, one otherwise gets nonsensical results
@@ -186,7 +187,8 @@ if __name__ == "__main__":
     ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
     ROOT.gStyle.SetErrorX(0.5)
     ROOT.gStyle.SetOptStat(0)
-    effplots = [ (y,x,makeEff(mca,cut,y,x,options.normEffUncToLumi)) for y in ids for x in xvars ]
+    isnotprofile = options.normEffUncToLumi or options.outputNumDenHistos
+    effplots = [ (y,x,makeEff(mca,cut,y,x,isnotprofile)) for y in ids for x in xvars ]
     for (y,x,pmap) in effplots:
         for proc in procs:
             eff = pmap[proc]
@@ -200,7 +202,7 @@ if __name__ == "__main__":
                         eff.SetBinContent(b,0)
                         eff.SetBinError(b,0)
 
-            if options.normEffUncToLumi:
+            if isnotprofile:
                 assert (("TH3" in eff.ClassName()) or ("TH2" in eff.ClassName()))
                 is1d = "TH3" not in eff.ClassName()
                 eff.Print()
@@ -214,20 +216,26 @@ if __name__ == "__main__":
                     binsfail = [eff.GetBin(i1,i2,1) for i1 in range(1,eff.GetNbinsX()+1) for i2 in range(1,eff.GetNbinsY()+1)]
                     binspass = [eff.GetBin(i1,i2,2) for i1 in range(1,eff.GetNbinsX()+1) for i2 in range(1,eff.GetNbinsY()+1)]
 
-                for bin in binspass+binsfail:
-                    eff.SetBinError(bin,sqrt(eff.GetBinContent(bin)))
+                if options.normEffUncToLumi:
+                    for bin in binspass+binsfail:
+                        eff.SetBinError(bin,sqrt(eff.GetBinContent(bin)))
 
                 outfile.WriteTObject(eff)
 
                 effratio = eff.ProjectionX("_px") if is1d else eff.Project3D("yx")
                 effratio.Reset()
 
-                eff.Print()
-                effratio.Print()
+                namestring = "_".join([y.name,x.name,proc])
+
+                if options.outputNumDenHistos:
+                    eff_pass = effratio.Clone(namestring+"_pass")
+                    eff_fail = effratio.Clone(namestring+"_fail")
 
                 for b1 in xrange(len(binsfail)):
                     passing = eff.GetBinContent(binspass[b1])
                     failing = eff.GetBinContent(binsfail[b1])
+                    passing_err = eff.GetBinError(binspass[b1])
+                    failing_err = eff.GetBinError(binsfail[b1])
                     bx = ROOT.Long(0)
                     by = ROOT.Long(0)
                     bz = ROOT.Long(0)
@@ -237,20 +245,22 @@ if __name__ == "__main__":
                     else:
                         ratiobin = effratio.FindBin(eff.GetXaxis().GetBinCenter(bx),eff.GetYaxis().GetBinCenter(by))
                     effratio.SetBinContent(ratiobin,passing/(passing+failing))
-                    effratio.SetBinError(ratiobin,sqrt(passing*failing*((passing+failing)**(-3))))
-#                    print 'bx',ROOT.Long(bx)
-#                    print 'num',passing
-#                    print 'den',passing+failing
-#                    print 'ratio',effratio.GetBinContent(ratiobin)
-#                    print 'err',effratio.GetBinError(ratiobin)
-#                    print 'relerr',effratio.GetBinError(ratiobin)/effratio.GetBinContent(ratiobin)
+                    effratio.SetBinError(ratiobin,sqrt(((passing*failing_err)**2)+((failing*passing_err)**2))/((passing+failing)**2))
+                    if options.outputNumDenHistos:
+                        eff_pass.SetBinContent(ratiobin,passing)
+                        eff_fail.SetBinContent(ratiobin,failing)
+                        eff_pass.SetBinError(ratiobin,passing_err)
+                        eff_fail.SetBinError(ratiobin,failing_err)
+                if options.outputNumDenHistos:
+                    eff_num = eff_pass.Clone(namestring+"_num")
+                    eff_den = eff_pass.Clone(namestring+"_den")
+                    eff_den.Add(eff_fail)
+                    outfile.WriteTObject(eff_pass)
+                    outfile.WriteTObject(eff_fail)
+                    outfile.WriteTObject(eff_num)
+                    outfile.WriteTObject(eff_den)
                 eff = effratio
                 pmap[proc] = effratio
-#            else:
-#                for bx in xrange(eff.GetNbinsX()):
-#                    print bx
-#                    print eff.GetBinContent(bx+1)
-#                    print eff.GetBinError(bx+1)
             eff.SetName("_".join([y.name,x.name,proc]))
             outfile.WriteTObject(eff)
     if len(procs)>=1 and "cut" in options.groupBy:

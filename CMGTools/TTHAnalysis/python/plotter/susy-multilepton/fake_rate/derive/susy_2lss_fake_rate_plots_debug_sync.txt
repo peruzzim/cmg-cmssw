@@ -1,12 +1,7 @@
 den_eta_pt: abs(LepGood_eta)\:LepGood_ConePt : [10,15,25,35,50,70]*[0,1,2,2.5] ; XTitle="Pt", YTitle="Eta"
-den_eta_corrconept: abs(LepGood_eta)\:LepGood_CorrConePt : [10,15,25,35,50,70]*[0,1,2,2.5] ; XTitle="CorrConePt", YTitle="Eta"
-
-
-#eta_pt: bin2Dto1D(LepGood_pt,abs(LepGood_eta),0) : 15,0.5,15.5 ; XTitle="FR 3x5 eta_pt bin",Density=True
-#eta_conept: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0) : 15,0.5,15.5 ; XTitle="FR 3x5 eta_conept bin",Density=True
-#eta_jetpt: bin2Dto1D(LepGood_pt/LepGood_jetPtRatio,abs(LepGood_eta),0) : 15,0.5,15.5 ; XTitle="FR 3x5 eta_jetpt bin",Density=True
+eta_conept: bin2Dto1D(LepGood_ConePt,abs(LepGood_eta),0) : 15,0.5,15.5 ; XTitle="FR 3x5 eta_conept bin",Density=True
 #
-#lep_pt:     LepGood_pt: [ 0,5,7,10,13,16,20,25,30,35,45,60,90,120 ] ; XTitle="pt"
+#lep_conept:     LepGood_ConePt: [ 0,5,7,10,13,16,20,25,30,35,45,60,90,120 ] ; XTitle="ConePt"
 #pdgId:	    abs(LepGood_pdgId): 7,9.5,16.5 ; XTitle="pdgId"
 #eta:	    LepGood_eta: 52,-2.6,2.6; XTitle="eta"
 #miniiso:    LepGood_miniRelIso: 50,0,1; XTitle="miniiso"

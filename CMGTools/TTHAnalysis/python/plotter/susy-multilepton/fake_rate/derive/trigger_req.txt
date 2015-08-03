@@ -1,0 +1,6 @@
+triggers_fr: HLT_FR_Mu34 || HLT_FR_Mu17 || HLT_FR_Mu34_TrkIsoVVL || HLT_FR_Mu17_TrkIsoVVL || HLT_FR_Mu24 || HLT_FR_Mu8_TrkIsoVVL || HLT_FR_Mu8 || HLT_FR_Mu24_TrkIsoVVL || HLT_FR_Ele33_CaloIdM_TrackIdM_PFJet30 || HLT_FR_Ele18_CaloIdM_TrackIdM_PFJet30 || HLT_FR_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 || HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 || HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 || HLT_FR_Ele18_CaloIdL_TrackIdL_IsoVL_PFJet30 || HLT_FR_Ele33_CaloIdL_TrackIdL_IsoVL_PFJet30 || HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 || HLT_FR_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30
+#triggers_fr_Mu_noiso: HLT_FR_Mu34 || HLT_FR_Mu17 || HLT_FR_Mu24 || HLT_FR_Mu8
+#triggers_fr_Mu: HLT_FR_Mu34 || HLT_FR_Mu17 || HLT_FR_Mu34_TrkIsoVVL || HLT_FR_Mu17_TrkIsoVVL || HLT_FR_Mu24 || HLT_FR_Mu8_TrkIsoVVL || HLT_FR_Mu8 || HLT_FR_Mu24_TrkIsoVVL
+#triggers_fr_El: HLT_FR_Ele33_CaloIdM_TrackIdM_PFJet30 || HLT_FR_Ele18_CaloIdM_TrackIdM_PFJet30 || HLT_FR_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 || HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 || HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 || HLT_FR_Ele18_CaloIdL_TrackIdL_IsoVL_PFJet30 || HLT_FR_Ele33_CaloIdL_TrackIdL_IsoVL_PFJet30 || HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 || HLT_FR_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30
+
+
