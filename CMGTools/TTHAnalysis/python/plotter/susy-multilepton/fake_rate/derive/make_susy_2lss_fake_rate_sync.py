@@ -37,6 +37,8 @@ cuts["sipGT4"]="LepGood_sip3d>4"
 cuts["pt5"]="LepGood_ConePt > 5"
 cuts["pt7"]="LepGood_ConePt > 7"
 cuts["pt10"]="LepGood_ConePt > 10"
+cuts["leppt15"]="LepGood_pt > 15"
+cuts["lepptLT15"]="LepGood_pt < 15"
 cuts["etaLT2p4"]="abs(LepGood_eta) < 2.4"
 cuts["etaLT2p5"]="abs(LepGood_eta) < 2.5"
 cuts["etagap"]="abs(LepGood_pdgId)!=11 || abs(LepGood_eta)<1.4442 || abs(LepGood_eta)>1.566"
@@ -62,7 +64,13 @@ cuts["nFO2InSituis1"]="nLepGood_FO2InSitu==1"
 cuts["nFO3InSituis1"]="nLepGood_FO3InSitu==1"
 cuts["nFO4InSituis1"]="nLepGood_FO4InSitu==1"
 
-LooseLepSel=["minireliso04","dxy005","dz01"]
+cuts["metLT20"]="met_pt<20"
+cuts["mtLT20"]="mt_2(LepGood_pt,LepGood_phi,met_pt,met_phi)<20"
+cuts["jetaway40"]="((LepGood_awayJet_pt>40) && (deltaR(LepGood_eta,LepGood_phi,LepGood_awayJet_eta,LepGood_awayJet_phi)>1.0))"
+
+cuts["isfake"]="LepGood_mcMatchId==0"
+
+LooseLepSel=["isfake","minireliso04","dxy005","dz01"]
 LooseMuSel=LooseLepSel+["ismu","pt5","etaLT2p4"]
 LooseElSel=LooseLepSel+["isel","pt7","pt10","etaLT2p5","etagap","elMVAloose","elConvVeto","losthitsLEQ1","losthitsEQ0"]
 
@@ -75,6 +83,8 @@ MuDsetsQCD=' -p QCD_Mu '
 ElDsetsQCD=' -p QCD_El '
 MuDsetsInSitu=' -p TT '
 ElDsetsInSitu=' -p TT '
+
+MySel=["ismu","minireliso04","pt10","lepptLT15","etaLT2p4","isfake","muMediumID","tightcharge","sipLT4","dz01","dxy005","multiiso"]
 
 
 
@@ -89,7 +99,8 @@ for xvar in ["eta_conept"]:
 #for xvar in ["eta_pt","eta_conept","eta_jetpt"]:
     True
 
-    runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+["nFO1is1"],[],[("multiiso","minireliso04")],"-p QCD_Mu ","multiiso",xvar])
+#    runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+["nFO1is1","metLT20","mtLT20","jetaway40"],[],[("multiiso","minireliso04")],"-p QCD_Mu -p TTJets ","multiiso",xvar])
+    runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",MySel+["nFO1is1","metLT20","mtLT20","jetaway40"],[],[("multiiso","minireliso04")],"-p QCD_Mu ","multiiso",xvar])
 #    runs.append(["FO2El"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightElSel+["nFO2is1"],[],[("multiiso","minireliso04"),("elMVAtight","elMVAloose")]," -p data -p QCD_El ","multiiso_AND_elMVAtight",xvar])
 
 #    runs.append(["FO1Mu"+"_"+xvar,"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_perlep.txt",TightMuSel+["nFO1is1"],[],[("multiiso","minireliso04")]," -p QCD_Mu -p TT_derive -p WJets_derive ","multiiso",xvar])

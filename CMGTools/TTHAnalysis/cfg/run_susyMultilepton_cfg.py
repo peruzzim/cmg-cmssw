@@ -164,26 +164,37 @@ selectedComponents = [ SingleMu_742, MuEG_742, DoubleMu_742 ]
 selectedComponents = [ TTJets, TTJets_LO, WJetsToLNu, DYJetsToLL_M10to50,  DYJetsToLL_M50,  ] + SingleTop + DiBosons
 selectedComponents = mcSamplesPriv 
 
-if False: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
-    target_lumi = 5000 # in inverse picobarns
+selectedComponents = [DYJetsToLL_M50_50ns, TTJets_50ns]
+lepAna.loose_muon_dxy = 999
+lepAna.loose_electron_dxy = 999
+ttHLepSkim.minLeptons = 1
+treeProducer.collections = {
+    "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusyExtra, 8, help="Leptons after the preselection"),
+    "cleanJets"       : NTupleCollection("Jet",     jetTypeSusy, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
+    }
+
+if True: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
+    target_lumi = 500 # in inverse picobarns
     for c in selectedComponents:
         nfiles = int(min(ceil(target_lumi * c.xSection / 30e3), len(c.files)))
         print "For component %s, will want %d/%d files" % (c.name, nfiles, len(c.files))
         c.files = c.files[:nfiles]
         c.splitFactor = len(c.files)
+        c.fineSplitFactor = 2
 
 if False: # For running on data
-    json = None; 
-    processing = "Run2015B-PromptReco-v1"; short = "Run2015B_v1"; 
-    run_ranges = [ (251244,251244), (251251,251252), (251559,251562), (251636,251636), (251638,251638), (251640,251640), (251643,251643), (251721,251721), (251883,251883) ]
+    json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-251883_13TeV_PromptReco_Collisions15_JSON.txt"; 
+#    processing = "Run2015B-PromptReco-v1"; short = "Run2015B_v1"; run_ranges = [ (251643,251883) ];
+    processing = "Run2015B-17Jul2015-v1"; short = "Run2015B_17Jul2015"; run_ranges = [ (251244, 251562) ];
     DatasetsAndTriggers = []
     DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
     DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-    DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
-    DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
-    DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
+#    DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
+#    DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
+#    DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
+
     selectedComponents = []; vetos = []
-    if False: # for fake rate measurements in data
+    if True: # for fake rate measurements in data
         lepAna.loose_muon_dxy = 999
         lepAna.loose_electron_dxy = 999
         ttHLepSkim.minLeptons = 1
@@ -212,8 +223,8 @@ if False: # For running on data
                                              triggers=triggers[:], vetoTriggers = vetos[:])
             print "Will process %s (%d files)" % (comp.name, len(comp.files))
 #            print "\ttrigger sel %s, veto %s" % (triggers, vetos)
-            comp.splitFactor = 1 #len(comp.files)
-            comp.fineSplitFactor = 4
+            comp.splitFactor = len(comp.files)
+            comp.fineSplitFactor = 1
             selectedComponents.append( comp )
         vetos += triggers
     if json is None:
@@ -236,7 +247,6 @@ if False: # QCD
         "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusyExtra, 8, help="Leptons after the preselection"),
         "cleanJets"       : NTupleCollection("Jet",     jetTypeSusy, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
     }
-
 
     
 #-------- SEQUENCE -----------
