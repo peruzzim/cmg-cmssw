@@ -10,6 +10,23 @@ def addROCMakerOptions(parser):
     parser.add_option("--select-plot", "--sP", dest="plotselect", action="append", default=[], help="Select only these plots out of the full file")
     parser.add_option("--exclude-plot", "--xP", dest="plotexclude", action="append", default=[], help="Exclude these plots from the full file")
 
+def addMCEfficienciesOptions(parser):
+    parser.add_option("-o", "--out", dest="out", default=None, help="Output file name. by default equal to plots -'.txt' +'.root'");
+    parser.add_option("--rebin", dest="globalRebin", type="int", default="0", help="Rebin all plots by this factor")
+    parser.add_option("--xrange", dest="xrange", default=None, nargs=2, type='float', help="X axis range");
+    parser.add_option("--xcut", dest="xcut", default=None, nargs=2, type='float', help="X axis cut");
+    parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
+    parser.add_option("--logy", dest="logy", default=False, action='store_true', help="Do y axis in log scale");
+    parser.add_option("--ytitle", dest="ytitle", default="Efficiency", type='string', help="Y axis title");
+    parser.add_option("--fontsize", dest="fontsize", default=0, type='float', help="Legend font size");
+    parser.add_option("--grid", dest="showGrid", action="store_true", default=False, help="Show grid lines")
+    parser.add_option("--groupBy",  dest="groupBy",  default="process",  type="string", help="Group by: cut, process")
+    parser.add_option("--legend",  dest="legend",  default="TR",  type="string", help="Legend position (BR, TR)")
+    parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
+    parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
+    parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
+    parser.add_option("--outputNumDenHistos", dest="outputNumDenHistos", action="store_true", default=False, help="Output the numerator and denominator histograms separately")
+
 def doLegend(rocs,options,textSize=0.035):
         if options.legend == "TR":
             (x1,y1,x2,y2) = (.6, .85 - textSize*max(len(rocs)-3,0), .93, .98)
@@ -152,16 +169,16 @@ def runEffPlots(mca,procs,cut,ids,xvars,opts):
     ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
     ROOT.gStyle.SetErrorX(0.5)
     ROOT.gStyle.SetOptStat(0)
-    isnotprofile = options.normEffUncToLumi or options.outputNumDenHistos
+    isnotprofile = opts.normEffUncToLumi or opts.outputNumDenHistos
     effplots = [ (y,x,makeEff(mca,cut,y,x,isnotprofile)) for y in ids for x in xvars ]
     for (y,x,pmap) in effplots:
-        for proc in procs:
+        for proc in pmap.keys():
             eff = pmap[proc]
             if not eff: continue
-            if options.xcut:
+            if opts.xcut:
                 ax = eff.GetXaxis()
                 for b in xrange(1,eff.GetNbinsX()+1):
-                    if ax.GetBinCenter(b) < options.xcut[0] or ax.GetBinCenter(b) > options.xcut[1]:
+                    if ax.GetBinCenter(b) < opts.xcut[0] or ax.GetBinCenter(b) > opts.xcut[1]:
                         eff.SetBinContent(b,0)
                         eff.SetBinError(b,0)
 
@@ -169,6 +186,7 @@ def runEffPlots(mca,procs,cut,ids,xvars,opts):
             eff_fail = None
             eff_num = None
             eff_den = None
+            eff_passfail = None
             if isnotprofile:
                 assert (("TH3" in eff.ClassName()) or ("TH2" in eff.ClassName()))
                 is1d = "TH3" not in eff.ClassName()
@@ -181,20 +199,19 @@ def runEffPlots(mca,procs,cut,ids,xvars,opts):
                     binsfail = [eff.GetBin(i1,i2,1) for i1 in range(1,eff.GetNbinsX()+1) for i2 in range(1,eff.GetNbinsY()+1)]
                     binspass = [eff.GetBin(i1,i2,2) for i1 in range(1,eff.GetNbinsX()+1) for i2 in range(1,eff.GetNbinsY()+1)]
 
-                if options.normEffUncToLumi:
+                if opts.normEffUncToLumi:
                     for bin in binspass+binsfail:
                         eff.SetBinError(bin,sqrt(eff.GetBinContent(bin)))
-
-                outfile.WriteTObject(eff)
 
                 effratio = eff.ProjectionX("_px") if is1d else eff.Project3D("yx")
                 effratio.Reset()
 
                 namestring = "_".join([y.name,x.name,proc])
                 
-                if options.outputNumDenHistos:
+                if opts.outputNumDenHistos:
                     eff_pass = effratio.Clone(namestring+"_pass")
                     eff_fail = effratio.Clone(namestring+"_fail")
+                    eff_passfail = eff.Clone(namestring+"_passfail")
 
                 for b1 in xrange(len(binsfail)):
                     passing = eff.GetBinContent(binspass[b1])
@@ -209,42 +226,28 @@ def runEffPlots(mca,procs,cut,ids,xvars,opts):
                         ratiobin = effratio.FindBin(eff.GetXaxis().GetBinCenter(bx))
                     else:
                         ratiobin = effratio.FindBin(eff.GetXaxis().GetBinCenter(bx),eff.GetYaxis().GetBinCenter(by))
-                    effratio.SetBinContent(ratiobin,passing/(passing+failing))
-                    effratio.SetBinError(ratiobin,sqrt(((passing*failing_err)**2)+((failing*passing_err)**2))/((passing+failing)**2))
-                    if options.outputNumDenHistos:
+                    effratio.SetBinContent(ratiobin,passing/(passing+failing) if (passing+failing!=0) else 0)
+                    effratio.SetBinError(ratiobin,sqrt(((passing*failing_err)**2)+((failing*passing_err)**2))/((passing+failing)**2) if (passing+failing!=0) else 0)
+                    if opts.outputNumDenHistos:
                         eff_pass.SetBinContent(ratiobin,passing)
                         eff_fail.SetBinContent(ratiobin,failing)
                         eff_pass.SetBinError(ratiobin,passing_err)
                         eff_fail.SetBinError(ratiobin,failing_err)
-                if options.outputNumDenHistos:
+                if opts.outputNumDenHistos:
                     eff_num = eff_pass.Clone(namestring+"_num")
                     eff_den = eff_pass.Clone(namestring+"_den")
                     eff_den.Add(eff_fail)
                 eff = effratio
 
             eff.SetName("_".join([y.name,x.name,proc]))
-            pmap[proc] = [eff,eff_pass,eff_fail,eff_num,eff_den]
+            pmap[proc] = {'eff':eff,'pass':eff_pass,'fail':eff_fail,'num':eff_num,'den':eff_den,'passfail':eff_passfail}
     return effplots
 
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] mc.txt cuts.txt plotfile.txt")
     addROCMakerOptions(parser)
-    parser.add_option("-o", "--out", dest="out", default=None, help="Output file name. by default equal to plots -'.txt' +'.root'");
-    parser.add_option("--rebin", dest="globalRebin", type="int", default="0", help="Rebin all plots by this factor")
-    parser.add_option("--xrange", dest="xrange", default=None, nargs=2, type='float', help="X axis range");
-    parser.add_option("--xcut", dest="xcut", default=None, nargs=2, type='float', help="X axis cut");
-    parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
-    parser.add_option("--logy", dest="logy", default=False, action='store_true', help="Do y axis in log scale");
-    parser.add_option("--ytitle", dest="ytitle", default="Efficiency", type='string', help="Y axis title");
-    parser.add_option("--fontsize", dest="fontsize", default=0, type='float', help="Legend font size");
-    parser.add_option("--grid", dest="showGrid", action="store_true", default=False, help="Show grid lines")
-    parser.add_option("--groupBy",  dest="groupBy",  default="process",  type="string", help="Group by: cut, process")
-    parser.add_option("--legend",  dest="legend",  default="TR",  type="string", help="Legend position (BR, TR)")
-    parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
-    parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
-    parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
-    parser.add_option("--outputNumDenHistos", dest="outputNumDenHistos", action="store_true", default=False, help="Output the numerator and denominator histograms separately")
+    addMCEfficienciesOptions(parser)
     (options, args) = parser.parse_args()
     options.globalRebin = 1
     options.allowNegative = True # with the fine bins used in ROCs, one otherwise gets nonsensical results
@@ -263,14 +266,15 @@ if __name__ == "__main__":
     effplots = runEffPlots(mca,procs,cut,ids,xvars,options)
     for (y,x,pmap) in effplots:
         for proc in procs:
-            eff = pmap[proc][0]
+            eff = pmap[proc]['eff']
             if not eff: continue
             outfile.WriteTObject(eff)
             if options.outputNumDenHistos:
-                outfile.WriteTObject(pmap[proc][1])
-                outfile.WriteTObject(pmap[proc][2])
-                outfile.WriteTObject(pmap[proc][3])
-                outfile.WriteTObject(pmap[proc][4])
+                outfile.WriteTObject(pmap[proc]['pass'])
+                outfile.WriteTObject(pmap[proc]['fail'])
+                outfile.WriteTObject(pmap[proc]['num'])
+                outfile.WriteTObject(pmap[proc]['den'])
+                outfile.WriteTObject(pmap[proc]['passfail'])
     if len(procs)>=1 and "cut" in options.groupBy:
         for x in xvars:
             for y,ex,pmap in effplots:
@@ -278,7 +282,7 @@ if __name__ == "__main__":
                 effs = []
                 myname = outname.replace(".root","_%s_%s.root" % (y.name,x.name))
                 for proc in procs:
-                    eff = pmap[proc][0]
+                    eff = pmap[proc]['eff']
                     if not eff: continue
                     eff.SetLineColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
                     eff.SetMarkerColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
@@ -295,7 +299,7 @@ if __name__ == "__main__":
                 myname = outname.replace(".root","_%s_%s.root" % (proc,x.name))
                 for y,ex,pmap in effplots:
                     if ex != x: continue
-                    eff = pmap[proc][0]
+                    eff = pmap[proc]['eff']
                     if not eff: continue
                     eff.SetLineColor(y.getOption("MarkerColor",SAFE_COLOR_LIST[len(effs)]))
                     eff.SetMarkerColor(y.getOption("MarkerColor",SAFE_COLOR_LIST[len(effs)]))
