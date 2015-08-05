@@ -10,8 +10,9 @@ sys.argv.remove('-b-')
 from CMGTools.TTHAnalysis.plotter.mcEfficiencies import *
 
 class METBinnedFakeRate:
-    def __init__(self,effplots):
+    def __init__(self,effplots,options):
         self.effplots = effplots
+        self.options = options
         self.pmap = (self.effplots)[0][2]
         self.myprocs = ['data','mcmixture','ewk','qcd']
         self.myprocs = [i for i in self.myprocs if i in self.pmap.keys()]
@@ -64,6 +65,7 @@ class METBinnedFakeRate:
 
 # pass 3d histos (pt,met,pass(0/1)) to this function
 
+        if not (hdata and hewk): raise RunTimeError('An histogram is missing in get_fake_qcd()')
         res = hdata.ProjectionX()
         res.Reset()
         res.SetName(hdata.GetName()+"qcd_fakerate")
@@ -74,17 +76,16 @@ class METBinnedFakeRate:
             C = self.sliceintegral(hdata,[['y',met_h[0],met_h[1]],['z',-0.5,0.5]])
             D = self.sliceintegral(hdata,[['y',met_h[0],met_h[1]],['z',0.5,1.5]])
             rewk = self.sliceintegral(hewk,[['y',met_l[0],met_l[1]]])/self.sliceintegral(hewk,[['y',met_h[0],met_h[1]]]) if hewk else 0
-            if not hewk: raise RunTimeError('EWKMISSING','The histogram for EWK subtraction is missing')
-            elif rewk==0: print 'Warning: EWK low/high MET ratio is zero in bin',b
+            if rewk==0: print 'Warning: EWK low/high MET ratio is zero in bin',b
             res.SetBinContent(b,(B-rewk*D)/(A-rewk*C))
             res.SetBinError(b,0) # TODO
         return res
 
     def makePlotsBySource(self):
-        met_l = (0,20)
-        met_h = (50,200)
+        met_l = (self.options.met_ranges[0],self.options.met_ranges[1])
+        met_h = (self.options.met_ranges[2],self.options.met_ranges[3])
         print self.myprocs
-        meas_sample = 'data' if ('data' in self.myprocs) else 'QCD_Mu'
+        meas_sample = self.options.target_dataset
         hdata = self.pmap[meas_sample]['passfail']
         hewk = self.pmap['ewk']['passfail'] if 'ewk' in self.myprocs else None
         print self.get_fake_qcd(hdata,hewk,met_l,met_h)
@@ -95,6 +96,8 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] mc.txt cuts.txt plotfile.txt")
     addROCMakerOptions(parser)
     addMCEfficienciesOptions(parser)
+    parser.add_option("--target-dset", dest="target_dataset", default='data', help="Dataset where the fake rate should be measured after EWK subtraction");
+    parser.add_option("--met-ranges", dest="met_ranges", default=(0,20,50,200), nargs=4, type='float', help="MET ranges (4 parameters) to be used for the fake rate measurement: low MET region: (A,B), high MET region: (C,D)");
     (options, args) = parser.parse_args()
     options.globalRebin = 1
     options.allowNegative = True # with the fine bins used in ROCs, one otherwise gets nonsensical results
@@ -105,6 +108,6 @@ if __name__ == "__main__":
     ids   = PlotFile(args[2],options).plots()
     xvars = PlotFile(args[3],options).plots()
     effplots = runEffPlots(mca,procs,cut,ids,xvars,options)
-    fr = METBinnedFakeRate(effplots)
+    fr = METBinnedFakeRate(effplots,options)
     fr.makePlotsBySource()
 
