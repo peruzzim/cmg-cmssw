@@ -163,7 +163,8 @@ hbheAna = cfg.Analyzer(
     hbheAnalyzer, name="hbheAnalyzer",
     )
 susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),hbheAna)
-susyMultilepton_globalVariables.append(NTupleVariable("hbheFilterNew", lambda ev: ev.hbheFilterNew, int, help="new HBHE filter"))
+susyMultilepton_globalVariables.append(NTupleVariable("hbheFilterNew50ns", lambda ev: ev.hbheFilterNew50ns, int, help="new HBHE filter for 50 ns"))
+susyMultilepton_globalVariables.append(NTupleVariable("hbheFilterNew25ns", lambda ev: ev.hbheFilterNew25ns, int, help="new HBHE filter for 25 ns"))
 
 susyCoreSequence.insert(susyCoreSequence.index(metAna)+1,metNoHFAna)
 susyMultilepton_globalObjects.update({"metNoHF"  : NTupleObject("metNoHF", metType, help="PF E_{T}^{miss}, after type 1 corrections (NoHF)")})
@@ -216,7 +217,9 @@ selectedComponents = [ TTJets, TTJets_LO, WJetsToLNu, DYJetsToLL_M10to50,  DYJet
 selectedComponents = [ DYJetsToLL_M10to50_50ns, DYJetsToLL_M50_50ns, TBar_tWch_50ns, TTJets_LO_50ns, TToLeptons_tch_50ns, T_tWch_50ns, WJetsToLNu_50ns, WWTo2L2Nu_50ns, WZp8_50ns, ZZp8_50ns, TTJets_50ns ]
 selectedComponents = [ TT_pow_50ns ]
 
-selectedComponents = [DYJetsToLL_M10to50_50ns, DYJetsToLL_M50_50ns,DYJetsToLL_LO_M50_50ns,TBar_tWch_50ns,TTJets_50ns,TTJets_LO_50ns,TT_pow_50ns,TToLeptons_tch_50ns,T_tWch_50ns,WJetsToLNu_50ns,WWTo2L2Nu_50ns,WZp8_50ns,ZZp8_50ns]
+selectedComponents = [DYJetsToLL_M10to50_50ns, DYJetsToLL_M50_50ns,TBar_tWch_50ns,TTJets_50ns,TTJets_LO_50ns,TT_pow_50ns,TToLeptons_tch_50ns,T_tWch_50ns,WJetsToLNu_50ns,WWTo2L2Nu_50ns,WZp8_50ns,ZZp8_50ns]
+
+isData = False
 
 if True: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = 1000 # in inverse picobarns
@@ -230,9 +233,10 @@ if True: # select only a subset of a sample, corresponding to a given luminosity
         #c.splitFactor = 1; c.fineSplitFactor = 4
 
 if False: # For running on data
+    isData = True
     json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-251883_13TeV_PromptReco_Collisions15_JSON.txt"; 
-    #processing = "Run2015B-PromptReco-v1"; short = "Run2015B_v1"; run_ranges = [ (251643,251883) ]; useAAA=False
-    processing = "Run2015B-17Jul2015-v1"; short = "Run2015B_17Jul2015"; run_ranges = [ (251244, 251562) ]; useAAA=True
+    processing = "Run2015B-PromptReco-v1"; short = "Run2015B_v1"; run_ranges = [ (251643,251883) ]; useAAA=False
+    #processing = "Run2015B-17Jul2015-v1"; short = "Run2015B_17Jul2015"; run_ranges = [ (251244, 251562) ]; useAAA=True
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
     selectedComponents = []; vetos = []  
@@ -325,6 +329,14 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 test = getHeppyOption('test')
 if test == '1':
     comp = DYJetsToLL_M50_50ns
+    comp.files = comp.files[:1]
+    print comp.files
+    comp.splitFactor = 1
+    if not getHeppyOption('single'):
+        comp.fineSplitFactor = 4
+    selectedComponents = [ comp ]
+elif test == '125':
+    comp = TTJets
     comp.files = comp.files[:1]
     print comp.files
     comp.splitFactor = 1
@@ -436,7 +448,6 @@ elif test == "express":
 
 
 removeResiduals = True
-isData = False
 import tempfile
 # -------------------- Running pre-processor
 import subprocess
@@ -483,7 +494,8 @@ outputService.append(output_service)
 # the following is declared in case this cfg is used in input to the heppy.py script
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
 from CMGTools.TTHAnalysis.tools.EOSEventsWithDownload import EOSEventsWithDownload
-event_class = EOSEventsWithDownload
+#event_class = EOSEventsWithDownload
+event_class = Events
 EOSEventsWithDownload.aggressive = 2 # always fetch if running on Wigner
 if getHeppyOption("nofetch"):
     event_class = Events 

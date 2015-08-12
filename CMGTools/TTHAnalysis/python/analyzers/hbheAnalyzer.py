@@ -37,12 +37,18 @@ class hbheAnalyzer( Analyzer ):
         event.hbheMaxHPDHits        = self.mchandles['hcalnoise'].product().maxHPDHits()
         event.hbheMaxHPDNoOtherHits = self.mchandles['hcalnoise'].product().maxHPDNoOtherHits()
         event.hbheHasBadRBXTS4TS5   = self.mchandles['hcalnoise'].product().HasBadRBXTS4TS5()
+        event.hbheHasBadRBXRechitR45Tight   = self.mchandles['hcalnoise'].product().HasBadRBXRechitR45Tight()
         event.hbheGoodJetFoundInLowBVRegion = self.mchandles['hcalnoise'].product().goodJetFoundInLowBVRegion()
 
-        event.hbheFilterNew = 1
+        event.hbheFilterNew25ns = 1
+        event.hbheFilterNew50ns = 1
 
-        if event.hbheMaxHPDHits >= 17: event.hbheFilterNew = 0
+        if event.hbheMaxHPDHits >= 17: 
+            event.hbheFilterNew25ns = 0
+            event.hbheFilterNew50ns = 0
         if event.hbheMaxHPDNoOtherHits >= 10 or (event.hbheHasBadRBXTS4TS5 and not event.hbheGoodJetFoundInLowBVRegion): 
-            event.hbheFilterNew = 0
+            event.hbheFilterNew50ns = 0
+        if event.hbheMaxHPDNoOtherHits >= 10 or (event.hbheHasBadRBXRechitR45Tight and not event.hbheGoodJetFoundInLowBVRegion): 
+            event.hbheFilterNew25ns = 0
 
         return True
