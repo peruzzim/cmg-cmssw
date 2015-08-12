@@ -468,6 +468,7 @@ if isData:
 else:
   GT= 'MCRUN2_74_V9A'
 if removeResiduals:extraArgs.append('--removeResiduals')
+extraArgs.append('--addReclusterTrackJetsAK4')
 args = ['python',
   os.path.expandvars('$CMSSW_BASE/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
   '--GT='+GT,
