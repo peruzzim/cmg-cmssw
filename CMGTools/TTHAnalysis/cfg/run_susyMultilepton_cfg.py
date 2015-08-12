@@ -89,6 +89,9 @@ else:
     # nothing to do, will use normal relIso03
     pass
 
+# Switch on slow QGL
+jetAna.doQG = True
+
 # Switch off slow photon MC matching
 photonAna.do_mc_match = False
 
