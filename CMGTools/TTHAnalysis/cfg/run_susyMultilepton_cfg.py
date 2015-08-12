@@ -165,6 +165,7 @@ hbheAna = cfg.Analyzer(
 susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),hbheAna)
 susyMultilepton_globalVariables.append(NTupleVariable("hbheFilterNew50ns", lambda ev: ev.hbheFilterNew50ns, int, help="new HBHE filter for 50 ns"))
 susyMultilepton_globalVariables.append(NTupleVariable("hbheFilterNew25ns", lambda ev: ev.hbheFilterNew25ns, int, help="new HBHE filter for 25 ns"))
+susyMultilepton_globalVariables.append(NTupleVariable("hbheFilterIso", lambda ev: ev.hbheFilterIso, int, help="HBHE iso-based noise filter"))
 
 susyCoreSequence.insert(susyCoreSequence.index(metAna)+1,metNoHFAna)
 susyMultilepton_globalObjects.update({"metNoHF"  : NTupleObject("metNoHF", metType, help="PF E_{T}^{miss}, after type 1 corrections (NoHF)")})
