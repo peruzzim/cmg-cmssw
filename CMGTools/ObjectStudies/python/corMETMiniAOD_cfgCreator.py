@@ -164,7 +164,7 @@ addJetCollection(
     pfCandidates = cms.InputTag('packedPFCandidates'),
     svSource = cms.InputTag('slimmedSecondaryVertices'),
     btagDiscriminators = ['None'],
-    jetCorrections = None,
+    jetCorrections = ('AK4PFchs', [], 'None'),
     genJetCollection = cms.InputTag('slimmedGenJets'),
     genParticles = cms.InputTag('prunedGenParticles'),
     algo = 'AK',

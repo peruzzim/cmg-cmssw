@@ -118,6 +118,8 @@ susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
                         ttHSVAna)
 susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
                         ttHHeavyFlavourHadronAna)
+susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
+                        pfChargedCHSjetAna)
 
 ## Insert declustering analyzer
 from CMGTools.TTHAnalysis.analyzers.ttHDeclusterJetsAnalyzer import ttHDeclusterJetsAnalyzer
@@ -332,7 +334,7 @@ preprocessor = None
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 test = getHeppyOption('test')
 if test == '1':
-    comp = DYJetsToLL_M50_50ns
+    comp = TTJets_50ns
     comp.files = comp.files[:1]
     print comp.files
     comp.splitFactor = 1
