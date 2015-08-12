@@ -25,7 +25,7 @@ lepAna.doMiniIsolation = True
 lepAna.packedCandidates = 'packedPFCandidates'
 lepAna.miniIsolationPUCorr = 'rhoArea'
 lepAna.miniIsolationVetoLeptons = None # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
-lepAna.doIsolationScan = False
+lepAna.doIsolationScan = True
 
 # Lepton Preselection
 lepAna.loose_electron_id = "POG_MVA_ID_Run2_NonTrig_VLoose"
@@ -157,6 +157,22 @@ treeProducer = cfg.Analyzer(
 susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
                         susyCounter)
 
+# HBHE new filter
+from CMGTools.TTHAnalysis.analyzers.hbheAnalyzer import hbheAnalyzer
+hbheAna = cfg.Analyzer(
+    hbheAnalyzer, name="hbheAnalyzer",
+    )
+susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),hbheAna)
+susyMultilepton_globalVariables.append(NTupleVariable("hbheFilterNew", lambda ev: ev.hbheFilterNew, int, help="new HBHE filter"))
+
+susyCoreSequence.insert(susyCoreSequence.index(metAna)+1,metNoHFAna)
+susyMultilepton_globalObjects.update({"metNoHF"  : NTupleObject("metNoHF", metType, help="PF E_{T}^{miss}, after type 1 corrections (NoHF)")})
+susyMultilepton_globalVariables.append(NTupleVariable("metNoHF_rawPt", lambda ev : ev.metNoHF.uncorrectedPt() if  hasattr(ev,'metNoHF') else  0, help="raw NoHF met p_{T}"))
+susyMultilepton_globalVariables.append(NTupleVariable("metNoHF_rawPhi", lambda ev : ev.metNoHF.uncorrectedPhi() if  hasattr(ev,'metNoHF') else  0, help="raw NoHF met phi"))
+susyMultilepton_globalVariables.append(NTupleVariable("met_trkPt", lambda ev : ev.tkMet.pt() if  hasattr(ev,'tkMet') else  0, help="tkmet p_{T}"))
+susyMultilepton_globalVariables.append(NTupleVariable("met_trkPhi", lambda ev : ev.tkMet.phi() if  hasattr(ev,'tkMet') else  0, help="tkmet phi"))
+susyMultilepton_globalVariables.append(NTupleVariable("metNoHF_trkPt", lambda ev : ev.tkMetNoHF.pt() if  hasattr(ev,'tkMetNoHF') else  0, help="tkmetNoHF p_{T}"))
+susyMultilepton_globalVariables.append(NTupleVariable("metNoHF_trkPhi", lambda ev : ev.tkMetNoHF.phi() if  hasattr(ev,'tkMetNoHF') else  0, help="tkmetNoHF phi"))
 
 #-------- SAMPLES AND TRIGGERS -----------
 
@@ -199,6 +215,8 @@ selectedComponents = [ SingleMu_742, MuEG_742, DoubleMu_742 ]
 selectedComponents = [ TTJets, TTJets_LO, WJetsToLNu, DYJetsToLL_M10to50,  DYJetsToLL_M50,  ] + SingleTop + DiBosons
 selectedComponents = [ DYJetsToLL_M10to50_50ns, DYJetsToLL_M50_50ns, TBar_tWch_50ns, TTJets_LO_50ns, TToLeptons_tch_50ns, T_tWch_50ns, WJetsToLNu_50ns, WWTo2L2Nu_50ns, WZp8_50ns, ZZp8_50ns, TTJets_50ns ]
 selectedComponents = [ TT_pow_50ns ]
+
+selectedComponents = [DYJetsToLL_M10to50_50ns, DYJetsToLL_M50_50ns,DYJetsToLL_LO_M50_50ns,TBar_tWch_50ns,TTJets_50ns,TTJets_LO_50ns,TT_pow_50ns,TToLeptons_tch_50ns,T_tWch_50ns,WJetsToLNu_50ns,WWTo2L2Nu_50ns,WZp8_50ns,ZZp8_50ns]
 
 if True: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = 1000 # in inverse picobarns
@@ -306,8 +324,9 @@ preprocessor = None
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 test = getHeppyOption('test')
 if test == '1':
-    comp = TTJets
+    comp = DYJetsToLL_M50_50ns
     comp.files = comp.files[:1]
+    print comp.files
     comp.splitFactor = 1
     if not getHeppyOption('single'):
         comp.fineSplitFactor = 4
@@ -412,6 +431,42 @@ elif test == "express":
     #    sed -i 's/process.MINIAODoutput_step/process.endpath/' miniAOD-data_PAT.py
     from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
     preprocessor = CmsswPreprocessor("miniAOD-data_PAT.py")
+
+
+
+
+removeResiduals = True
+isData = False
+import tempfile
+# -------------------- Running pre-processor
+import subprocess
+jecDBFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_50nsV2_MC.db'
+jecEra    = 'Summer15_50nsV2_MC'
+tempfile.tempdir=os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/cfg'
+tfile, tpath = tempfile.mkstemp(suffix='.py',prefix='MET_preproc_')
+os.close(tfile)
+preprocessorFile = tpath
+extraArgs=[]
+if isData:
+  extraArgs.append('--isData')
+  GT= '74X_dataRun2_Prompt_v1'
+else:
+  GT= 'MCRUN2_74_V9A'
+if removeResiduals:extraArgs.append('--removeResiduals')
+args = ['python',
+  os.path.expandvars('$CMSSW_BASE/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
+  '--GT='+GT,
+  '--outputFile='+preprocessorFile,
+  '--jecDBFile='+jecDBFile,
+  '--jecEra='+jecEra
+  ] + extraArgs
+#print "Making pre-processorfile:"
+#print " ".join(args)
+subprocess.call(args)
+from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+preprocessor = CmsswPreprocessor(preprocessorFile)
+
+
 
 ## output histogram
 outputService=[]

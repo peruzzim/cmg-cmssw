@@ -164,5 +164,6 @@ susyMultilepton_collections.update({
             ##------------------------------------------------
             "LHE_weights"    : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
  
+            "cleanGenJets"   : NTupleCollection("genJet",     genParticleType, 10, help="Generated jets after cleaning"),
 
 })
