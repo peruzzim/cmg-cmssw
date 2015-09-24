@@ -5,12 +5,11 @@ export MYTREEDIR="~/work/cmgtools/trees25"
 export MYLUMI="0.151"
 
 export EXE="python mcPlots.py"
-export MYMCC="--mcc susy-multilepton/first-data/susy_jetPtRatioL1Corr.txt"
+export MYMCC="--mcc susy-multilepton/first-data-new/susy_jetPtRatioL1Corr.txt"
 export WDIR="susy-multilepton/first-data-new"
 export COMMOPT='--s2v --tree treeProducerSusyMultilepton --noErrorBandOnRatio  --rspam "%(lumi) (13 TeV)  " --lspam "#bf{CMS} #it{Preliminary}" --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.35 --showRatio --maxRatioRange 0 2 --showRatio --poisson -j 8 -f --sp ".*"'
 
-export SELECTIONS="Wl"
-#export SELECTIONS="ZtoEE ZtoMuMu ttbar Wl Zl ttbar_semiLeptonic"
+export SELECTIONS="ZtoEE ZtoMuMu ttbar Wl Zl ttbar_semiLeptonic"
 
 for SEL in ${SELECTIONS}
 do
