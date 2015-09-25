@@ -15,12 +15,14 @@ class myres:
     def __init__(self):
         pass
     def printme(self):
-        print "%d_%s_%.1f_%.1f_%s: %.3f +/- %.3f, scaled to R^2: %.3f +/- %.3f"%(self.pid,self.iso,self.etamin,self.etamax,self.Rlabel,self.slope,self.slope_error,self.slopeOverR2,self.slopeOverR2Error)
+        print "%d_%s_%.1f_%.1f_%s: %.3f +/- %.3f, scaled to R^2: %.3f +/- %.3f"%(self.pid,self.iso,self.etamin,self.etamax,self.Rlabel,self.slope,self.slopeError,self.slopeOverR2,self.slopeOverR2Error)
+
+def getkey(particle,iso,etamin,etamax,text):
+    return "%d_%s_%.1f_%.1f_%s"%(particle,iso,etamin,etamax,text)
 
 def fit(particle,iso,etamin=0,etamax=999,tag='EA fit'):
-    points = [("005",0.05), ("01",0.1), ("02",0.2), ("03",0.3), ("04",0.4)]
     for text,x in points:
-        newkey = "%d_%s_%.1f_%.1f_%s"%(particle,iso,etamin,etamax,text)
+        newkey = getkey(particle,iso,etamin,etamax,text)
         print 'Fitting %s'%newkey
         if newkey in results.keys(): print 'Warning: updating key %s'%newkey
         title = "LepGood_scanAbsIso%s%s_%s_%s_%s"%(iso,text,particle,etamin,etamax)
@@ -42,7 +44,7 @@ def fit(particle,iso,etamin=0,etamax=999,tag='EA fit'):
         a.R = x
         a.Rlabel = text
         a.slope = slope
-        a.slope_error = error
+        a.slopeError = error
         a.slopeOverR2 = slope/(x*x)
         a.slopeOverR2Error = error/(x*x)
         results[newkey]=a
@@ -69,20 +71,60 @@ if __name__=="__main__":
     components = ["Neutral","Charged"]
     eta_boundaries = [0,0.8,1.3,2.0,2.2,2.5]
     pids={"Electron": 11, "Muon": 13}
+    points = [("005",0.05), ("01",0.1), ("02",0.2), ("03",0.3), ("04",0.4)]
 
     for particle,pid in pids.iteritems():
         for comp in components:
             for eta_bin in xrange(len(eta_boundaries)-1):
-                eta_min = eta_boundaries[eta_bin]
-                eta_max = eta_boundaries[eta_bin+1]
-                label = particle+' %.1f-%.1f'%(eta_min,eta_max)
-                fit(pid,comp,eta_min,eta_max,label)
+                etamin = eta_boundaries[eta_bin]
+                etamax = eta_boundaries[eta_bin+1]
+                label = particle+' %.1f-%.1f'%(etamin,etamax)
+                fit(pid,comp,etamin,etamax,label)
 
     for key,res in results.iteritems(): res.printme()
 
-    print getEA(11,"Neutral",1.1,0.05)
+    colors=[kBlue,kRed,kGreen,kYellow,kOrange,kBlack]
+    for particle,pid in pids.iteritems():
+        for comp in components:
+            title = '%s: %s component'%(particle,comp)
+            c2 = TCanvas(title,title,800,600)
+            c2.cd()
+            n = len(points)
+            grs=[]
+            for eta_bin in xrange(len(eta_boundaries)-1):
+                gr = TGraphErrors(n)
+                gr.SetName(title+'_%d'%eta_bin)
+                gr.SetTitle(title+'_%d'%eta_bin)
+                if eta_bin==0: gr.SetTitle(gr.GetTitle().split('_')[0])
+                print gr.GetTitle()
+                etamin = eta_boundaries[eta_bin]
+                etamax = eta_boundaries[eta_bin+1]
+                for i in xrange(n):
+                    key = getkey(pid,comp,etamin,etamax,points[i][0])
+                    gr.SetPoint(i,points[i][1],results[key].slopeOverR2)
+                    gr.SetPointError(i,0,results[key].slopeOverR2Error)
+                gr.SetMarkerStyle(21)
+                gr.SetMarkerColor(colors[eta_bin])
+                gr.SetLineColor(colors[eta_bin])
+                gr.Draw("AP" if eta_bin==0 else "Psame")
+                gr.GetXaxis().SetTitle("Cone radius")
+                gr.GetYaxis().SetTitle("Effective area / Square cone radius")
+                gr.GetXaxis().SetRangeUser(0,0.45)
+                gr.GetYaxis().SetRangeUser(-0.2,1.6)
+                grs.append(gr)
+            c2.Update()
 
+            leg = TLegend(0.12,0.58,0.42,0.88)
+            leg.SetFillColor(kWhite)
+            leg.SetFillStyle(0)
+            leg.SetBorderSize(0)
+            for i in xrange(len(grs)):
+                leg.AddEntry(grs[i],"#eta=%.1f-%.1f"%(eta_boundaries[i],eta_boundaries[i+1]),"lp");
+                print "#eta=%.1f-%.1f"%(eta_boundaries[i],eta_boundaries[i+1])
+            leg.Draw()
+            c2.Update()
 
+            c2.Print('%s_%s.pdf'%(particle,comp))
 
 
 #    results2= []
@@ -92,7 +134,7 @@ if __name__=="__main__":
 #        slope2 = slope/results[-1][1]
 #        error2 = slope2*sqrt((error/slope)**2+(results[-1][2]/results[-1][1])**2)
 #        print '%f: %f +/- %f   -> ratio %f +/- %f'%(x,slope,error,slope2/x2,error2/x2)
-#    title = '%s: %s component, #eta=%.1f-%.1f'%('Electron' if particle==11 else 'Muon',iso,etamin,etamax)
+
 #    c2 = TCanvas(title,title,800,600)
 #    c2.cd()
 #    n = len(points)
@@ -101,17 +143,6 @@ if __name__=="__main__":
 #    for i in xrange(n):
 #        gr.SetPoint(i,results[i][0],results[i][1]/(results[i][0]**2))
 #        gr.SetPointError(i,0,results[i][2]/(results[i][0]**2))
-#    gr.SetMarkerStyle(21)
-#    gr.SetMarkerColor(kBlue)
-#    gr.SetLineColor(kBlue)
-#    gr.Draw("AP")
-#    gr.GetXaxis().SetTitle("Cone radius")
-#    gr.GetYaxis().SetTitle("Effective area / Square cone radius")
-#    gr.GetXaxis().SetRangeUser(0,0.45)
-##    gr.GetYaxis().SetRangeUser(min(0,min([r[1]/r[0]**2 for r in results])*1.1),max([r[1]/r[0]**2 for r in results])*1.1)
-#    gr.GetYaxis().SetRangeUser(-0.2,1.6)
-#    c2.Update()
-#    c2.Print(title+'.pdf')
 
 
 
