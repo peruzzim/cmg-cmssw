@@ -11,7 +11,7 @@ f = TFile("/data1/p/peruzzi/TREES_74X_250915_7_4_12_noIso_slimForEA/DYJetsToLL_M
 t = f.Get("tree")
 
 printfits = False
-nevents = int(1e4)
+nevents = int(1e7)
 evcuts = "(rho>5 && rho<25 && LepGood_mcMatchId==23 && LepGood_pt>20 && (abs(LepGood_pdgId)!=11 || abs(LepGood_etaSc)<1.4442 || abs(LepGood_etaSc)>1.566))"
 
 results = {}
@@ -183,6 +183,7 @@ if __name__=="__main__":
             leg.SetBorderSize(0)
             leg.AddEntry(hraw,"Raw","lp")
             leg.AddEntry(hdefScaled,"Scaled EA","lp")
+            leg.AddEntry(hnew,"R-dep. EA","lp")
             leg.Draw()
             c2.Update()
 
@@ -215,6 +216,7 @@ if __name__=="__main__":
             leg.SetBorderSize(0)
             leg.AddEntry(hraw,"Raw","lp")
             leg.AddEntry(hdefScaled,"Scaled EA","lp")
+            leg.AddEntry(hnew,"R-dep. EA","lp")
             leg.Draw()
             c2.Update()
 
