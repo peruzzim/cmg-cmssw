@@ -20,7 +20,8 @@ class myres:
     def __init__(self):
         pass
     def printme(self):
-        print "%d_%s_%.1f_%.1f_%s: %.3f +/- %.3f, scaled to R^2: %.3f +/- %.3f"%(self.pid,self.iso,self.etamin,self.etamax,self.Rlabel,self.slope,self.slopeError,self.slopeOverR2,self.slopeOverR2Error)
+#        print "%d %s eta=%.1f-%.1f R=%.2f: %.3f +/- %.3f, scaled to R^2: %.3f +/- %.3f"%(self.pid,self.iso,self.etamin,self.etamax,self.R,self.slope,self.slopeError,self.slopeOverR2,self.slopeOverR2Error)
+        print "%d %s eta=%.1f-%.1f R=%.2f: %.4f +/- %.4f"%(self.pid,self.iso,self.etamin,self.etamax,self.R,self.slope,self.slopeError)
 
 def getkey(particle,iso,etamin,etamax,text):
     return "%d_%s_%.1f_%.1f_%s"%(particle,iso,etamin,etamax,text)
@@ -112,7 +113,16 @@ if __name__=="__main__":
                 etamax = eta_boundaries[eta_bin+1]
                 fit(pid,comp,etamin,etamax)
 
-    for key,res in results.iteritems(): res.printme()
+    for particle,pid in pids.iteritems():
+        for comp in components:
+            for eta_bin in xrange(len(eta_boundaries)-1):
+                etamin = eta_boundaries[eta_bin]
+                etamax = eta_boundaries[eta_bin+1]
+                for key,res in results.iteritems():
+                    if res.pid!=pid: continue
+                    if res.iso!=comp: continue
+                    if res.etamin!=etamin: continue
+                    res.printme()
 
     colors=[kBlue,kRed,kGreen,kOrange,kMagenta]
     for particle,pid in pids.iteritems():
