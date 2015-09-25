@@ -39,8 +39,10 @@ def isomean(particle,etamin=0,etamax=999,R=0.4,EAsub="raw",eff=None):
             else: t.Draw("(LepGood_scanAbsIsoCharged%s+TMath::Max(0,LepGood_scanAbsIsoNeutral%s-LepGood_rhoForEA*LepGood_effArea*%f*%f/0.3/0.3))/LepGood_pt<%f:rho>>htempdefScaled(25,0,25)"%(text,text,R,R,eff),cutstring,"prof",nevents)
             htemp = gDirectory.Get("htempdefScaled")
         elif EAsub=="new":
-            if eff==None: t.Draw("LepGood_scanAbsIsoCharged%s+TMath::Max(0,LepGood_scanAbsIsoNeutral%s-rho*getEA(%d,%d,LepGood_etaSc,%f)):rho>>htempnew(25,0,25)"%(text,text,particle,0,R),cutstring,"prof",nevents)
-            else: t.Draw("(LepGood_scanAbsIsoCharged%s+TMath::Max(0,LepGood_scanAbsIsoNeutral%s-rho*getEA(%d,%d,LepGood_etaSc,%f)))/LepGood_pt<%f:rho>>htempnew(25,0,25)"%(text,text,particle,0,R,eff),cutstring,"prof",nevents)
+            plotstring="LepGood_scanAbsIsoCharged%s+TMath::Max(0,LepGood_scanAbsIsoNeutral%s-rho*getEA(%d,%d,LepGood_etaSc,%f))"%(text,text,particle,0,R)
+            if particle!=11: plotstring = plotstring.replace('LepGood_etaSc','LepGood_eta')
+            if eff==None: t.Draw("%s:rho>>htempnew(25,0,25)"%plotstring,cutstring,"prof",nevents)
+            else: t.Draw("(%s)/LepGood_pt<%f:rho>>htempnew(25,0,25)"%(plotstring,eff),cutstring,"prof",nevents)
             htemp = gDirectory.Get("htempnew")
         return htemp
 
