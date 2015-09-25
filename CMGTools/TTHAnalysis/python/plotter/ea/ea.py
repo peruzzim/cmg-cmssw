@@ -1,12 +1,17 @@
 from ROOT import *
 from math import *
 
+if "/getEA_cc.so" not in gSystem.GetLibraries(): 
+    gROOT.ProcessLine(".L getEA.cc+O")
+
 gROOT.SetBatch(True)
+gStyle.SetOptStat(0)
 
 f = TFile("/data1/p/peruzzi/TREES_74X_250915_7_4_12_noIso_slimForEA/DYJetsToLL_M50/treeProducerSusyMultilepton/tree.root")
 t = f.Get("tree")
 
 printfits = False
+nevents = int(1e4)
 evcuts = "(rho>5 && rho<25 && LepGood_mcMatchId==23 && LepGood_pt>20 && (abs(LepGood_pdgId)!=11 || abs(LepGood_etaSc)<1.4442 || abs(LepGood_etaSc)>1.566))"
 
 results = {}
@@ -20,7 +25,26 @@ class myres:
 def getkey(particle,iso,etamin,etamax,text):
     return "%d_%s_%.1f_%.1f_%s"%(particle,iso,etamin,etamax,text)
 
-def fit(particle,iso,etamin=0,etamax=999,tag='EA fit'):
+def isomean(particle,etamin=0,etamax=999,R=0.4,EAsub="raw",eff=None):
+    for text,x in points:
+        if x!=R: continue
+        cutstring = "abs(LepGood_pdgId)==%d && abs(LepGood_etaSc)>%f && abs(LepGood_etaSc)<%f %s"%(particle,etamin,etamax,'&& '+evcuts if evcuts!="" else "")
+        if particle!=11: cutstring = cutstring.replace('LepGood_etaSc','LepGood_eta')
+        if EAsub=="raw":
+            if eff==None: t.Draw("LepGood_scanAbsIsoCharged%s+LepGood_scanAbsIsoNeutral%s:rho>>htempraw(25,0,25)"%(text,text),cutstring,"prof",nevents)
+            else: t.Draw("(LepGood_scanAbsIsoCharged%s+LepGood_scanAbsIsoNeutral%s)/LepGood_pt<%f:rho>>htempraw(25,0,25)"%(text,text,eff),cutstring,"prof",nevents)
+            htemp = gDirectory.Get("htempraw")
+        elif EAsub=="defScaled":
+            if eff==None: t.Draw("LepGood_scanAbsIsoCharged%s+TMath::Max(0,LepGood_scanAbsIsoNeutral%s-LepGood_rhoForEA*LepGood_effArea*%f*%f/0.3/0.3):rho>>htempdefScaled(25,0,25)"%(text,text,R,R),cutstring,"prof",nevents)
+            else: t.Draw("(LepGood_scanAbsIsoCharged%s+TMath::Max(0,LepGood_scanAbsIsoNeutral%s-LepGood_rhoForEA*LepGood_effArea*%f*%f/0.3/0.3))/LepGood_pt<%f:rho>>htempdefScaled(25,0,25)"%(text,text,R,R,eff),cutstring,"prof",nevents)
+            htemp = gDirectory.Get("htempdefScaled")
+        elif EAsub=="new":
+            if eff==None: t.Draw("LepGood_scanAbsIsoCharged%s+TMath::Max(0,LepGood_scanAbsIsoNeutral%s-rho*getEA(%d,%d,LepGood_etaSc,%f)):rho>>htempnew(25,0,25)"%(text,text,particle,0,R),cutstring,"prof",nevents)
+            else: t.Draw("(LepGood_scanAbsIsoCharged%s+TMath::Max(0,LepGood_scanAbsIsoNeutral%s-rho*getEA(%d,%d,LepGood_etaSc,%f)))/LepGood_pt<%f:rho>>htempnew(25,0,25)"%(text,text,particle,0,R,eff),cutstring,"prof",nevents)
+            htemp = gDirectory.Get("htempnew")
+        return htemp
+
+def fit(particle,iso,etamin=0,etamax=999):
     for text,x in points:
         newkey = getkey(particle,iso,etamin,etamax,text)
         print 'Fitting %s'%newkey
@@ -30,7 +54,7 @@ def fit(particle,iso,etamin=0,etamax=999,tag='EA fit'):
         c1.cd()
         cutstring = "abs(LepGood_pdgId)==%d && abs(LepGood_etaSc)>%f && abs(LepGood_etaSc)<%f %s"%(particle,etamin,etamax,'&& '+evcuts if evcuts!="" else "")
         if particle!=11: cutstring = cutstring.replace('LepGood_etaSc','LepGood_eta')
-        t.Draw("LepGood_scanAbsIso%s%s:rho>>htemp(10,5,25)"%(iso,text),cutstring,"prof",10000)
+        t.Draw("LepGood_scanAbsIso%s%s:rho>>htemp(10,5,25)"%(iso,text),cutstring,"prof",nevents)
         htemp = gDirectory.Get("htemp")
         fit = htemp.Fit("pol1","SQ")
         if printfits: c1.Print(title+'.pdf')
@@ -49,21 +73,27 @@ def fit(particle,iso,etamin=0,etamax=999,tag='EA fit'):
         a.slopeOverR2Error = error/(x*x)
         results[newkey]=a
 
-def getEA(particle,iso,eta,R):
-    found = None
-    for key,res in results.iteritems():
-        if res.pid!=particle: continue
-        if res.iso!=iso: continue
-        if abs(eta)<res.etamin: continue
-        if not (abs(eta)<res.etamax): continue
-        if R!=res.R: continue
-        found = res
-        break
-    if found==None:
-        print 'EA not found'
-        return 0
-    return found.slope
+from array import array
 
+def setEAs():
+    myhs={}
+    for particle,pid in pids.iteritems():
+        for comp in components:
+            rs = [0]
+            rs.extend([x for text,x in points])
+            rs.append(10)
+            n = len(rs)
+            rs2 = []
+            for i in xrange(n):
+                if i==0: rs2.append(rs[i])
+                elif i!=n-1: rs2.append((rs[i]+rs[i+1])/2)
+                else: pass
+            name = 'EA_%s_%s'%(pid,comp)
+            myhs[name] = TH2F(name,name,len(eta_boundaries)-1,array('f',eta_boundaries),len(rs2)-1,array('f',rs2))
+    for key,res in results.iteritems():    
+        h=myhs['EA_%s_%s'%(res.pid,res.iso)]
+        h.SetBinContent(h.GetXaxis().FindBin((res.etamin+res.etamax)/2),h.GetYaxis().FindBin(res.R),res.slope)
+    setEAhistos(myhs['EA_11_Neutral'],myhs['EA_11_Charged'],myhs['EA_13_Neutral'],myhs['EA_13_Charged'])
 
 
 if __name__=="__main__":
@@ -78,12 +108,11 @@ if __name__=="__main__":
             for eta_bin in xrange(len(eta_boundaries)-1):
                 etamin = eta_boundaries[eta_bin]
                 etamax = eta_boundaries[eta_bin+1]
-                label = particle+' %.1f-%.1f'%(etamin,etamax)
-                fit(pid,comp,etamin,etamax,label)
+                fit(pid,comp,etamin,etamax)
 
     for key,res in results.iteritems(): res.printme()
 
-    colors=[kBlue,kRed,kGreen,kYellow,kOrange,kBlack]
+    colors=[kBlue,kRed,kGreen,kOrange,kMagenta]
     for particle,pid in pids.iteritems():
         for comp in components:
             title = '%s: %s component'%(particle,comp)
@@ -96,7 +125,6 @@ if __name__=="__main__":
                 gr.SetName(title+'_%d'%eta_bin)
                 gr.SetTitle(title+'_%d'%eta_bin)
                 if eta_bin==0: gr.SetTitle(gr.GetTitle().split('_')[0])
-                print gr.GetTitle()
                 etamin = eta_boundaries[eta_bin]
                 etamax = eta_boundaries[eta_bin+1]
                 for i in xrange(n):
@@ -114,35 +142,79 @@ if __name__=="__main__":
                 grs.append(gr)
             c2.Update()
 
-            leg = TLegend(0.12,0.58,0.42,0.88)
+            leg = TLegend(0.12,0.68,0.42,0.88)
             leg.SetFillColor(kWhite)
             leg.SetFillStyle(0)
             leg.SetBorderSize(0)
             for i in xrange(len(grs)):
                 leg.AddEntry(grs[i],"#eta=%.1f-%.1f"%(eta_boundaries[i],eta_boundaries[i+1]),"lp");
-                print "#eta=%.1f-%.1f"%(eta_boundaries[i],eta_boundaries[i+1])
             leg.Draw()
             c2.Update()
 
             c2.Print('%s_%s.pdf'%(particle,comp))
 
+    setEAs()
 
-#    results2= []
-#    print '\n'+tag+' '+iso
-#    for x,slope,error in results:
-#        x2 = (x/results[-1][0])**2
-#        slope2 = slope/results[-1][1]
-#        error2 = slope2*sqrt((error/slope)**2+(results[-1][2]/results[-1][1])**2)
-#        print '%f: %f +/- %f   -> ratio %f +/- %f'%(x,slope,error,slope2/x2,error2/x2)
+    for particle,pid in pids.iteritems():
+        for text,x in points:
+            title = '%s: isolation in R=%.1f cone'%(particle,x)
+            c2 = TCanvas(title,title,800,600)
+            c2.cd()
+            hraw = isomean(pid,etamin=0,etamax=2.5,R=x,EAsub="raw")
+            hdefScaled = isomean(pid,etamin=0,etamax=2.5,R=x,EAsub="defScaled")
+            hnew = isomean(pid,etamin=0,etamax=2.5,R=x,EAsub="new")
+            hs=[hraw,hdefScaled,hnew]
+            for i in xrange(len(hs)):
+                hs[i].SetMarkerStyle(21+i)
+                hs[i].SetMarkerColor(colors[i])
+                hs[i].SetLineColor(colors[i])
+                if i==0: hs[i].SetTitle("%s isolation in R=%s cone"%(particle,str(x).rstrip('0')))
+                hs[i].Draw("E1" if i==0 else "E1same")
+                if i==0: hs[i].GetYaxis().SetRangeUser(0,5)
+                hs[i].GetXaxis().SetTitle("#rho")
+                hs[i].GetYaxis().SetTitle("<Isolation> (GeV)")
+            c2.Update()
 
-#    c2 = TCanvas(title,title,800,600)
-#    c2.cd()
-#    n = len(points)
-#    gr = TGraphErrors(n)
-#    gr.SetTitle(title)
-#    for i in xrange(n):
-#        gr.SetPoint(i,results[i][0],results[i][1]/(results[i][0]**2))
-#        gr.SetPointError(i,0,results[i][2]/(results[i][0]**2))
+            leg = TLegend(0.12,0.73,0.42,0.88)
+            leg.SetFillColor(kWhite)
+            leg.SetFillStyle(0)
+            leg.SetBorderSize(0)
+            leg.AddEntry(hraw,"Raw","lp")
+            leg.AddEntry(hdefScaled,"Scaled EA","lp")
+            leg.Draw()
+            c2.Update()
 
+            c2.Print('Iso_%s_%s.pdf'%(particle,text))
 
+    effcut = 0.05
+    for particle,pid in pids.iteritems():
+        for text,x in points:
+            title = '%s: efficiency for isolation in R=%.1f cone < %s'%(particle,x,str(effcut).rstrip('0'))
+            c2 = TCanvas(title,title,800,600)
+            c2.cd()
+            hraw = isomean(pid,etamin=0,etamax=2.5,R=x,EAsub="raw",eff=effcut)
+            hdefScaled = isomean(pid,etamin=0,etamax=2.5,R=x,EAsub="defScaled",eff=effcut)
+            hnew = isomean(pid,etamin=0,etamax=2.5,R=x,EAsub="new",eff=effcut)
+            hs = [hraw,hdefScaled,hnew]
+            for i in xrange(len(hs)):
+                hs[i].SetMarkerStyle(21+i)
+                hs[i].SetMarkerColor(colors[i])
+                hs[i].SetLineColor(colors[i])
+                if i==0: hs[i].SetTitle('%s: efficiency for isolation in R=%s cone < %s'%(particle,str(x).rstrip('0'),str(effcut).rstrip('0')))
+                hs[i].Draw("E1" if i==0 else "E1same")
+                if i==0: hs[i].GetYaxis().SetRangeUser(0.6,1.2)
+                hs[i].GetXaxis().SetTitle("#rho")
+                hs[i].GetYaxis().SetTitle("Efficiency")
+            c2.Update()
+
+            leg = TLegend(0.12,0.68,0.42,0.88)
+            leg.SetFillColor(kWhite)
+            leg.SetFillStyle(0)
+            leg.SetBorderSize(0)
+            leg.AddEntry(hraw,"Raw","lp")
+            leg.AddEntry(hdefScaled,"Scaled EA","lp")
+            leg.Draw()
+            c2.Update()
+
+            c2.Print('Eff_%s_%s.pdf'%(particle,text))
 
