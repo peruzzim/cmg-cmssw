@@ -1,6 +1,10 @@
-DY : DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan
-DY : DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan
- 
+DYbb : DYJetsToLL_M10to50 : xsec :   LepGood3_mcMatchAny == 5; FillColor=75,        Label="Z + b\#rightarrowl"
+DYcc : DYJetsToLL_M10to50 : xsec :   LepGood3_mcMatchAny == 4; FillColor=65,        Label="Z + c\#rightarrowl"
+DYjets : DYJetsToLL_M10to50 : xsec : LepGood3_mcMatchAny < 4 ;  FillColor=ROOT.kCyan, Label="Z + j\#rightarrowl"
+DYbb : DYJetsToLL_M50 : xsec : LepGood3_mcMatchAny == 5; FillColor=75, Label="Z + b\#rightarrowl"
+DYcc : DYJetsToLL_M50 : xsec : LepGood3_mcMatchAny == 4; FillColor=50, Label="Z + c\#rightarrowl"
+DYjets : DYJetsToLL_M50 : xsec : LepGood3_mcMatchAny < 4; FillColor=ROOT.kCyan, Label="Z + j\#rightarrowl"
+
 TT : TT_pow: xsec ;  FillColor=ROOT.kGray  
 
 VV : WZp8: xsec ; FillColor=ROOT.kViolet-4
