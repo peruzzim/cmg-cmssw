@@ -2,7 +2,8 @@
 
 ODIR="~/www/25ns_run2015d_upto4391"
 MYTREEDIR="~/work/ra5trees/TREES_74X_230915_MiniIso_7_4_12"
-MYLUMI="0.14388"
+MYLUMI="0.12163"
+#run 256843 up to lumi ~ 370
 
 EXE="python mcPlots.py"
 MYMCC="--mcc susy-multilepton/first-data-new/susy_jetPtRatioL1Corr.txt"
@@ -14,6 +15,6 @@ SELECTIONS=["ZtoEE","ZtoMuMu","ttbar","Wl","Zl","ttbar_semiLeptonic"]
 for SEL in SELECTIONS:
     print '#'+SEL
     MCA = 'mca_13tev_%s.txt'%SEL if SEL in ['Wl','Zl','ttbar_semiLeptonic'] else 'mca_13tev.txt'
-    print "%s %s/%s %s/cuts_%s.txt %s/plots_%s.txt %s -P %s -l %s %s --scaleSigToData --pdir %s/%s/ScaleSigToData"%(EXE,WDIR,MCA,WDIR,SEL,WDIR,SEL,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)
-    print "%s %s/%s %s/cuts_%s.txt %s/plots_%s.txt %s -P %s -l %s %s --pdir %s/%s/ScaleToLumi"%(EXE,WDIR,MCA,WDIR,SEL,WDIR,SEL,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)
+    print '%s %s/%s %s/cuts_%s.txt %s/plots_%s.txt %s -P %s -l %s %s --scaleSigToData --pdir %s/%s/ScaleSigToData'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,SEL,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)
+    print '%s %s/%s %s/cuts_%s.txt %s/plots_%s.txt %s -P %s -l %s %s --pdir %s/%s/ScaleToLumi'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,SEL,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)
 
