@@ -12,9 +12,9 @@ COMMOPT='--s2v --tree treeProducerSusyMultilepton --noErrorBandOnRatio  --rspam 
 SELECTIONS=["ZtoEE","ZtoMuMu","ttbar","Wl","Zl","ttbar_semiLeptonic"]
 
 for SEL in SELECTIONS:
-    print SEL
-    MCA = 'mca_13tev.txt'
-    print "%s %s/%s %s/cuts_%s.txt %s/plots_%s.txt %s -P %s -l %s %s --scaleSigToData --pdir %s/%s/ScaleSigToData"%(EXE,MCA,WDIR,WDIR,SEL,WDIR,SEL,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)
-    print "%s %s/%s %s/cuts_%s.txt %s/plots_%s.txt %s -P %s -l %s %s --pdir %s/%s/ScaleToLumi"%(EXE,MCA,WDIR,WDIR,SEL,WDIR,SEL,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)
+    print '#'+SEL
+    MCA = 'mca_13tev_%s.txt'%SEL if SEL in ['Wl','Zl','ttbar_semiLeptonic'] else 'mca_13tev.txt'
+    print "%s %s/%s %s/cuts_%s.txt %s/plots_%s.txt %s -P %s -l %s %s --scaleSigToData --pdir %s/%s/ScaleSigToData"%(EXE,WDIR,MCA,WDIR,SEL,WDIR,SEL,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)
+    print "%s %s/%s %s/cuts_%s.txt %s/plots_%s.txt %s -P %s -l %s %s --pdir %s/%s/ScaleToLumi"%(EXE,WDIR,MCA,WDIR,SEL,WDIR,SEL,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)
 
 
