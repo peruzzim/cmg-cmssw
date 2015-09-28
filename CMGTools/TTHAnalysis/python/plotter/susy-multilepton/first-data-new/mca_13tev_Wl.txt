@@ -2,8 +2,8 @@ Wjets    : WJetsToLNu    : xsec : LepGood2_mcMatchId == 0 && LepGood2_mcMatchAny
 Wb       : WJetsToLNu    : xsec : LepGood2_mcMatchId == 0 && LepGood2_mcMatchAny == 5  ;  FillColor=ROOT.kBlue-5, Label="W + b\#rightarrowl"
 W        : WJetsToLNu 	 : xsec : LepGood2_mcMatchId != 0;  FillColor=ROOT.kBlue-10, Label="W (prompt)"
 
-TTT2l: TT_pow: xsec : LepGood2_mcMatchId !=0;    FillColor=ROOT.kGray,    Label="tt\#rightarrow2l"
-TTTj : TT_pow: xsec : LepGood2_mcMatchId ==0 && LepGood2_mcMatchAny <= 4 ;    FillColor=ROOT.kGreen-8, Label="tt\,j\#rightarrowl)"
+TTT2l: TT_pow: xsec : LepGood2_mcMatchId !=0;    FillColor=ROOT.kGray,    Label="tt\, prompt"
+TTTj : TT_pow: xsec : LepGood2_mcMatchId ==0 && LepGood2_mcMatchAny <= 4 ;    FillColor=ROOT.kGreen-8, Label="tt\, j\#rightarrowl)"
 TTTb : TT_pow: xsec : LepGood2_mcMatchId ==0 && LepGood2_mcMatchAny == 5;    FillColor=ROOT.kGreen-5,    Label="tt\, b\#rightarrowl"
 
 DY       : DYJetsToLL_M10to50 : xsec      : LepGood2_mcMatchId != 0;  FillColor=ROOT.kCyan, Label="DY"
