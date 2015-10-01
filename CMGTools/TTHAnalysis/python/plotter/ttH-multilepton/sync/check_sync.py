@@ -21,28 +21,46 @@ def printred(s,b=False):
 def printgreen(s,b=False):
     print green(s,b)
 
-def comparelines(r1,r2,n=-1):
-    if r1==r2: return True
+def comparelines(r1,r2,n=-1,tolerance=1e-4):
+    x1 = [float(x) for x in r1]
+    x2 = [float(x) for x in r2]
+    eq = [False]*max(len(x1),len(x2))
+    for i in xrange(min(len(x1),len(x2))):
+        eq[i]=True
+        if x2[i]==0:
+            if abs(x1[i])>tolerance:eq[i]=False
+        elif abs(x1[i]/x2[i]-1)>tolerance: eq[i]=False
+    if eq==[True]*len(eq): return True
     if not n<0:
-        eq = [False]*max(len(r1),len(r2))
-        for i in xrange(min(len(r1),len(r2))):
-            if r1[i]==r2[i]: eq[i]=True
-        printred('Difference found on entry nr. %d'%n,b=True)
+        printred('Difference found on event nr. %d'%n,b=True)
         print ', '.join([(r1[i] if eq[i] else red(r1[i])) for i in xrange(len(r1))])
         print ', '.join([(r2[i] if eq[i] else red(r2[i])) for i in xrange(len(r2))])
     return False
 
-def compareCSV(j1,j2,stopAtError=False):
+def compareCSV(j1,j2,stopAtError=False,tolerance=1e-4):
     if j1[0]!=j2[0]:
         print 'Different keys'
         return False
     bad=False
-    if len(j1[1])!=len(j2[1]):
-        printred('Different number of lines: %d vs. %d'%(len(j1[1]),len(j2[1])),b=True)
+    ev1 = dict([(int(row[0]),row) for row in j1[1]])
+    ev2 = dict([(int(row[0]),row) for row in j2[1]])
+    ev1only = [ int(r[0]) for r in j1[1] if int(r[0]) not in ev2.keys() ]
+    ev2only = [ int(r[0]) for r in j2[1] if int(r[0]) not in ev1.keys() ]
+    ev12 = [ int(r[0]) for r in j1[1] if int(r[0]) in ev2.keys() ]
+
+    if ev1only!=[]:
+        printred('%s events only in j1: %s'%(len(ev1only), ','.join( [str(s) for s in ev1only] )),b=True)
+        for ev in ev1only:
+            printred(', '.join([ str(s) for s in ev1[ev] ]))
+        bad=True
+    if ev2only!=[]:
+        printred('%d events only in j2: %s'%(len(ev2only), ','.join( [str(s) for s in ev2only] )),b=True)
+        for ev in ev2only:
+            printred(', '.join([ str(s) for s in ev2[ev] ]))
         bad=True
     if stopAtError and bad: return False
-    for i in xrange(min(len(j1[1]),len(j2[1]))):
-        if not comparelines(j1[1][i],j2[1][i],i): bad=True
+    for ev in ev12:
+        if not comparelines( ev1[ev],ev2[ev],ev, tolerance=tolerance ): bad=True
         if stopAtError and bad: break
     if bad: return False
     printgreen('All ok',b=True)
@@ -104,6 +122,7 @@ if __name__=="__main__":
     if test in ["muons","electrons"]:
         res=[['event#'],[]]
         keys = muonkeys if test=='muons' else elekeys
+        print [k[0] for k in keys]
         psel = MuonPreselection if test=='muons' else ElePreselection
         res[0].extend([key[0] for key in keys])
         for ev in t:
@@ -128,10 +147,11 @@ if __name__=="__main__":
                 outfile.write('%d'%row[0]+','+','.join(['%.5f'%x for x in row[1:]])+'\n')
             outfile.close()
         print '%s entries found'%len(res[1])
-        with open(outfilename,'r') as outfile:
-            for line in outfile: print line.rstrip('\n')
+        if options.verbose:
+            with open(outfilename,'r') as outfile:
+                for line in outfile: print line.rstrip('\n')
         if options.compare!="":
             print 'Comparing to %s:'%options.compare
             oc=parseCSV(options.compare)
             oc2=parseCSV(outfilename)
-            compareCSV(oc,oc2)
+            compareCSV(oc2,oc)
