@@ -317,12 +317,15 @@ def _tthlep_lepId(lep):
 def _susy2lss_lepId_CBloose(lep):
         if abs(lep.pdgId) == 13:
             if lep.pt <= 5: return False
-            return True #lep.mediumMuonId > 0
+            if not lep.mediumMuonId > 0: return False
+            return True
         elif abs(lep.pdgId) == 11:
             if lep.pt <= 7: return False
             if not (lep.convVeto and lep.lostHits <= 1): 
                 return False
-            return True #lep.mvaIdPhys14 > -0.11+(-0.35+0.11)*(abs(lep.eta)>0.8)+(-0.55+0.35)*(abs(lep.eta)>1.479)
+            if not lep.mvaIdSpring15 > -0.70+(-0.83+0.70)*(abs(lep.eta)>0.8)+(-0.92+0.83)*(abs(lep.eta)>1.479):
+                return False
+            return True
         return False
 
 def _susy2lss_lepId_CB(lep):
@@ -332,7 +335,7 @@ def _susy2lss_lepId_CB(lep):
         elif abs(lep.pdgId) == 11:
             if not (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0): 
                 return False
-            return lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(0.05-0.57)*(abs(lep.eta)>1.479)
+            return lep.mvaIdSpring15 > 0.87+(0.60-0.87)*(abs(lep.eta)>0.8)+(0.17-0.60)*(abs(lep.eta)>1.479)
         return False
 
 def _susy2lss_multiIso(lep):
