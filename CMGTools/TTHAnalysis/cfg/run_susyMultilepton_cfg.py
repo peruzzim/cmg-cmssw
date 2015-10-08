@@ -647,6 +647,23 @@ elif test == "ttH-sync":
         comp.splitFactor=1
         comp.fineSplitFactor=30
     ttHLepSkim.minLeptons = 0
+elif test == "ra5-sync-mc":
+    comp = cfg.MCComponent( files = ["root://eoscms.cern.ch//store/mc/RunIISpring15DR74/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v1/30000/60087A61-9134-E511-B0C6-0025905B855E.root"], name="TTW_RA5_sync" )
+    comp.triggers = []
+    selectedComponents = [ comp ]
+    sequence.remove(jsonAna)
+    if is50ns or runData: raise RuntimeError, 'Wrong configuration'
+elif test == "ra5-sync-data":
+    comp = cfg.DataComponent( files = [
+            "root://eoscms.cern.ch//store/data/Run2015D/DoubleMuon/MINIAOD/PromptReco-v3/000/257/531/00000/B26DC190-8166-E511-AE66-02163E0133A7.root",
+            "root://eoscms.cern.ch//store/data/Run2015D/DoubleEG/MINIAOD/PromptReco-v3/000/257/531/00000/2CFA9A0A-0F66-E511-88FF-02163E013484.root",
+            "root://eoscms.cern.ch//store/data/Run2015D/MuonEG/MINIAOD/PromptReco-v3/000/257/531/00000/D62608D5-FB65-E511-B031-02163E0145C1.root",
+            ], name="data_RA5_sync", intLumi=1 )
+    comp.triggers = []
+    selectedComponents = [ comp ]
+    comp.json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    comp.triggers = triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_ee + triggers_ee_ht + triggers_3e + triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu
+    if is50ns or (not runData): raise RuntimeError, 'Wrong configuration'
 
 ## output histogram
 outputService=[]
