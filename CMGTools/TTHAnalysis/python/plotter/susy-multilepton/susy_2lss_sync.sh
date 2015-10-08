@@ -12,7 +12,6 @@ if [[ "$WHAT" == "mccounts" ]]; then
     GO="python mcAnalysis.py $CORE mca-Phys14.txt susy-multilepton/susy_2lss_multiiso.txt -p T1tttt_HM -f -G -u "
     POST="| awk '/all/{print \$2}' "
 elif [[ "$WHAT" == "mcyields" ]]; then
-    #GO="python mcAnalysis.py $CORE mca-Phys14.txt susy-multilepton/susy_2lss_sync.txt -p 'T1tttt_HM,T5tttt_MLDx,T5qqqqWW_HM,T5qqqqWWD,TTX,WZ,TT,WJets,DY' --pgroup TTX=TT[WZH] -f -G -l 4.0"
     GO="python mcAnalysis.py $CORE mca-Phys14.txt susy-multilepton/susy_2lss_multiiso.txt -p 'T1tttt_HM,TTX,TT' --pgroup TTX=TT[WZH] -f -G -l 4.0"
 elif [[ "$WHAT" == "mcplots" ]]; then
     GO="python mcPlots.py $CORE mca-Phys14.txt susy-multilepton/susy_2lss_multiiso.txt -f -G -l 4.0  -p  T1tttt_HM,T5tttt_MLDx,T5qqqqWW_HM,T5qqqqWWD,TT.,TT,WJets,DY,T,TW,WZ  -j 8 -f   --showIndivSigs --noStackSig --legendWidth 0.30 --ss 5 susy-multilepton/susy_2lss_plots.txt"
