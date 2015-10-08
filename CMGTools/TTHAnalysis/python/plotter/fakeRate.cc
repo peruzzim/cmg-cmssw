@@ -747,53 +747,80 @@ float fakeRateReader_2lss_FO(float l1eta, float l1pt, float l2eta, float l2pt, i
 namespace WP {
     enum WPId { V=0, VL=0, VVL=-1, L=1, M=2, T=3, VT=4, HT=5 } ;
 }
-float multiIso_singleWP(float LepGood_miniRelIso, float LepGood_jetPtRatio, float LepGood_jetPtRel, WP::WPId wp) {
+float multiIso_singleWP(float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
     switch (wp) {
-        case WP::HT: return LepGood_miniRelIso < 0.05  && (LepGood_jetPtRatio>0.725 || LepGood_jetPtRel>8   );
-        case WP::VT: return LepGood_miniRelIso < 0.075 && (LepGood_jetPtRatio>0.725 || LepGood_jetPtRel>7   );
-        case WP::T:  return LepGood_miniRelIso < 0.10  && (LepGood_jetPtRatio>0.700 || LepGood_jetPtRel>7   );
-        case WP::M:  return LepGood_miniRelIso < 0.14  && (LepGood_jetPtRatio>0.68  || LepGood_jetPtRel>6.7 );
-        case WP::L:  return LepGood_miniRelIso < 0.22  && (LepGood_jetPtRatio>0.63  || LepGood_jetPtRel>6.0 );
+        case WP::VT: return LepGood_miniRelIso < 0.09  && (LepGood_jetPtRatiov2>0.84  || LepGood_jetPtRelv2>7.2 );
+        case WP::T:  return LepGood_miniRelIso < 0.12  && (LepGood_jetPtRatiov2>0.80  || LepGood_jetPtRelv2>7.2 );
+        case WP::M:  return LepGood_miniRelIso < 0.16  && (LepGood_jetPtRatiov2>0.76  || LepGood_jetPtRelv2>7.2 );
+        case WP::L:  return LepGood_miniRelIso < 0.20  && (LepGood_jetPtRatiov2>0.69  || LepGood_jetPtRelv2>6.0 );
+        case WP::VL: return LepGood_miniRelIso < 0.25  && (LepGood_jetPtRatiov2>0.67  || LepGood_jetPtRelv2>4.4 );
         case WP::VVL: return LepGood_miniRelIso < 0.4;
         default:
             std::cerr << "Working point " << wp << " not implemented for multiIso_singleWP" << std::endl;
             abort();
     }
 }
-float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatio, float LepGood_jetPtRel, WP::WPId wp) {
+float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
     switch (wp) {
         case WP::VT: 
            return abs(LepGood_pdgId)==13 ? 
-                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel, WP::VT) :
-                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel, WP::HT) ;
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::VT) :
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::HT) ;
         case WP::T:
            return abs(LepGood_pdgId)==13 ? 
-                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel, WP::T) :
-                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel, WP::VT) ;
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::T) :
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::VT) ;
         case WP::M:
            return abs(LepGood_pdgId)==13 ? 
-                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel, WP::M) :
-                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel, WP::T) ;
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::M) :
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::T) ;
         case WP::VVL: return LepGood_miniRelIso < 0.4;
         default:
             std::cerr << "Working point " << wp << " not implemented for multiIso_multiWP" << std::endl;
             abort();
     }
 }
-float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatio, float LepGood_jetPtRel, int wp) {
-    return multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,WP::WPId(wp));
+float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, int wp) {
+    return multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,WP::WPId(wp));
 }
 
-float multiIso_singleWP_relaxFO3(int LepGood_pdgId, float LepGood_pt, float LepGood_CorrConePt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatio, float LepGood_jetPtRel, WP::WPId wp) {
+float multiIso_singleWP_relaxFO3(int LepGood_pdgId, float LepGood_pt, float LepGood_CorrConePt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
   assert (wp==2);
-  return multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,(LepGood_miniRelIso>=0.4),LepGood_CorrConePt/LepGood_pt*LepGood_jetPtRatio,LepGood_jetPtRel,wp)>0;
+  return multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,(LepGood_miniRelIso>=0.4),LepGood_CorrConePt/LepGood_pt*LepGood_jetPtRatiov2,LepGood_jetPtRelv2,wp)>0;
 }
 
-float multiIso_singleWP_relaxFO4(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatio, float LepGood_jetPtRel, WP::WPId wp) {
+float multiIso_singleWP_relaxFO4(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
   assert (wp==2);
-  if (abs(LepGood_pdgId)==13) return (LepGood_miniRelIso<0.4 && (1/LepGood_jetPtRatio < (1/0.7 + LepGood_miniRelIso)));
-  else if (abs(LepGood_pdgId)==11) return (LepGood_miniRelIso<0.4 && (1/LepGood_jetPtRatio < (1/0.68 + LepGood_miniRelIso)));
+  if (abs(LepGood_pdgId)==13) return (LepGood_miniRelIso<0.4 && (1/LepGood_jetPtRatiov2 < (1/0.76 + LepGood_miniRelIso)));
+  else if (abs(LepGood_pdgId)==11) return (LepGood_miniRelIso<0.4 && (1/LepGood_jetPtRatiov2 < (1/0.80 + LepGood_miniRelIso)));
   else assert(false);
+}
+
+float mvaIdSpring15(int LepGood_pdgId, float LepGood_eta, float LepGood_mvaIdSpring15, WP::WPId wp, int iso_emulation_applied){
+  if (abs(LepGood_pdgId)!=11) return 1;
+  switch (wp) {
+
+  case WP::L:
+    if (iso_emulation_applied) {
+      if (eta<0.8) return LepGood_mvaIdSpring15>-0.155;
+      else if (eta<=1.479) return LepGood_mvaIdSpring15>-0.56;
+      else return LepGood_mvaIdSpring15>-0.76;
+    }
+    else {
+      if (eta<0.8) return LepGood_mvaIdSpring15>-0.70;
+      else if (eta<=1.479) return LepGood_mvaIdSpring15>-0.83;
+      else return LepGood_mvaIdSpring15>-0.92;
+  }
+
+  case WP::T:
+    if (eta<0.8) return LepGood_mvaIdSpring15>0.87;
+    else if (eta<=1.479) return LepGood_mvaIdSpring15>0.60;
+    else return LepGood_mvaIdSpring15>0.17;
+
+  default:
+    std::cerr << "Working point " << wp << " not implemented for mvaIdSpring15" << std::endl;
+    abort();
+  }
 }
 
 void fakeRate() {}
