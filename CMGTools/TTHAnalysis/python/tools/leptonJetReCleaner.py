@@ -336,17 +336,17 @@ def _susy2lss_lepId_CB(lep):
         return False
 
 def _susy2lss_multiIso(lep):
-        if abs(lep.pdgId) == 13: A,B,C = (0.14,0.68,6.7)
-        else:                    A,B,C = (0.10,0.70,7.0)
-        return lep.miniRelIso < A and (lep.jetPtRatio > B or lep.jetPtRel > C)
-def _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio(lep):
-        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.68,6.7)
-        else:                    A,B,C = (0.4,0.70,7.0)
-        return lep.miniRelIso < A and (conept(lep.pt,lep.miniRelIso,lep.jetPtRatio,lep.jetPtRel,lep.pdgId,2)/lep.pt*lep.jetPtRatio > B or lep.jetPtRel > C)
+        if abs(lep.pdgId) == 13: A,B,C = (0.16,0.76,7.2)
+        else:                    A,B,C = (0.12,0.80,7.2)
+        return lep.miniRelIso < A and (lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
+def _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatiov2(lep):
+        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
+        else:                    A,B,C = (0.4,0.80,7.2)
+        return lep.miniRelIso < A and (conept(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)/lep.pt*lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
 def _susy2lss_multiIso_withMiniIsoRelaxed_CutForFO4(lep):
-        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.68,6.7)
-        else:                    A,B,C = (0.4,0.70,7.0)
-        return lep.miniRelIso < A and (1/lep.jetPtRatio < (1/B + lep.miniRelIso))
+        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
+        else:                    A,B,C = (0.4,0.80,7.2)
+        return lep.miniRelIso < A and (1/lep.jetPtRatiov2 < (1/B + lep.miniRelIso))
 
 def _susy2lss_lepId_CBOld(lep):
         if lep.pt <= 10: return False
