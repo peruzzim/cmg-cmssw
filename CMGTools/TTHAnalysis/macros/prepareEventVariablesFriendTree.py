@@ -20,10 +20,11 @@ MODULES.append( ('leptonJetReCleanerTTH', LeptonJetReCleaner("MiniSip8",
                 lambda lep : lep.mvaTTH > 0.6 and lep.mediumMuonId,
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
 #--- Susy multilep instances
-MODULES.append( ('leptonJetReCleanerSusy', LeptonJetReCleaner("Mini", 
-                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
-                lambda lep : lep.sip3d < 4 and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep),
-                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
+print "TO BE DECIDED WHAT WE DO"
+#MODULES.append( ('leptonJetReCleanerSusy', LeptonJetReCleaner("Mini", 
+#                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
+#                lambda lep : lep.sip3d < 4 and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep),
+#                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
 from CMGTools.TTHAnalysis.tools.leptonFakeRateQCDVars import LeptonFakeRateQCDVars
 #--- TTH instances
 MODULES.append( ('leptonFakeRateQCDVarsTTH', LeptonFakeRateQCDVars(
@@ -43,6 +44,7 @@ list_cuts_tightlepid_nomultiiso_noeltightmvaid_nosip_nodxy = [
             lambda lep : ((abs(lep.eta)<2.4 and abs(lep.pdgId)==13) or (abs(lep.eta)<2.5 and abs(lep.pdgId)==11)),
             lambda lep : ((abs(lep.pdgId)!=11) or abs(lep.eta)<1.4442 or abs(lep.eta)>1.566),
             lambda lep : (lep.mediumMuonId > 0 or abs(lep.pdgId)!=13),
+            CORREGGERE QUI TUTTO
             lambda lep : (lep.mvaIdPhys14 > -0.11+(-0.35+0.11)*(abs(lep.eta)>0.8)+(-0.55+0.35)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
             lambda lep : (lep.lostHits==0 or abs(lep.pdgId)!=11),
             lambda lep : lep.convVeto,

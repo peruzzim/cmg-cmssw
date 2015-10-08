@@ -315,6 +315,7 @@ def _tthlep_lepId(lep):
         return False
 
 def _susy2lss_lepId_CBloose(lep):
+    COPIARE FO
         if abs(lep.pdgId) == 13:
             if lep.pt <= 5: return False
             if not lep.mediumMuonId > 0: return False
