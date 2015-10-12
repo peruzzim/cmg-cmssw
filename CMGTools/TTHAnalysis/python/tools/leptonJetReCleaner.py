@@ -262,8 +262,8 @@ class LeptonJetReCleaner:
         elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 28
         elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 500 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 29
         elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 500 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 30
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and met > 500 and nj >= 2 : SR = 31
-        elif l1pt > 25 and l2pt > 25 and ht > 1600 and met > 50 and met < 500 and nj >= 2 : SR = 32
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and met > 300 and nj >= 2 : SR = 31
+        elif l1pt > 25 and l2pt > 25 and ht > 1125 and met > 50 and met < 500 and nj >= 2 : SR = 32
         ####
         elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 33 #1B
         elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 34 #2B
@@ -290,8 +290,8 @@ class LeptonJetReCleaner:
         elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 54 #21B       
         elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 500 and nj >= 2 and mtw > 120 : SR = 55 #23B
         elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 500 and nj >= 2 and mtw > 120 : SR = 56 #24B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and met > 500 and nj >= 2 : SR = 57 #25B
-        elif l1pt > 25 and l2pt < 25 and ht > 1600 and met > 50 and met < 500 and nj >= 2 : SR = 58 #26B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and met > 300 and nj >= 2 : SR = 57 #25B
+        elif l1pt > 25 and l2pt < 25 and ht > 1125 and met > 50 and met < 500 and nj >= 2 : SR = 58 #26B
         ####
         elif l1pt < 25 and l2pt < 25 and  met > 50 and met < 200 and nb == 0 and mtw < 120 : SR = 59 #C1 
         elif l1pt < 25 and l2pt < 25 and  met > 200 and nb == 0 and mtw < 120 : SR = 60 #C2 
