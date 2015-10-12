@@ -331,19 +331,17 @@ def _susy2lss_lepId_CBloose(lep):
             return True
         return False
 
-def _susy2lss_lepId_loosestFO(lep):
+def _susy2lss_lepId_loosestFOnopt(lep):
     if not _susy2lss_lepId_CBloose(lep): return False
-    if lep.pt <= 10: return False
     if abs(lep.dxy)>=0.05: return False
-    if not (lep.sip3d < 4): return False
     if abs(lep.pdgId) == 13:
         return lep.mediumMuonId > 0 and lep.tightCharge > 0
     elif abs(lep.pdgId) == 11:
         return (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0)
     return False
 
-def _susy2lss_lepId_tighterFO(lep):
-    if not _susy2lss_lepId_loosestFO(lep): return False
+def _susy2lss_lepId_tighterFOnopt(lep):
+    if not _susy2lss_lepId_loosestFOnopt(lep): return False
     if abs(lep.pdgId)==11:
         if not lep.mvaIdSpring15 > -0.155+(-0.56+0.155)*(abs(lep.eta)>0.8)+(-0.76+0.56)*(abs(lep.eta)>1.479):
             return False
