@@ -9,22 +9,24 @@ MODULES = []
 #MODULES.append( ('2lss', EventVars2LSS()) )
 from CMGTools.TTHAnalysis.tools.susyVars_2lssInc import SusyVars2LSSInc 
 MODULES.append( ('susy2lss', SusyVars2LSSInc()) )
-from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner,_susy2lss_lepId_CB,_susy2lss_lepId_CBloose,_susy2lss_multiIso,_tthlep_lepId
+from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner,_susy2lss_lepId_CB,_susy2lss_lepId_CBloose,_susy2lss_multiIso,_tthlep_lepId,_susy2lss_idEmu_cuts,_susy2lss_idIsoEmu_cuts,_susy2lss_lepId_loosestFO
 #--- TTH instances
 MODULES.append( ('leptonJetReCleanerTTH', LeptonJetReCleaner("I03Sip8", 
+                lambda lep : lep.relIso03 < 0.5 and lep.sip3d < 8 and _tthlep_lepId(lep), 
                 lambda lep : lep.relIso03 < 0.5 and lep.sip3d < 8 and _tthlep_lepId(lep), 
                 lambda lep : lep.mvaTTH > 0.6 and lep.mediumMuonId,
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
 MODULES.append( ('leptonJetReCleanerTTH', LeptonJetReCleaner("MiniSip8", 
                 lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8 and _tthlep_lepId(lep), 
+                lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8 and _tthlep_lepId(lep), 
                 lambda lep : lep.mvaTTH > 0.6 and lep.mediumMuonId,
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
 #--- Susy multilep instances
-print "TO BE DECIDED WHAT WE DO"
-#MODULES.append( ('leptonJetReCleanerSusy', LeptonJetReCleaner("Mini", 
-#                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
-#                lambda lep : lep.sip3d < 4 and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep),
-#                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
+MODULES.append( ('leptonJetReCleanerSusy', LeptonJetReCleaner("Mini", 
+                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
+                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep) and _susy2lss_lepId_loosestFO(lep), 
+                lambda lep : lep.sip3d < 4 and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep),
+                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
 from CMGTools.TTHAnalysis.tools.leptonFakeRateQCDVars import LeptonFakeRateQCDVars
 #--- TTH instances
 MODULES.append( ('leptonFakeRateQCDVarsTTH', LeptonFakeRateQCDVars(
@@ -99,6 +101,9 @@ MODULES.append ( ('leptonFakeRateFO4InSitu', ObjTagger('FO4InSitu','LepGood',
                 lambda lep : (lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(+0.05-0.57)*(abs(lep.eta)>1.479) or abs(lep.pdgId)!=11),
                 lambda lep : lep.sip3d>=4,
             ]) ) )
+
+MODULES.append ( ('leptonIdEmuCuts', ObjTagger('idEmu','LepGood',[lambda lep: _susy2lss_idEmu_cuts(lep)]) ) )
+MODULES.append ( ('leptonIdIsoEmuCuts', ObjTagger('idIsoEmu','LepGood',[lambda lep: _susy2lss_idIsoEmu_cuts(lep)]) ) )
 
 #from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
 #pufile="../path/to/nvtx/file.root"

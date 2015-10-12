@@ -318,7 +318,7 @@ def _tthlep_lepId(lep):
         return False
 
 def _susy2lss_lepId_CBloose(lep):
-    COPIARE FO
+SISTEMARE TOGLIENDO I TAGLI AGGIUNTI
         if abs(lep.pdgId) == 13:
             if lep.pt <= 5: return False
             if not lep.mediumMuonId > 0: return False
@@ -332,6 +332,10 @@ def _susy2lss_lepId_CBloose(lep):
             return True
         return False
 
+def _susy2lss_lepId_loosestFO(lep):
+    if not _susy2lss_lepId_CBloose(lep): return False
+    COPIARE FO
+
 def _susy2lss_lepId_CB(lep):
         if lep.pt <= 10: return False
         if abs(lep.pdgId) == 13:
@@ -343,6 +347,7 @@ def _susy2lss_lepId_CB(lep):
         return False
 
 def _susy2lss_idEmu_cuts(lep):
+    if (abs(lep.pdgId)!=11): return True
     if (lep.sigmaIEtaIEta>=(0.011 if abs(lep.etaSc)<1.479 else 0.031)): return False
     if (lep.hadronicOverEm>=0.08): return False
     if (abs(lep.dEtaScTrkIn)>=0.01): return False
@@ -351,6 +356,7 @@ def _susy2lss_idEmu_cuts(lep):
     return True
 
 def _susy2lss_idIsoEmu_cuts(lep):
+    if (abs(lep.pdgId)!=11): return True
     if not _susy2lss_idEmu_cuts(lep): return False
     if (lep.ecalPFClusterIso>=0.45*lep.pt): return False
     if (lep.hcalPFClusterIso>=0.25*lep.pt): return False
