@@ -803,7 +803,7 @@ float mvaIdSpring15(int LepGood_pdgId, float LepGood_eta, float LepGood_mvaIdSpr
 
   switch (wp) {
 
-  case WP::L:
+  case WP::VL:
     if (iso_emulation_applied) {
       if (eta<0.8) return LepGood_mvaIdSpring15>-0.155;
       else if (eta<=1.479) return LepGood_mvaIdSpring15>-0.56;
