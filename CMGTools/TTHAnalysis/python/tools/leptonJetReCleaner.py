@@ -2,9 +2,10 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from CMGTools.TTHAnalysis.tools.conept import conept
 
 class LeptonJetReCleaner:
-    def __init__(self,label,looseLeptonSel,tightLeptonSel,cleanJet,isMC=True):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,tightLeptonSel,cleanJet,isMC=True):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
+        self.cleaningLeptonSel = cleaningLeptonSel
         self.tightLeptonSel = tightLeptonSel
         self.cleanJet = cleanJet
         self.isMC = isMC
@@ -75,12 +76,14 @@ class LeptonJetReCleaner:
         ret["nLepTightVeto"] = len(ret["iLTV"])
         lepstv = [ leps[il] for il in ret["iLTV"] ]
         #
+        # define leptons for cleaning
+        cleaningLeps = [il for il in ret["iL"] if self.cleaningLeptonSel(leps[il])]
         ### Define jets
         ret["iJ"] = []
         # 0. mark each jet as clean
         for j in jetsc+jetsd: j._clean = True
-        # 1. associate to each loose lepton its nearest jet 
-        for il in ret["iL"]:
+        # 1. associate to each lepton passing the cleaning selection its nearest jet 
+        for il in cleaningLeps:
             lep = leps[il]
             best = None; bestdr = 0.4
             for j in jetsc+jetsd:
@@ -338,6 +341,21 @@ def _susy2lss_lepId_CB(lep):
                 return False
             return lep.mvaIdSpring15 > 0.87+(0.60-0.87)*(abs(lep.eta)>0.8)+(0.17-0.60)*(abs(lep.eta)>1.479)
         return False
+
+def _susy2lss_idEmu_cuts(lep):
+    if (lep.sigmaIEtaIEta>=(0.011 if abs(lep.etaSc)<1.479 else 0.031)): return False
+    if (lep.hadronicOverEm>=0.08): return False
+    if (abs(lep.dEtaScTrkIn)>=0.01): return False
+    if (abs(lep.dPhiScTrkIn)>=(0.04 if abs(lep.etaSc)<1.479 else 0.08)): return False
+    if (abs(lep.eInvMinusPInv)>=0.01): return False
+    return True
+
+def _susy2lss_idIsoEmu_cuts(lep):
+    if not _susy2lss_idEmu_cuts(lep): return False
+    if (lep.ecalPFClusterIso>=0.45*lep.pt): return False
+    if (lep.hcalPFClusterIso>=0.25*lep.pt): return False
+    if (lep.dr03TkSumPt>=0.2*lep.pt): return False
+    return True
 
 def _susy2lss_multiIso(lep):
         if abs(lep.pdgId) == 13: A,B,C = (0.16,0.76,7.2)
