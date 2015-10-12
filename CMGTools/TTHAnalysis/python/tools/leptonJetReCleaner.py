@@ -353,6 +353,7 @@ def _susy2lss_lepId_IPcuts(lep):
     if not lep.sip3d<4: return False
     if not (abs(lep.dxy)<0.05): return False
     if not (abs(lep.dz)<0.1): return False
+    return True
 
 def _susy2lss_lepId_CB(lep):
     if not _susy2lss_lepId_CBloose(lep): return False
