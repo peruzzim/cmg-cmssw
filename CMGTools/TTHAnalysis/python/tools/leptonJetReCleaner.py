@@ -60,22 +60,6 @@ class LeptonJetReCleaner:
         ret["nLepGoodVeto"] = len(ret["iLV"])
         lepslv = [ leps[il] for il in ret["iLV"] ]            
         #
-        ### Define tight leptons
-        ret["iLT"] = []; ret["nLepTight10"] = 0
-        ret["iLTV"] = []; ret["nLepTightVeto10"] = 0
-        for il in ret["iL"]:
-            lep = leps[il]
-            if self.tightLeptonSel(lep):
-                ret["iLT"].append(il)
-                if lep.pt > 10: ret["nLepTight10"] += 1
-                if self.passMllTLVeto(lep, lepsl, 76, 106, True) and self.passMllTLVeto(lep, lepsl, 0, 12, True):
-                    ret["iLTV"].append(il)
-                    if lep.pt > 10: ret["nLepTightVeto10"] += 1
-        ret["nLepTight"] = len(ret["iLT"])
-        lepst = [ leps[il] for il in ret["iLT"] ]
-        ret["nLepTightVeto"] = len(ret["iLTV"])
-        lepstv = [ leps[il] for il in ret["iLTV"] ]
-        #
         # define leptons for cleaning
         cleaningLeps = [il for il in ret["iL"] if self.cleaningLeptonSel(leps[il])]
         ### Define jets
@@ -128,6 +112,22 @@ class LeptonJetReCleaner:
                 ret["nJet40"] += 1; ret["htJet40j"] += j.pt; 
                 if j.btagCSV>0.423: ret["nBJetLoose40"] += 1
                 if j.btagCSV>0.814: ret["nBJetMedium40"] += 1
+        #
+        ### Define tight leptons
+        ret["iLT"] = []; ret["nLepTight10"] = 0
+        ret["iLTV"] = []; ret["nLepTightVeto10"] = 0
+        for il in ret["iL"]:
+            lep = leps[il]
+            if self.tightLeptonSel(lep,ret["htJet40j"]):
+                ret["iLT"].append(il)
+                if lep.pt > 10: ret["nLepTight10"] += 1
+                if self.passMllTLVeto(lep, lepsl, 76, 106, True) and self.passMllTLVeto(lep, lepsl, 0, 12, True):
+                    ret["iLTV"].append(il)
+                    if lep.pt > 10: ret["nLepTightVeto10"] += 1
+        ret["nLepTight"] = len(ret["iLT"])
+        lepst = [ leps[il] for il in ret["iLT"] ]
+        ret["nLepTightVeto"] = len(ret["iLTV"])
+        lepstv = [ leps[il] for il in ret["iLTV"] ]
         #
         ### 2lss specific things
         ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
@@ -332,7 +332,9 @@ def _susy2lss_lepId_CBloose(lep):
         return False
 
 def _susy2lss_lepId_loosestFO(lep):
+    if not _susy2lss_lepId_CBloose(lep): return False
     if lep.pt <= 10: return False
+    if abs(lep.dxy)>=0.05: return False
     if not (lep.sip3d < 4): return False
     if abs(lep.pdgId) == 13:
         return lep.mediumMuonId > 0 and lep.tightCharge > 0
@@ -340,19 +342,33 @@ def _susy2lss_lepId_loosestFO(lep):
         return (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0)
     return False
 
+def _susy2lss_lepId_tighterFO(lep):
+    if not _susy2lss_lepId_loosestFO(lep): return False
+    if abs(lep.pdgId)==11:
+        if not lep.mvaIdSpring15 > -0.155+(-0.56+0.155)*(abs(lep.eta)>0.8)+(-0.76+0.56)*(abs(lep.eta)>1.479):
+            return False
+        if not _susy2lss_idIsoEmu_cuts(lep): return False
+    return True
+
+def _susy2lss_lepId_IPcuts(lep):
+    if not lep.sip3d<4: return False
+    if not (abs(lep.dxy)<0.05): return False
+    if not (abs(lep.dz)<0.1): return False
+
 def _susy2lss_lepId_CB(lep):
-        if lep.pt <= 10: return False
-        if not (lep.sip3d < 4): return False
-        if abs(lep.pdgId) == 13:
-            return lep.mediumMuonId > 0 and lep.tightCharge > 0
-        elif abs(lep.pdgId) == 11:
-            if not (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0): 
-                return False
-            return lep.mvaIdSpring15 > 0.87+(0.60-0.87)*(abs(lep.eta)>0.8)+(0.17-0.60)*(abs(lep.eta)>1.479)
-        return False
+    if not _susy2lss_lepId_CBloose(lep): return False
+    if lep.pt <= 10: return False
+    if not _susy2lss_lepId_IPcuts(lep): return False
+    if abs(lep.pdgId) == 13:
+        return lep.mediumMuonId > 0 and lep.tightCharge > 0
+    elif abs(lep.pdgId) == 11:
+        if not (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0): 
+            return False
+        return lep.mvaIdSpring15 > 0.87+(0.60-0.87)*(abs(lep.eta)>0.8)+(0.17-0.60)*(abs(lep.eta)>1.479)
+    return False
 
 def _susy2lss_idEmu_cuts(lep):
-    if (abs(lep.pdgId)!=11): return True
+    if (abs(lep.pdgId)!=11): return False
     if (lep.sigmaIEtaIEta>=(0.011 if abs(lep.etaSc)<1.479 else 0.031)): return False
     if (lep.hadronicOverEm>=0.08): return False
     if (abs(lep.dEtaScTrkIn)>=0.01): return False
@@ -361,7 +377,7 @@ def _susy2lss_idEmu_cuts(lep):
     return True
 
 def _susy2lss_idIsoEmu_cuts(lep):
-    if (abs(lep.pdgId)!=11): return True
+    if (abs(lep.pdgId)!=11): return False
     if not _susy2lss_idEmu_cuts(lep): return False
     if (lep.ecalPFClusterIso>=0.45*lep.pt): return False
     if (lep.hcalPFClusterIso>=0.25*lep.pt): return False
