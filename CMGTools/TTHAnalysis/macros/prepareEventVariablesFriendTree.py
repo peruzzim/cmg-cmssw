@@ -9,7 +9,7 @@ MODULES = []
 #MODULES.append( ('2lss', EventVars2LSS()) )
 from CMGTools.TTHAnalysis.tools.susyVars_2lssInc import SusyVars2LSSInc 
 MODULES.append( ('susy2lss', SusyVars2LSSInc()) )
-from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner,_susy2lss_lepId_CB,_susy2lss_lepId_CBloose,_susy2lss_multiIso,_tthlep_lepId,_susy2lss_idEmu_cuts,_susy2lss_idIsoEmu_cuts,_susy2lss_lepId_loosestFOnopt,_susy2lss_lepId_tighterFOnopt,_susy2lss_lepId_IPcuts
+from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner,_susy2lss_lepId_CB,_susy2lss_lepId_CBloose,_susy2lss_multiIso,_tthlep_lepId,_susy2lss_idEmu_cuts,_susy2lss_idIsoEmu_cuts,_susy2lss_lepId_loosestFO,_susy2lss_lepId_tighterFO,_susy2lss_lepId_IPcuts
 ##--- TTH instances
 #MODULES.append( ('leptonJetReCleanerTTH', LeptonJetReCleaner("I03Sip8", 
 #                lambda lep : lep.relIso03 < 0.5 and lep.sip3d < 8 and _tthlep_lepId(lep), 
@@ -24,7 +24,7 @@ from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner,_su
 #--- Susy multilep instances
 MODULES.append( ('leptonJetReCleanerSusy', LeptonJetReCleaner("Mini", 
                 lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
-                lambda lep : (_susy2lss_lepId_loosestFOnopt(lep) and _susy2lss_lepId_IPcuts(lep)), # cuts applied on top of previous selection
+                lambda lep : (_susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep)), # cuts applied on top of previous selection
                 lambda lep,ht : _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)),
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
 from CMGTools.TTHAnalysis.tools.leptonFakeRateQCDVars import LeptonFakeRateQCDVars
@@ -43,28 +43,24 @@ from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
 MODULES.append ( ('leptonFakeRateFO2', ObjTagger('FO2','LepGood',[
                 lambda lep: lep.miniRelIso<0.4,
                 lambda lep: _susy2lss_lepId_CBloose(lep),
-                lambda lep: _susy2lss_lepId_loosestFOnopt(lep),
+                lambda lep: _susy2lss_lepId_loosestFO(lep),
                 lambda lep: _susy2lss_lepId_IPcuts(lep),
-                lambda lep: lep.pt>10,
                 ] ) ) )
 MODULES.append ( ('leptonFakeRateFO2iso', ObjTagger('FO2iso','LepGood',[
                 lambda lep: lep.miniRelIso<0.4,
                 lambda lep: _susy2lss_lepId_CBloose(lep),
-                lambda lep: _susy2lss_lepId_tighterFOnopt(lep),
+                lambda lep: _susy2lss_lepId_tighterFO(lep),
                 lambda lep: _susy2lss_lepId_IPcuts(lep),
-                lambda lep: lep.pt>10,
                 ] ) ) )
 MODULES.append ( ('leptonFakeRateFO2InSitu', ObjTagger('FO2InSitu','LepGood',[
                 lambda lep: lep.miniRelIso<0.4,
                 lambda lep: _susy2lss_lepId_CBloose(lep),
-                lambda lep: _susy2lss_lepId_loosestFOnopt(lep),
-                lambda lep: lep.pt>10,
+                lambda lep: _susy2lss_lepId_loosestFO(lep),
                 ] ) ) )
 MODULES.append ( ('leptonFakeRateFO2isoInSitu', ObjTagger('FO2isoInSitu','LepGood',[
                 lambda lep: lep.miniRelIso<0.4,
                 lambda lep: _susy2lss_lepId_CBloose(lep),
-                lambda lep: _susy2lss_lepId_tighterFOnopt(lep),
-                lambda lep: lep.pt>10,
+                lambda lep: _susy2lss_lepId_tighterFO(lep),
                 ] ) ) )
 
 MODULES.append ( ('leptonIdEmuCuts', ObjTagger('idEmu','LepGood',[lambda lep: _susy2lss_idEmu_cuts(lep)]) ) )

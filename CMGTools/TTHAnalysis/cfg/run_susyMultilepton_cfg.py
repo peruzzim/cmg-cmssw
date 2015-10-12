@@ -653,6 +653,12 @@ elif test == "ra5-sync-mc":
     selectedComponents = [ comp ]
     sequence.remove(jsonAna)
     if is50ns or runData: raise RuntimeError, 'Wrong configuration'
+elif test == "ra5-sync-mc-v2":
+    comp = cfg.MCComponent( files = ["root://eoscms.cern.ch//store/mc/RunIISpring15MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/10000/3A2285C7-CA6D-E511-B68F-0CC47A13D09C.root"], name="TTWv2_RA5_sync" )
+    comp.triggers = []
+    selectedComponents = [ comp ]
+    sequence.remove(jsonAna)
+    if is50ns or runData: raise RuntimeError, 'Wrong configuration'
 elif test == "ra5-sync-data":
     comp = cfg.DataComponent( files = [
             "root://eoscms.cern.ch//store/data/Run2015D/DoubleMuon/MINIAOD/PromptReco-v3/000/257/531/00000/B26DC190-8166-E511-AE66-02163E0133A7.root",
