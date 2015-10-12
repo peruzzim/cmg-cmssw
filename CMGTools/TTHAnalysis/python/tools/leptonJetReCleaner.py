@@ -318,26 +318,31 @@ def _tthlep_lepId(lep):
         return False
 
 def _susy2lss_lepId_CBloose(lep):
-SISTEMARE TOGLIENDO I TAGLI AGGIUNTI
         if abs(lep.pdgId) == 13:
             if lep.pt <= 5: return False
-            if not lep.mediumMuonId > 0: return False
-            return True
+            return True #lep.mediumMuonId > 0
         elif abs(lep.pdgId) == 11:
             if lep.pt <= 7: return False
             if not (lep.convVeto and lep.lostHits <= 1): 
                 return False
             if not lep.mvaIdSpring15 > -0.70+(-0.83+0.70)*(abs(lep.eta)>0.8)+(-0.92+0.83)*(abs(lep.eta)>1.479):
                 return False
+            if not _susy2lss_idEmu_cuts(lep): return False
             return True
         return False
 
 def _susy2lss_lepId_loosestFO(lep):
-    if not _susy2lss_lepId_CBloose(lep): return False
-    COPIARE FO
+    if lep.pt <= 10: return False
+    if not (lep.sip3d < 4): return False
+    if abs(lep.pdgId) == 13:
+        return lep.mediumMuonId > 0 and lep.tightCharge > 0
+    elif abs(lep.pdgId) == 11:
+        return (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0)
+    return False
 
 def _susy2lss_lepId_CB(lep):
         if lep.pt <= 10: return False
+        if not (lep.sip3d < 4): return False
         if abs(lep.pdgId) == 13:
             return lep.mediumMuonId > 0 and lep.tightCharge > 0
         elif abs(lep.pdgId) == 11:

@@ -24,8 +24,8 @@ MODULES.append( ('leptonJetReCleanerTTH', LeptonJetReCleaner("MiniSip8",
 #--- Susy multilep instances
 MODULES.append( ('leptonJetReCleanerSusy', LeptonJetReCleaner("Mini", 
                 lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
-                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep) and _susy2lss_lepId_loosestFO(lep), 
-                lambda lep : lep.sip3d < 4 and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep),
+                lambda lep : _susy2lss_lepId_loosestFO(lep), # cuts applied on top of previous selection
+                lambda lep : _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep),
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
 from CMGTools.TTHAnalysis.tools.leptonFakeRateQCDVars import LeptonFakeRateQCDVars
 #--- TTH instances
