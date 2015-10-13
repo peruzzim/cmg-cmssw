@@ -233,65 +233,65 @@ class LeptonJetReCleaner:
         return ret
     def SR(self, l1pt, l2pt, ht, met, nj, nb, mtw):
         if l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 1
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 2
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 500 and nj >= 2 and mtw < 120) or (met > 50 and met < 500 and nj >= 2 and mtw > 120))   : SR = 3
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 0 and mtw < 120  : SR = 4
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 5
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 0 and mtw < 120  : SR = 6
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw > 120  : SR = 7
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 500 and nj >= 2 and mtw > 120)) : SR = 8
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 2
+        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 300 and nj >= 2 and mtw < 120) or (met > 50 and met < 300 and nj >= 2 and mtw > 120))   : SR = 3
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 0 and mtw < 120  : SR = 4
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 5
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 0 and mtw < 120  : SR = 6
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw > 120  : SR = 7
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 300 and nj >= 2 and mtw > 120)) : SR = 8
         elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 9
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120  : SR = 10
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 1 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 500 and nj >= 2 and mtw < 120) or (met > 50 and met < 500 and nj >= 2 and mtw > 120))   : SR = 11
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 1 and mtw < 120  : SR = 12
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120  : SR = 13
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 1 and mtw < 120  : SR = 14
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw > 120  : SR = 15
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and nb == 1 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 500 and nj >= 2 and mtw > 120)) : SR = 16
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120  : SR = 10
+        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 1 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 300 and nj >= 2 and mtw < 120) or (met > 50 and met < 300 and nj >= 2 and mtw > 120))   : SR = 11
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 1 and mtw < 120  : SR = 12
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120  : SR = 13
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 1 and mtw < 120  : SR = 14
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw > 120  : SR = 15
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and nb == 1 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 300 and nj >= 2 and mtw > 120)) : SR = 16
         elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 17
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120  : SR = 18
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 2 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 500 and nj >= 2 and mtw < 120) or (met > 50 and met < 500 and nj >= 2 and mtw > 120))   : SR = 19
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 2 and mtw < 120  : SR = 20
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120  : SR = 21
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 2 and mtw < 120  : SR = 22
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw > 120  : SR = 23
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and nb == 2 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 500 and nj >= 2 and mtw > 120)) : SR = 24
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120  : SR = 18
+        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 2 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 300 and nj >= 2 and mtw < 120) or (met > 50 and met < 300 and nj >= 2 and mtw > 120))   : SR = 19
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 2 and mtw < 120  : SR = 20
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120  : SR = 21
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 2 and mtw < 120  : SR = 22
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw > 120  : SR = 23
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and nb == 2 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 300 and nj >= 2 and mtw > 120)) : SR = 24
         elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 25
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 26
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 200 and met < 500 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 27
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 28
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 500 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 29
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 500 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 30
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 26
+        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 27
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 28
+        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 300 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 29
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 300 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 30
         elif l1pt > 25 and l2pt > 25 and ht > 300 and met > 300 and nj >= 2 : SR = 31
-        elif l1pt > 25 and l2pt > 25 and ht > 1125 and met > 50 and met < 500 and nj >= 2 : SR = 32
+        elif l1pt > 25 and l2pt > 25 and ht > 1125 and met > 50 and met < 300 and nj >= 2 : SR = 32
         ####
         elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 33 #1B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 34 #2B
-        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 500 and nj >= 2)) and nb == 0 and mtw < 120 : SR = 35 #3B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 0 and mtw < 120 : SR = 36  #4B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 37 #5B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 0 and mtw < 120 : SR = 38 #6B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 34 #2B
+        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 300 and nj >= 2)) and nb == 0 and mtw < 120 : SR = 35 #3B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 0 and mtw < 120 : SR = 36  #4B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 37 #5B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 0 and mtw < 120 : SR = 38 #6B
         elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 39 #7B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 40 #8B
-        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 500 and nj >= 2)) and nb == 1 and mtw < 120 : SR = 41 #9B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 1 and mtw < 120 : SR = 42 #10B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 43 #11B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 1 and mtw < 120 : SR = 44 #12B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 40 #8B
+        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 300 and nj >= 2)) and nb == 1 and mtw < 120 : SR = 41 #9B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 1 and mtw < 120 : SR = 42 #10B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 43 #11B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 1 and mtw < 120 : SR = 44 #12B
         elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 45 #13B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 46 #14B
-        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 500 and nj >= 2)) and nb == 2 and mtw < 120 : SR = 47 #15B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 2 and mtw < 120 : SR = 48 #16B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 49 #17B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 2 and mtw < 120 : SR = 50 #18B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 46 #14B
+        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 300 and nj >= 2)) and nb == 2 and mtw < 120 : SR = 47 #15B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 2 and mtw < 120 : SR = 48 #16B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 49 #17B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 2 and mtw < 120 : SR = 50 #18B
        
         elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 51 #19B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 52 #20B
-        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 200 and met < 500 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 53 #21B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 54 #21B       
-        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 500 and nj >= 2 and mtw > 120 : SR = 55 #23B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 500 and nj >= 2 and mtw > 120 : SR = 56 #24B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 52 #20B
+        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 53 #21B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 54 #21B       
+        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 300 and nj >= 2 and mtw > 120 : SR = 55 #23B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 300 and nj >= 2 and mtw > 120 : SR = 56 #24B
         elif l1pt > 25 and l2pt < 25 and ht > 300 and met > 300 and nj >= 2 : SR = 57 #25B
-        elif l1pt > 25 and l2pt < 25 and ht > 1125 and met > 50 and met < 500 and nj >= 2 : SR = 58 #26B
+        elif l1pt > 25 and l2pt < 25 and ht > 1125 and met > 50 and met < 300 and nj >= 2 : SR = 58 #26B
         ####
         elif l1pt < 25 and l2pt < 25 and  met > 50 and met < 200 and nb == 0 and mtw < 120 : SR = 59 #C1 
         elif l1pt < 25 and l2pt < 25 and  met > 200 and nb == 0 and mtw < 120 : SR = 60 #C2 
