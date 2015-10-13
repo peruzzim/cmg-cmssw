@@ -334,7 +334,6 @@ def _susy2lss_lepId_CBloose(lep):
 def _susy2lss_lepId_loosestFO(lep):
     if not _susy2lss_lepId_CBloose(lep): return False
     if lep.pt <= 10: return False
-    if abs(lep.dxy)>=0.05: return False
     if abs(lep.pdgId) == 13:
         return lep.mediumMuonId > 0 and lep.tightCharge > 0
     elif abs(lep.pdgId) == 11:
