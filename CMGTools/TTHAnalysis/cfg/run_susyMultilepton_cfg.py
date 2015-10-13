@@ -657,7 +657,7 @@ elif test == "ra5-sync-mc-v2":
     comp = cfg.MCComponent( files = ["root://eoscms.cern.ch//store/mc/RunIISpring15MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/10000/3A2285C7-CA6D-E511-B68F-0CC47A13D09C.root"], name="TTWv2_RA5_sync" )
     comp.triggers = []
     comp.splitFactor = 1
-    comp.fineSplitFactor = 6
+    comp.fineSplitFactor = 20
     selectedComponents = [ comp ]
     sequence.remove(jsonAna)
     if is50ns or runData: raise RuntimeError, 'Wrong configuration'
