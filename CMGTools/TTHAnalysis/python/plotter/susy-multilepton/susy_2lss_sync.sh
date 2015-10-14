@@ -24,12 +24,12 @@ else
 fi
 
 SAVE="${GO}"
-for LL  in ll; do 
-for SR  in 0; do # 0X 1X 2X 3X; do 
-for LPt in hh; do
-#for LL  in ee em mm; do 
-#for SR  in 0 10 20 30; do # 0X 1X 2X 3X; do 
-#for LPt in hh hl; do
+for LL  in ee em mm ll; do 
+for SR  in 0 10 20 30; do # 0X 1X 2X 3X; do 
+for LPt in hh hl; do
+#for LL  in ll; do 
+#for SR  in 0; do # 0X 1X 2X 3X; do 
+#for LPt in hh; do
 for MOD in multiiso; do #oldpresel ptrel miniiso; do
 
 GO="${SAVE}"
@@ -43,10 +43,10 @@ case $SR in
 esac;
 
 case $LL in
-ee)  GO="${GO} -R anyll ee 'abs(LepGood1_pdgId) == 11 && abs(LepGood2_pdgId) == 11' -A ee trig_ee Triggers_ee" ;;
-em)  GO="${GO} -R anyll em 'abs(LepGood1_pdgId) != abs(LepGood2_pdgId)' -A em trig_em Triggers_em" ;;
-mm)  GO="${GO} -R anyll mm 'abs(LepGood1_pdgId) == 13 && abs(LepGood2_pdgId) == 13' -A mm trig_mm Triggers_mm" ;;
-ll)  GO="${GO} -A anyll trig_ll Triggers_ll" ;;
+ee)  GO="${GO} -R anyll ee 'abs(LepGood1_pdgId) == 11 && abs(LepGood2_pdgId) == 11' -A alwaystrue trig_ee Triggers_ee" ;;
+em)  GO="${GO} -R anyll em 'abs(LepGood1_pdgId) != abs(LepGood2_pdgId)' -A alwaystrue trig_em Triggers_em" ;;
+mm)  GO="${GO} -R anyll mm 'abs(LepGood1_pdgId) == 13 && abs(LepGood2_pdgId) == 13' -A alwaystrue trig_mm Triggers_mm" ;;
+ll)  GO="${GO} -A alwaystrue trig_ll '(abs(LepGood1_pdgId) != 11 || abs(LepGood2_pdgId) != 11 || Triggers_ee) && (abs(LepGood1_pdgId) != 13 || abs(LepGood2_pdgId) != 13 || Triggers_mm) && (abs(LepGood1_pdgId)==abs(LepGood2_pdgId) || Triggers_em)'" ;;
 esac;
 case $LPt in
 hl)  GO="${GO} -I lep2_pt25" ;;
