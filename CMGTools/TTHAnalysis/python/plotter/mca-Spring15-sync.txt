@@ -1,0 +1,1 @@
+TTWv2_RA5_sync : TTWv2_RA5_sync : xsec ; FillColor=ROOT.kOrange+1, Label="ttW miniAODv2 RA5 sync"

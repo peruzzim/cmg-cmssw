@@ -1,0 +1,4 @@
+Triggers_ee\b : (HLT_DoubleEl || (htJet40j>300)) && (HLT_DoubleElHT || (htJet40j<300)); AlsoData
+Triggers_mm\b : (HLT_DoubleMu || (htJet40j>300)) && (HLT_DoubleMuHT || (htJet40j<300)) ; AlsoData
+Triggers_em\b : (HLT_MuEG || (htJet40j>300)) && (HLT_MuEGHT || (htJet40j<300)); AlsoData
+
