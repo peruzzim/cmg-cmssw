@@ -2,11 +2,13 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from CMGTools.TTHAnalysis.tools.conept import conept
 
 class LeptonJetReCleaner:
-    def __init__(self,label,looseLeptonSel,tightLeptonSel,cleanJet,isMC=True):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,tightLeptonSel,cleanJet,selectJet,isMC=True):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
+        self.cleaningLeptonSel = cleaningLeptonSel
         self.tightLeptonSel = tightLeptonSel
         self.cleanJet = cleanJet
+        self.selectJet = selectJet
         self.isMC = isMC
     def listBranches(self):
         label = self.label
@@ -59,28 +61,14 @@ class LeptonJetReCleaner:
         ret["nLepGoodVeto"] = len(ret["iLV"])
         lepslv = [ leps[il] for il in ret["iLV"] ]            
         #
-        ### Define tight leptons
-        ret["iLT"] = []; ret["nLepTight10"] = 0
-        ret["iLTV"] = []; ret["nLepTightVeto10"] = 0
-        for il in ret["iL"]:
-            lep = leps[il]
-            if self.tightLeptonSel(lep):
-                ret["iLT"].append(il)
-                if lep.pt > 10: ret["nLepTight10"] += 1
-                if self.passMllTLVeto(lep, lepsl, 76, 106, True) and self.passMllTLVeto(lep, lepsl, 0, 12, True):
-                    ret["iLTV"].append(il)
-                    if lep.pt > 10: ret["nLepTightVeto10"] += 1
-        ret["nLepTight"] = len(ret["iLT"])
-        lepst = [ leps[il] for il in ret["iLT"] ]
-        ret["nLepTightVeto"] = len(ret["iLTV"])
-        lepstv = [ leps[il] for il in ret["iLTV"] ]
-        #
+        # define leptons for cleaning
+        cleaningLeps = [il for il in ret["iL"] if self.cleaningLeptonSel(leps[il])]
         ### Define jets
         ret["iJ"] = []
         # 0. mark each jet as clean
-        for j in jetsc+jetsd: j._clean = True
-        # 1. associate to each loose lepton its nearest jet 
-        for il in ret["iL"]:
+        for j in jetsc+jetsd: j._clean = True if self.selectJet(j) else False
+        # 1. associate to each lepton passing the cleaning selection its nearest jet 
+        for il in cleaningLeps:
             lep = leps[il]
             best = None; bestdr = 0.4
             for j in jetsc+jetsd:
@@ -125,6 +113,22 @@ class LeptonJetReCleaner:
                 ret["nJet40"] += 1; ret["htJet40j"] += j.pt; 
                 if j.btagCSV>0.423: ret["nBJetLoose40"] += 1
                 if j.btagCSV>0.814: ret["nBJetMedium40"] += 1
+        #
+        ### Define tight leptons
+        ret["iLT"] = []; ret["nLepTight10"] = 0
+        ret["iLTV"] = []; ret["nLepTightVeto10"] = 0
+        for il in ret["iL"]:
+            lep = leps[il]
+            if self.tightLeptonSel(lep,ret["htJet40j"]):
+                ret["iLT"].append(il)
+                if lep.pt > 10: ret["nLepTight10"] += 1
+                if self.passMllTLVeto(lep, lepsl, 76, 106, True) and self.passMllTLVeto(lep, lepsl, 0, 12, True):
+                    ret["iLTV"].append(il)
+                    if lep.pt > 10: ret["nLepTightVeto10"] += 1
+        ret["nLepTight"] = len(ret["iLT"])
+        lepst = [ leps[il] for il in ret["iLT"] ]
+        ret["nLepTightVeto"] = len(ret["iLTV"])
+        lepstv = [ leps[il] for il in ret["iLTV"] ]
         #
         ### 2lss specific things
         ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
@@ -230,65 +234,65 @@ class LeptonJetReCleaner:
         return ret
     def SR(self, l1pt, l2pt, ht, met, nj, nb, mtw):
         if l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 1
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 2
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 500 and nj >= 2 and mtw < 120) or (met > 50 and met < 500 and nj >= 2 and mtw > 120))   : SR = 3
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 0 and mtw < 120  : SR = 4
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 5
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 0 and mtw < 120  : SR = 6
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw > 120  : SR = 7
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 500 and nj >= 2 and mtw > 120)) : SR = 8
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 2
+        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 300 and nj >= 2 and mtw < 120) or (met > 50 and met < 300 and nj >= 2 and mtw > 120))   : SR = 3
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 0 and mtw < 120  : SR = 4
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 5
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 0 and mtw < 120  : SR = 6
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw > 120  : SR = 7
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 300 and nj >= 2 and mtw > 120)) : SR = 8
         elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 9
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120  : SR = 10
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 1 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 500 and nj >= 2 and mtw < 120) or (met > 50 and met < 500 and nj >= 2 and mtw > 120))   : SR = 11
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 1 and mtw < 120  : SR = 12
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120  : SR = 13
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 1 and mtw < 120  : SR = 14
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw > 120  : SR = 15
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and nb == 1 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 500 and nj >= 2 and mtw > 120)) : SR = 16
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120  : SR = 10
+        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 1 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 300 and nj >= 2 and mtw < 120) or (met > 50 and met < 300 and nj >= 2 and mtw > 120))   : SR = 11
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 1 and mtw < 120  : SR = 12
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120  : SR = 13
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 1 and mtw < 120  : SR = 14
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw > 120  : SR = 15
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and nb == 1 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 300 and nj >= 2 and mtw > 120)) : SR = 16
         elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 17
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120  : SR = 18
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 2 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 500 and nj >= 2 and mtw < 120) or (met > 50 and met < 500 and nj >= 2 and mtw > 120))   : SR = 19
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 2 and mtw < 120  : SR = 20
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120  : SR = 21
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 2 and mtw < 120  : SR = 22
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw > 120  : SR = 23
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and nb == 2 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 500 and nj >= 2 and mtw > 120)) : SR = 24
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120  : SR = 18
+        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 2 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 300 and nj >= 2 and mtw < 120) or (met > 50 and met < 300 and nj >= 2 and mtw > 120))   : SR = 19
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 2 and mtw < 120  : SR = 20
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120  : SR = 21
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 2 and mtw < 120  : SR = 22
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw > 120  : SR = 23
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and nb == 2 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 300 and nj >= 2 and mtw > 120)) : SR = 24
         elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 25
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 26
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 200 and met < 500 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 27
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 28
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 500 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 29
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1600 and met > 50 and met < 500 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 30
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and met > 500 and nj >= 2 : SR = 31
-        elif l1pt > 25 and l2pt > 25 and ht > 1600 and met > 50 and met < 500 and nj >= 2 : SR = 32
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 26
+        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 27
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 28
+        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 300 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 29
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 300 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 30
+        elif l1pt > 25 and l2pt > 25 and ht > 300 and met > 300 and nj >= 2 : SR = 31
+        elif l1pt > 25 and l2pt > 25 and ht > 1125 and met > 50 and met < 300 and nj >= 2 : SR = 32
         ####
         elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 33 #1B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 34 #2B
-        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 500 and nj >= 2)) and nb == 0 and mtw < 120 : SR = 35 #3B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 0 and mtw < 120 : SR = 36  #4B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 37 #5B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 0 and mtw < 120 : SR = 38 #6B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 34 #2B
+        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 300 and nj >= 2)) and nb == 0 and mtw < 120 : SR = 35 #3B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 0 and mtw < 120 : SR = 36  #4B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 37 #5B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 0 and mtw < 120 : SR = 38 #6B
         elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 39 #7B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 40 #8B
-        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 500 and nj >= 2)) and nb == 1 and mtw < 120 : SR = 41 #9B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 1 and mtw < 120 : SR = 42 #10B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 43 #11B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 1 and mtw < 120 : SR = 44 #12B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 40 #8B
+        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 300 and nj >= 2)) and nb == 1 and mtw < 120 : SR = 41 #9B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 1 and mtw < 120 : SR = 42 #10B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 43 #11B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 1 and mtw < 120 : SR = 44 #12B
         elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 45 #13B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 46 #14B
-        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 500 and nj >= 2)) and nb == 2 and mtw < 120 : SR = 47 #15B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 5 and nb == 2 and mtw < 120 : SR = 48 #16B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 49 #17B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 5 and nb == 2 and mtw < 120 : SR = 50 #18B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 46 #14B
+        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 300 and nj >= 2)) and nb == 2 and mtw < 120 : SR = 47 #15B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 2 and mtw < 120 : SR = 48 #16B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 49 #17B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 2 and mtw < 120 : SR = 50 #18B
        
         elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 51 #19B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 52 #20B
-        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 200 and met < 500 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 53 #21B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 200 and met < 500 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 54 #21B       
-        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 500 and nj >= 2 and mtw > 120 : SR = 55 #23B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1600 and met > 50 and met < 500 and nj >= 2 and mtw > 120 : SR = 56 #24B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and met > 500 and nj >= 2 : SR = 57 #25B
-        elif l1pt > 25 and l2pt < 25 and ht > 1600 and met > 50 and met < 500 and nj >= 2 : SR = 58 #26B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 52 #20B
+        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 53 #21B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 54 #21B       
+        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 300 and nj >= 2 and mtw > 120 : SR = 55 #23B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 300 and nj >= 2 and mtw > 120 : SR = 56 #24B
+        elif l1pt > 25 and l2pt < 25 and ht > 300 and met > 300 and nj >= 2 : SR = 57 #25B
+        elif l1pt > 25 and l2pt < 25 and ht > 1125 and met > 50 and met < 300 and nj >= 2 : SR = 58 #26B
         ####
         elif l1pt < 25 and l2pt < 25 and  met > 50 and met < 200 and nb == 0 and mtw < 120 : SR = 59 #C1 
         elif l1pt < 25 and l2pt < 25 and  met > 200 and nb == 0 and mtw < 120 : SR = 60 #C2 
@@ -322,31 +326,76 @@ def _susy2lss_lepId_CBloose(lep):
             if lep.pt <= 7: return False
             if not (lep.convVeto and lep.lostHits <= 1): 
                 return False
-            return True #lep.mvaIdPhys14 > -0.11+(-0.35+0.11)*(abs(lep.eta)>0.8)+(-0.55+0.35)*(abs(lep.eta)>1.479)
+            if not lep.mvaIdSpring15 > -0.70+(-0.83+0.70)*(abs(lep.eta)>0.8)+(-0.92+0.83)*(abs(lep.eta)>1.479):
+                return False
+            if not _susy2lss_idEmu_cuts(lep): return False
+            return True
         return False
+
+def _susy2lss_lepId_loosestFO(lep):
+    if not _susy2lss_lepId_CBloose(lep): return False
+    if lep.pt <= 10: return False
+    if abs(lep.pdgId) == 13:
+        return lep.mediumMuonId > 0 and lep.tightCharge > 0
+    elif abs(lep.pdgId) == 11:
+        return (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0)
+    return False
+
+def _susy2lss_lepId_tighterFO(lep):
+    if not _susy2lss_lepId_loosestFO(lep): return False
+    if abs(lep.pdgId)==11:
+        if not lep.mvaIdSpring15 > -0.155+(-0.56+0.155)*(abs(lep.eta)>0.8)+(-0.76+0.56)*(abs(lep.eta)>1.479):
+            return False
+        if not _susy2lss_idIsoEmu_cuts(lep): return False
+    return True
+
+def _susy2lss_lepId_IPcuts(lep):
+    if not lep.sip3d<4: return False
+    if not (abs(lep.dxy)<0.05): return False
+    if not (abs(lep.dz)<0.1): return False
+    return True
 
 def _susy2lss_lepId_CB(lep):
-        if lep.pt <= 10: return False
-        if abs(lep.pdgId) == 13:
-            return lep.mediumMuonId > 0 and lep.tightCharge > 0
-        elif abs(lep.pdgId) == 11:
-            if not (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0): 
-                return False
-            return lep.mvaIdPhys14 > 0.73+(0.57-0.73)*(abs(lep.eta)>0.8)+(0.05-0.57)*(abs(lep.eta)>1.479)
-        return False
+    if not _susy2lss_lepId_CBloose(lep): return False
+    if lep.pt <= 10: return False
+    if not _susy2lss_lepId_IPcuts(lep): return False
+    if abs(lep.pdgId) == 13:
+        return lep.mediumMuonId > 0 and lep.tightCharge > 0
+    elif abs(lep.pdgId) == 11:
+        if not (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0): 
+            return False
+        return lep.mvaIdSpring15 > 0.87+(0.60-0.87)*(abs(lep.eta)>0.8)+(0.17-0.60)*(abs(lep.eta)>1.479)
+    return False
+
+def _susy2lss_idEmu_cuts(lep):
+    if (abs(lep.pdgId)!=11): return True
+    if (lep.sigmaIEtaIEta>=(0.011 if abs(lep.etaSc)<1.479 else 0.031)): return False
+    if (lep.hadronicOverEm>=0.08): return False
+    if (abs(lep.dEtaScTrkIn)>=0.01): return False
+    if (abs(lep.dPhiScTrkIn)>=(0.04 if abs(lep.etaSc)<1.479 else 0.08)): return False
+    if (abs(lep.eInvMinusPInv)>=0.01): return False
+    return True
+
+def _susy2lss_idIsoEmu_cuts(lep):
+    if (abs(lep.pdgId)!=11): return True
+    if not _susy2lss_idEmu_cuts(lep): return False
+    if (lep.ecalPFClusterIso>=0.45*lep.pt): return False
+    if (lep.hcalPFClusterIso>=0.25*lep.pt): return False
+    if (lep.dr03TkSumPt>=0.2*lep.pt): return False
+    return True
 
 def _susy2lss_multiIso(lep):
-        if abs(lep.pdgId) == 13: A,B,C = (0.14,0.68,6.7)
-        else:                    A,B,C = (0.10,0.70,7.0)
-        return lep.miniRelIso < A and (lep.jetPtRatio > B or lep.jetPtRel > C)
-def _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio(lep):
-        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.68,6.7)
-        else:                    A,B,C = (0.4,0.70,7.0)
-        return lep.miniRelIso < A and (conept(lep.pt,lep.miniRelIso,lep.jetPtRatio,lep.jetPtRel,lep.pdgId,2)/lep.pt*lep.jetPtRatio > B or lep.jetPtRel > C)
+        if abs(lep.pdgId) == 13: A,B,C = (0.16,0.76,7.2)
+        else:                    A,B,C = (0.12,0.80,7.2)
+        return lep.miniRelIso < A and (lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
+def _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatiov2(lep):
+        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
+        else:                    A,B,C = (0.4,0.80,7.2)
+        return lep.miniRelIso < A and (conept(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)/lep.pt*lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
 def _susy2lss_multiIso_withMiniIsoRelaxed_CutForFO4(lep):
-        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.68,6.7)
-        else:                    A,B,C = (0.4,0.70,7.0)
-        return lep.miniRelIso < A and (1/lep.jetPtRatio < (1/B + lep.miniRelIso))
+        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
+        else:                    A,B,C = (0.4,0.80,7.2)
+        return lep.miniRelIso < A and (1/lep.jetPtRatiov2 < (1/B + lep.miniRelIso))
 
 def _susy2lss_lepId_CBOld(lep):
         if lep.pt <= 10: return False
