@@ -451,20 +451,23 @@ if forcedSplitFactor>0 or forcedFineSplitFactor>0:
         if forcedFineSplitFactor>0: c.fineSplitFactor = forcedFineSplitFactor
 
 #trigMatchExample = cfg.Analyzer(
-#    TriggerMatchAnalyzer, name="TriggerMatchAllObjects",
+#    TriggerMatchAnalyzer, name="TriggerMatchEle27",
 #    processName = 'PAT',
-#    label = 'dummyTrigMatch',
+#    label = 'Ele27_WP85_Gsf',
 #    unpackPathNames = True,
-#    trgObjSelectors = [lambda ob: ob.pt()>20, lambda ob: abs(ob.eta())<2.5],
+#    trgObjSelectors = [lambda ob: ob.pt()>20, lambda ob: abs(ob.eta())<2.5, lambda ob: len( [t for t in ob.pathNames(True) if re.match("HLT_Ele27_WP85_Gsf_v",t)] )>0 ],
 #    collToMatch = "selectedLeptons",
-#    collMatchSelectors = [lambda lep,ob: abs(lep.pt()/ob.pt()-1)<0.5],
+#    collMatchSelectors = [lambda lep,ob: abs(lep.pt()/ob.pt()-1)<0.5, lambda lep,ob: abs(lep.pdgId())==11],
 #    collMatchDRCut = 0.3,
 #    univoqueMatching = True,
-#    verbose = True
+#    verbose = False
 #)
 #susyCoreSequence.append(trigMatchExample)
+#leptonTypeSusyExtra.addVariables([
+#        NTupleVariable("matchedTrgObj_Ele27_WP85_Gsf_pt", lambda x: getattr(x,'matchedTrgObjEle27_WP85_Gsf').pt() if getattr(x,'matchedTrgObjEle27_WP85_Gsf',None) else -999, help="Electron trigger pt")
+#])
 
-    
+
 #-------- SEQUENCE -----------
 
 sequence = cfg.Sequence(susyCoreSequence+[
