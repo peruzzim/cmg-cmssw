@@ -26,7 +26,8 @@ MODULES.append( ('leptonJetReCleanerSusy', LeptonJetReCleaner("Mini",
                 lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
                 lambda lep : (_susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep)), # cuts applied on top of previous selection
                 lambda lep,ht : _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)),
-                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
+                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4),
+                selectJet = lambda jet: abs(jet.eta)<2.4) ))
 from CMGTools.TTHAnalysis.tools.leptonFakeRateQCDVars import LeptonFakeRateQCDVars
 #--- TTH instances
 MODULES.append( ('leptonFakeRateQCDVarsTTH', LeptonFakeRateQCDVars(

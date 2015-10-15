@@ -2,12 +2,13 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from CMGTools.TTHAnalysis.tools.conept import conept
 
 class LeptonJetReCleaner:
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,tightLeptonSel,cleanJet,isMC=True):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,tightLeptonSel,cleanJet,selectJet,isMC=True):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel
         self.tightLeptonSel = tightLeptonSel
         self.cleanJet = cleanJet
+        self.selectJet = selectJet
         self.isMC = isMC
     def listBranches(self):
         label = self.label
@@ -65,7 +66,7 @@ class LeptonJetReCleaner:
         ### Define jets
         ret["iJ"] = []
         # 0. mark each jet as clean
-        for j in jetsc+jetsd: j._clean = True
+        for j in jetsc+jetsd: j._clean = True if self.selectJet(j) else False
         # 1. associate to each lepton passing the cleaning selection its nearest jet 
         for il in cleaningLeps:
             lep = leps[il]
