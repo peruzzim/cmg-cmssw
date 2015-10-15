@@ -64,8 +64,9 @@ MODULES.append ( ('leptonFakeRateFO2isoInSitu', ObjTagger('FO2isoInSitu','LepGoo
                 lambda lep: _susy2lss_lepId_tighterFO(lep),
                 ] ) ) )
 
-MODULES.append ( ('leptonIdEmuCuts', ObjTagger('idEmu','LepGood',[lambda lep: _susy2lss_idEmu_cuts(lep)]) ) )
-MODULES.append ( ('leptonIdIsoEmuCuts', ObjTagger('idIsoEmu','LepGood',[lambda lep: _susy2lss_idIsoEmu_cuts(lep)]) ) )
+# obsolete: it is now calculated in ntupleTypes
+#MODULES.append ( ('leptonIdEmuCuts', ObjTagger('idEmu','LepGood',[lambda lep: _susy2lss_idEmu_cuts(lep)]) ) )
+#MODULES.append ( ('leptonIdIsoEmuCuts', ObjTagger('idIsoEmu','LepGood',[lambda lep: _susy2lss_idIsoEmu_cuts(lep)]) ) )
 
 #from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
 #pufile="../path/to/nvtx/file.root"
