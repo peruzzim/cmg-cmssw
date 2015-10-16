@@ -336,6 +336,8 @@ selectedComponents = [];
 #selectedComponents = [ TT_pow_50ns ] ; is50ns = True
 #selectedComponents = [ DYJetsToLL_LO_M50_50ns ] ; is50ns = True
 
+#selectedComponents = [TTJets, WJetsToLNu, DYJetsToLL_M10to50,  DYJetsToLL_M50, WZTo3LNu, ZZTo4L, WWTo2L2Nu, GGHZZ4L, TTHnobb, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTGJets, T5ttttDeg_mGo1000_mStop300_mCh285_mChi280, T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep, ] + SingleTop + T1tttt + T6ttWW + T5qqqqWW
+#for c in selectedComponents: c.splitFactor = len(c.files)/4
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -363,13 +365,29 @@ if runData and not isTest: # For running on data
 #    processing = "Run2015C-PromptReco-v1"; short = "Run2015C_v1"; run_ranges = [ (254833,254833) ]; useAAA=False; is50ns=True; triggerFlagsAna.checkL1Prescale = False;
 
 #    # Run2015C, 25 ns, 3.8T
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON_v3.txt'
 #    processing = "Run2015C-PromptReco-v1"; short = "Run2015C_v1"; run_ranges = [ (254231,254914) ]; useAAA=False; is50ns=False; triggerFlagsAna.checkL1Prescale = False;
 
-    # Run2015D, fills 4376-4426 - WARNING: beware of CACHING in .cmgdataset
+    is50ns = False
+    dataChunks = []
+
+    # Run2015D-v3, unblinded JSON - WARNING: beware of CACHING in .cmgdataset
     # normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON.txt' # and Run2015D = 209.2/pb
-    processing = "Run2015D-PromptReco-v3"; short = "Run2015D_v3"; run_ranges = [ (256630,257599) ]; useAAA=False; is50ns=False
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON_v3.txt' # and Run2015D = ???/pb
+    processing = "Run2015D-PromptReco-v3"; short = "Run2015D_v3"; run_ranges = [ (256630,257599) ]; useAAA=False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+
+    # Run2015D-v3, blinded - WARNING: beware of CACHING in .cmgdataset
+    # normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/???(16oct)' # and Run2015D = ???/pb
+    processing = "Run2015D-PromptReco-v3"; short = "Run2015D_v3"; run_ranges = [ (257600,258158) ]; useAAA=False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+
+    # Run2015D-v4, blinded - WARNING: beware of CACHING in .cmgdataset
+    # normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/???(16oct)' # and Run2015D = ???/pb
+    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258159,??????) ]; useAAA=False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
@@ -404,27 +422,28 @@ if runData and not isTest: # For running on data
                     else:
                         print 'the strategy for trigger selection on MuonEG for FR studies should yet be implemented'
                         assert(False)
-                        
-    for pd,triggers in DatasetsAndTriggers:
-        for run_range in run_ranges:
-            label = "runs_%d_%d" % run_range if run_range[0] != run_range[1] else "run_%d" % (run_range[0],)
-            compname = pd+"_"+short+"_"+label
-            if ((compSelection and not re.search(compSelection, compname)) or
-                (compVeto      and     re.search(compVeto,      compname))):
-                    print "Will skip %s" % (compname)
-                    continue
-            comp = kreator.makeDataComponent(compname, 
-                                             "/"+pd+"/"+processing+"/MINIAOD", 
-                                             "CMS", ".*root", 
-                                             json=json, 
-                                             run_range=run_range, 
-                                             triggers=triggers[:], vetoTriggers = vetos[:],
-                                             useAAA=useAAA)
-            print "Will process %s (%d files)" % (comp.name, len(comp.files))
-#            print "\ttrigger sel %s, veto %s" % (triggers, vetos)
-            comp.splitFactor = len(comp.files)
-            comp.fineSplitFactor = 1
-            selectedComponents.append( comp )
+
+    for json,processing,short,run_ranges,useAAA in dataChunks:
+        for pd,triggers in DatasetsAndTriggers:
+            for run_range in run_ranges:
+                label = "runs_%d_%d" % run_range if run_range[0] != run_range[1] else "run_%d" % (run_range[0],)
+                compname = pd+"_"+short+"_"+label
+                if ((compSelection and not re.search(compSelection, compname)) or
+                    (compVeto      and     re.search(compVeto,      compname))):
+                        print "Will skip %s" % (compname)
+                        continue
+                comp = kreator.makeDataComponent(compname, 
+                                                 "/"+pd+"/"+processing+"/MINIAOD", 
+                                                 "CMS", ".*root", 
+                                                 json=json, 
+                                                 run_range=run_range, 
+                                                 triggers=triggers[:], vetoTriggers = vetos[:],
+                                                 useAAA=useAAA)
+                print "Will process %s (%d files)" % (comp.name, len(comp.files))
+    #            print "\ttrigger sel %s, veto %s" % (triggers, vetos)
+                comp.splitFactor = len(comp.files)
+                comp.fineSplitFactor = 1
+                selectedComponents.append( comp )
         vetos += triggers
     if json is None:
         susyCoreSequence.remove(jsonAna)
