@@ -391,7 +391,7 @@ if runData and not isTest: # For running on data
 
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
-    selectedComponents = []; vetos = []  
+    selectedComponents = [];
  
     if SOS == True:
         DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
@@ -424,6 +424,7 @@ if runData and not isTest: # For running on data
                         assert(False)
 
     for json,processing,short,run_ranges,useAAA in dataChunks:
+        vetos = []
         for pd,triggers in DatasetsAndTriggers:
             for run_range in run_ranges:
                 label = "runs_%d_%d" % run_range if run_range[0] != run_range[1] else "run_%d" % (run_range[0],)
