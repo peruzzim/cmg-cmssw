@@ -10,3 +10,4 @@ nBJetMedium40\b: nBJetMedium40_Mini; AlsoData
 nJet25\b: nJet25_Mini; AlsoData
 htJet25j\b: htJet25j_Mini; AlsoData
 nBJetMedium25\b: nBJetMedium25_Mini; AlsoData
+SR\b: SRTV_Mini; AlsoData

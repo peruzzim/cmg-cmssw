@@ -1,0 +1,13 @@
+BR: if3(nBJetMedium25>3,3,nBJetMedium25) : 4,-0.5,3.5; XTitle="Baseline region", Legend='TR', LegendCutoff=1e-2
+
+SR_hh: SR : 32,0.5,32.5; XTitle="HH signal region", Legend='TR', LegendCutoff=1e-2
+SR_hl: SR-32 : 26,0.5,26.5; XTitle="HL signal region", Legend='TR', LegendCutoff=1e-2
+SR_ll: SR-58 : 8,0.5,8.5; XTitle="LL signal region", Legend='TR', LegendCutoff=1e-2
+
+htJet40j:   htJet40j: 40,0,800    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]", Logy
+met:   met_pt: 35,0,700    ; XTitle="E_{T}^{miss}  [GeV]", Logy
+mll  : mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass): 40,0,400; XTitle="m(ll) [GeV]", Logy
+mtWmin: min(mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi)) : 50,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Logy
+nJet40 : nJet40 : 10,-0.5,9.5 ; XTitle='N(jet\, p_{T} > 40)', Logy
+nBJet40 : nBJetMedium40 : 5,-0.5,4.5 ; XTitle='N(b-jet\, p_{T} > 40\, CSVM)', Logy
+

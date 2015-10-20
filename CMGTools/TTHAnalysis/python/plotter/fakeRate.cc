@@ -796,7 +796,8 @@ float multiIso_singleWP_relaxFO4(int LepGood_pdgId, float LepGood_pt, float LepG
   else assert(false);
 }
 
-float mvaIdSpring15(int LepGood_pdgId, float LepGood_eta, float LepGood_mvaIdSpring15, WP::WPId wp, int iso_emulation_applied){
+
+float mvaIdSpring15(int LepGood_pdgId, float LepGood_eta, float LepGood_mvaIdSpring15, int wp, int iso_emulation_applied){
   if (abs(LepGood_pdgId)!=11) return 1;
 
   float eta = fabs(LepGood_eta);

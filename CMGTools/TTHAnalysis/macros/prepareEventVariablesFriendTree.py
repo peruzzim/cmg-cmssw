@@ -29,6 +29,13 @@ MODULES.append( ('leptonJetReCleanerSusy', LeptonJetReCleaner("Mini",
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4),
                 selectJet = lambda jet: abs(jet.eta)<2.4,
                 isMC = False ) )) # SET TO THE RIGHT THING
+MODULES.append( ('leptonJetReCleanerSusyFO', LeptonJetReCleaner("FOsel", 
+                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
+                lambda lep : (_susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep)), # cuts applied on top of previous selection
+                lambda lep,ht : _susy2lss_lepId_IPcuts(lep) and (_susy2lss_lepId_loosestFO(lep) if ht>300 else _susy2lss_lepId_tighterFO(lep)),
+                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4),
+                selectJet = lambda jet: abs(jet.eta)<2.4,
+                isMC = False ) )) # SET TO THE RIGHT THING
 from CMGTools.TTHAnalysis.tools.leptonFakeRateQCDVars import LeptonFakeRateQCDVars
 #--- TTH instances
 MODULES.append( ('leptonFakeRateQCDVarsTTH', LeptonFakeRateQCDVars(
@@ -213,7 +220,7 @@ for D in glob(args[0]+"/*"):
                 if re.match(dm,short): found = True
             if not found: continue
         print 'short is %s'%short
-        data = ("DoubleMuon" in short or "MuonEG" in short or "DoubleEG" in short or "SingleMuon" in short or "SingleElectron")
+        data = ("DoubleMuon" in short or "MuonEG" in short or "DoubleEG" in short or "SingleMuon" in short or "SingleElectron" in short)
         f = ROOT.TFile.Open(fname)
         t = f.Get(treename)
         if not t:
