@@ -1,19 +1,9 @@
-DY : DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan
-DY : DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan
- 
-TT : TTJets: xsec ;  FillColor=ROOT.kGray  
+ttV: TTWToLNu : xsec ; FillColor=ROOT.kBlue
+ttV: TTZToLLNuNu : xsec ; FillColor=ROOT.kBlue
+ttV: TTLLJets_m1to10 : xsec ; FillColor=ROOT.kBlue
 
-VV : WZTo3LNu: xsec ; FillColor=ROOT.kViolet-4
-VV : ZZTo4L: xsec ; FillColor=ROOT.kViolet-4
-VV : WWTo2L2Nu: xsec ; FillColor=ROOT.kViolet-4
-
-TW : T_tWch: xsec; FillColor=ROOT.kGray+2
-TW : TBar_tWch: xsec; FillColor=ROOT.kGray+2
-
-Single top    : TToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2
-Single top    : TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2
-
-WJets    : WJetsToLNu :  xsec; FillColor=ROOT.kCyan+2
+WZ : WZTo3LNu: xsec ; FillColor=ROOT.kViolet-4
+ZZ : ZZTo4L: xsec ; FillColor=ROOT.kViolet-4
 
 Rares : TGJets : xsec; FillColor=ROOT.kOrange
 Rares : TTTT : xsec; FillColor=ROOT.kOrange
@@ -23,6 +13,30 @@ Rares : WWZ : xsec; FillColor=ROOT.kOrange
 Rares : WZZ : xsec; FillColor=ROOT.kOrange
 Rares : ZGTo2LG : xsec; FillColor=ROOT.kOrange
 Rares : ZZZ : xsec; FillColor=ROOT.kOrange
+Rares : TTHnobb : xsec; FillColor=ROOT.kOrange
+
+
+
+TT : TTJets: xsec ;  FillColor=ROOT.kGray  
+
+DY : DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan
+DY : DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan
+
+WJets    : WJetsToLNu :  xsec; FillColor=ROOT.kCyan+2
+
+Single top    : TToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2
+Single top    : TbarToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2
+Single top    : TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2
+Single top    : TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2
+Single top    : TBar_tWch:     xsec ;  FillColor=ROOT.kGray+2
+Single top    : T_tWch:     xsec ;  FillColor=ROOT.kGray+2
+
+TW : T_tWch: xsec; FillColor=ROOT.kGray+2
+TW : TBar_tWch: xsec; FillColor=ROOT.kGray+2
+
+WW : WWTo2L2Nu: xsec ; FillColor=ROOT.kViolet-4
+
+
 
 # 2015D 25ns data
 
