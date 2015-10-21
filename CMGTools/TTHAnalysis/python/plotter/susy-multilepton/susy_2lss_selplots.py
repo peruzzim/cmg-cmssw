@@ -14,10 +14,14 @@ SAVE=GO
 
 for LPt in ['hh','hl','ll']:
     GO=SAVE # BR and SR regions, all json (no data)
+    if LPt=='hh': GO="%s'"%GO
+    elif LPt=='hl': GO="%s -I lep2_pt25"%GO
+    elif LPt=='ll': GO="%s -I lep1_pt25 -X lep2_pt25"%GO
+    print "%s %s --sP BR --xp data --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/%s"%(GO,PU_ALL,LPt,LPt)
     if LPt=='hh': GO="%s -A alwaystrue SR_hh '(SR>0 && SR<=32)'"%GO
-    elif LPt=='hl': GO="%s -I lep2_pt25 -A alwaystrue SR_hl '(SR>32 && SR<=58)'"%GO
-    elif LPt=='ll': GO="%s -I lep1_pt25 -X lep2_pt25 -A alwaystrue SR_ll 'SR>58'"%GO
-    print "%s %s --sP BR --sP SR_%s --xp data --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/%s"%(GO,PU_ALL,LPt,LPt)
+    elif LPt=='hl': GO="%s -A alwaystrue SR_hl '(SR>32 && SR<=58)'"%GO
+    elif LPt=='ll': GO="%s -A alwaystrue SR_ll 'SR>58'"%GO
+    print "%s %s --sP SR_%s --xp data --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/%s"%(GO,PU_ALL,LPt,LPt)
 
 GO=SAVE
 GO="%s -R same-sign OS 'LepGood1_charge*LepGood2_charge<0' --xP 'SR.*' --xP BR -X lep1_pt25 -X lep2_pt25"%GO # OS, inclusive baseline, all json
