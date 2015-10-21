@@ -1,6 +1,6 @@
 ttW: TTWToLNu : xsec ; FillColor=ROOT.kBlue
-ttZ: TTZToLLNuNu : xsec ; FillColor=ROOT.kBlue
-ttZ: TTLLJets_m1to10 : xsec ; FillColor=ROOT.kBlue
+ttZ: TTZToLLNuNu : xsec ; FillColor=ROOT.kYellow-3
+ttZ: TTLLJets_m1to10 : xsec ; FillColor=ROOT.kYellow-3
 
 WZ : WZTo3LNu: xsec ; FillColor=ROOT.kViolet-4
 ZZ : ZZTo4L: xsec ; FillColor=ROOT.kViolet-4
