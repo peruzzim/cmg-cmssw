@@ -5,8 +5,6 @@ CORE="%s --s2v --tree treeProducerSusyMultilepton -F sf/t {P}/0_allFriends_v1/ev
 GO="python mcPlots.py %s mca-Spring15-analysis-unblinded.txt susy-multilepton/susy_2lss_multiiso.txt -f -j 8 --legendWidth 0.30 --showRatio --maxRatioRange 0 2 susy-multilepton/susy_2lss_selplots.txt"%CORE
 GO="%s -A alwaystrue trig_ll '(abs(LepGood1_pdgId) != 11 || abs(LepGood2_pdgId) != 11 || Triggers_ee) && (abs(LepGood1_pdgId) != 13 || abs(LepGood2_pdgId) != 13 || Triggers_mm) && (abs(LepGood1_pdgId)==abs(LepGood2_pdgId) || Triggers_em)'"%GO
 
-GO="%s --xp Rares"%GO # TO BE FIXED
-
 PU_UNBL = "--FMC sf/t {P}/1_puWeights_v2_run2015D_unblindedjson/evVarFriend_{cname}.root -W vtxWeight -l 0.13314"
 PU_ALL = "--FMC sf/t {P}/1_puWeights_v1_run2015D_upto258714/evVarFriend_{cname}.root -W vtxWeight -l 0.83231"
 
