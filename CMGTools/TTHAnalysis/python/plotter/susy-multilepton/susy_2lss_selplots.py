@@ -26,7 +26,7 @@ for LPt in ['hh','hl','ll']:
 GO=SAVE
 GO="%s -R same-sign OS 'LepGood1_charge*LepGood2_charge<0' --xP 'SR.*' --xP BR -X lep1_pt25 -X lep2_pt25"%GO # OS, inclusive baseline, all json
 GO=GO.replace("mca-Spring15-analysis-unblinded.txt","mca-Spring15-analysis-all.txt")
-print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/OS_nocuts"%(GO,PU_ALL)
+print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/OS_BR"%(GO,PU_ALL)
 
 GO=SAVE
 GO="%s --xP 'SR.*' --xP BR -X lep1_pt25 -X lep2_pt25"%GO # SS, inclusive baseline, tight + FO non tight, all json
@@ -35,9 +35,9 @@ GO="%s -A alwaystrue TF '((%s) + (%s) == 1)'"%(GO,TIGHT.replace("LepGood","LepGo
 GO=GO.replace("susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt","susy-multilepton/susy_2lssinc_lepchoice_FO.txt")
 GO=GO.replace("0_allFriends_v1","2_leptonJetRecleanerFO_v1")
 GO=GO.replace("mca-Spring15-analysis-unblinded.txt","mca-Spring15-analysis-all.txt")
-print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/SS_Tight_FOnonTight_ht300"%(GO,PU_ALL)
+print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/SS_TightFake_BR"%(GO,PU_ALL)
 
 GO=SAVE
 GO="%s --xP 'SR.*' --xP BR -X lep1_pt25 -X lep2_pt25"%GO # SS, inclusive baseline, unblinded json
-print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/SS_ht300"%(GO,PU_UNBL)
+print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/SS_BR"%(GO,PU_UNBL)
 
