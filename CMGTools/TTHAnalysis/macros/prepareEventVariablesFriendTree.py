@@ -76,9 +76,9 @@ MODULES.append ( ('leptonFakeRateFO2isoInSitu', ObjTagger('FO2isoInSitu','LepGoo
 #MODULES.append ( ('leptonIdEmuCuts', ObjTagger('idEmu','LepGood',[lambda lep: _susy2lss_idEmu_cuts(lep)]) ) )
 #MODULES.append ( ('leptonIdIsoEmuCuts', ObjTagger('idIsoEmu','LepGood',[lambda lep: _susy2lss_idIsoEmu_cuts(lep)]) ) )
 
-from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
-pufile="/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots_unbl/zjets-4-nvtx_plots.root"
-MODULES.append ( ('puWeights', VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
+#from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
+#pufile="/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots/zjets-4-nvtx_plots.root"
+#MODULES.append ( ('puWeights', VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
 
 
 from CMGTools.TTHAnalysis.tools.objFloatCalc import ObjFloatCalc

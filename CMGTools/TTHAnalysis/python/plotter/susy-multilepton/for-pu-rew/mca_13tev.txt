@@ -26,3 +26,9 @@ data: MuonEG_Run2015D_v4_runs_258159_258714
 data: SingleMuon_Run2015D_v4_runs_258159_258714
 data: SingleElectron_Run2015D_v4_runs_258159_258714
 
+data: DoubleMuon_Run2015D_v4_runs_258715_258750
+data: DoubleEG_Run2015D_v4_runs_258715_258750
+data: MuonEG_Run2015D_v4_runs_258715_258750
+data: SingleMuon_Run2015D_v4_runs_258715_258750
+data: SingleElectron_Run2015D_v4_runs_258715_258750
+

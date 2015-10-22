@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-MYTREEDIR="~/work/ra5trees/TREES_74X_061015_MiniIso_7_4_12_JECv5_noPreProc"
+MYTREEDIR="~/work/ra5trees/TREES_74X_161015_MiniIso"
 MYLUMI="0.2092"
 
 EXE="python mcPlots.py"

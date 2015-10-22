@@ -389,8 +389,8 @@ if runData and not isTest: # For running on data
 #    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258159,258714) ]; useAAA=False;
 #    dataChunks.append((json,processing,short,run_ranges,useAAA))
 
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt' # and Run2015D = ???/pb
-    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258715,258750) ]; useAAA=False;
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON_MINUS_UP_TO_258714.txt' # and Run2015D = ???/pb
+    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258211,258750) ]; useAAA=False;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -446,7 +446,7 @@ if runData and not isTest: # For running on data
                                                  useAAA=useAAA)
                 print "Will process %s (%d files)" % (comp.name, len(comp.files))
     #            print "\ttrigger sel %s, veto %s" % (triggers, vetos)
-                comp.splitFactor = len(comp.files)/4
+                comp.splitFactor = len(comp.files)/2
                 comp.fineSplitFactor = 1
                 selectedComponents.append( comp )
             vetos += triggers
