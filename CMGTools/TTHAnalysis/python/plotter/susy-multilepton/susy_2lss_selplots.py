@@ -11,7 +11,7 @@ PU_ALL = "--FMC sf/t {P}/1_puWeights_v3_run2015D_upto258750/evVarFriend_{cname}.
 SAVE=GO
 
 for LPt in ['hh','hl','ll']:
-    for group in ["","--pgroup 'Fakes + flips':='TT','DY','WJets','Single top','WW_fakes'"]:
+    for group in ["","--pgroup 'Fakes + flips':='.*fakes.*','.*flips.*'"]:
         GO=SAVE # BR and SR regions, all json (no data)
         if LPt=='hh': GO="%s"%GO
         elif LPt=='hl': GO="%s -I lep2_pt25"%GO
