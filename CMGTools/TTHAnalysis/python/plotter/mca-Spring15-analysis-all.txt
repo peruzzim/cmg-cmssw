@@ -1,21 +1,30 @@
-ttW: TTWToLNu : xsec ; FillColor=ROOT.kBlue
-ttZ: TTZToLLNuNu : xsec ; FillColor=ROOT.kYellow-3
-ttZ: TTLLJets_m1to10 : xsec ; FillColor=ROOT.kYellow-3
+# Prompt backgrounds
 
-WZ : WZTo3LNu: xsec ; FillColor=ROOT.kViolet-4
-ZZ : ZZTo4L: xsec ; FillColor=ROOT.kViolet-4
+ttW: TTWToLNu : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kAzure+2
 
-Rares : TGJets : xsec; FillColor=ROOT.kOrange
-Rares : TTTT : xsec; FillColor=ROOT.kOrange
-Rares : WGToLNuG : xsec; FillColor=ROOT.kOrange
-Rares : WWDouble : xsec; FillColor=ROOT.kOrange
-#Rares : WWZ : xsec; FillColor=ROOT.kOrange
-Rares : WZZ : xsec; FillColor=ROOT.kOrange
-Rares : ZGTo2LG : xsec; FillColor=ROOT.kOrange
-Rares : ZZZ : xsec; FillColor=ROOT.kOrange
-Rares : TTHnobb : xsec; FillColor=ROOT.kOrange
+ttZ/H: TTZToLLNuNu : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kGreen-6
+ttZ/H: TTLLJets_m1to10 : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kGreen-6
+ttZ/H : TTHnobb : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kGreen-6
+
+WZ : WZTo3LNu: xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kOrange
+
+WW : WWDouble : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kGreen+2
+
+T+G : TTGJets : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kMagenta
+T+G : TGJets : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kMagenta
+
+V+G : WGToLNuG : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kYellow-3
+V+G : ZGTo2LG : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kYellow-3
+
+Rares: ZZTo4L: xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kViolet+1
+#Rares: VH ???
+#Rares : WWZ (corrupted)
+Rares : ZZZ : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kViolet+1
+Rares : WZZ : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kViolet+1
+Rares : TTTT : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kViolet+1
 
 
+# Fakes+flips
 
 TT : TTJets: xsec ;  FillColor=ROOT.kGray  
 
@@ -31,9 +40,7 @@ Single top    : TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2
 Single top    : TBar_tWch:     xsec ;  FillColor=ROOT.kGray+2
 Single top    : T_tWch:     xsec ;  FillColor=ROOT.kGray+2
 
-WW : WWTo2L2Nu: xsec ; FillColor=ROOT.kViolet-4
-
-
+WW_fakes : WWTo2L2Nu: xsec ; FillColor=ROOT.kGray+1
 
 # 2015D 25ns data
 
@@ -55,8 +62,15 @@ data: MuonEG_Run2015D_v3_runs_257600_258158
 data: SingleMuon_Run2015D_v3_runs_257600_258158
 data: SingleElectron_Run2015D_v3_runs_257600_258158
 
-data: DoubleMuon_Run2015D_v4_runs_258159_258714
-data: DoubleEG_Run2015D_v4_runs_258159_258714
-data: MuonEG_Run2015D_v4_runs_258159_258714
-data: SingleMuon_Run2015D_v4_runs_258159_258714
-data: SingleElectron_Run2015D_v4_runs_258159_258714
+data: DoubleMuon_Run2015D_v4_runs_258159_258714_excl
+data: DoubleEG_Run2015D_v4_runs_258159_258714_excl
+data: MuonEG_Run2015D_v4_runs_258159_258714_excl
+data: SingleMuon_Run2015D_v4_runs_258159_258714_excl
+data: SingleElectron_Run2015D_v4_runs_258159_258714_excl
+
+data: DoubleMuon_Run2015D_v4_runs_258211_258750
+data: DoubleEG_Run2015D_v4_runs_258211_258750
+data: MuonEG_Run2015D_v4_runs_258211_258750
+data: SingleMuon_Run2015D_v4_runs_258211_258750
+data: SingleElectron_Run2015D_v4_runs_258211_258750
+

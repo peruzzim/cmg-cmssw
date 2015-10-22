@@ -6,25 +6,26 @@ GO="python mcPlots.py %s mca-Spring15-analysis-unblinded.txt susy-multilepton/su
 GO="%s -A alwaystrue trig_ll '(abs(LepGood1_pdgId) != 11 || abs(LepGood2_pdgId) != 11 || Triggers_ee) && (abs(LepGood1_pdgId) != 13 || abs(LepGood2_pdgId) != 13 || Triggers_mm) && (abs(LepGood1_pdgId)==abs(LepGood2_pdgId) || Triggers_em)'"%GO
 
 PU_UNBL = "--FMC sf/t {P}/1_puWeights_v2_run2015D_unblindedjson/evVarFriend_{cname}.root -W vtxWeight -l 0.13314"
-PU_ALL = "--FMC sf/t {P}/1_puWeights_v1_run2015D_upto258714/evVarFriend_{cname}.root -W vtxWeight -l 0.83231"
+PU_ALL = "--FMC sf/t {P}/1_puWeights_v3_run2015D_upto258750/evVarFriend_{cname}.root -W vtxWeight -l 1.26388"
 
 SAVE=GO
 
 for LPt in ['hh','hl','ll']:
-    GO=SAVE # BR and SR regions, all json (no data)
-    if LPt=='hh': GO="%s"%GO
-    elif LPt=='hl': GO="%s -I lep2_pt25"%GO
-    elif LPt=='ll': GO="%s -I lep1_pt25 -X lep2_pt25"%GO
-    print "%s %s --sP BR --xp data --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/%s"%(GO,PU_ALL,LPt)
-    if LPt=='hh': GO="%s -A alwaystrue SR_hh '(SR>0 && SR<=32)'"%GO
-    elif LPt=='hl': GO="%s -A alwaystrue SR_hl '(SR>32 && SR<=58)'"%GO
-    elif LPt=='ll': GO="%s -A alwaystrue SR_ll 'SR>58'"%GO
-    print "%s %s --sP SR_%s --xp data --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/%s"%(GO,PU_ALL,LPt,LPt)
+    for group in ["","--pgroup 'Fakes + flips':='TT','DY','WJets','Single top','WW_fakes'"]:
+        GO=SAVE # BR and SR regions, all json (no data)
+        if LPt=='hh': GO="%s"%GO
+        elif LPt=='hl': GO="%s -I lep2_pt25"%GO
+        elif LPt=='ll': GO="%s -I lep1_pt25 -X lep2_pt25"%GO
+        print "%s %s --sP BR --xp data --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots_oct22/%s%s %s"%(GO,PU_ALL,LPt,'_group' if group!='' else '',group)
+        if LPt=='hh': GO="%s -A alwaystrue SR_hh '(SR>0 && SR<=32)'"%GO
+        elif LPt=='hl': GO="%s -A alwaystrue SR_hl '(SR>32 && SR<=58)'"%GO
+        elif LPt=='ll': GO="%s -A alwaystrue SR_ll 'SR>58'"%GO
+        print "%s %s --sP SR_%s --xp data --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots_oct22/%s%s %s"%(GO,PU_ALL,LPt,LPt,'_group' if group!='' else '',group)
 
 GO=SAVE
 GO="%s -R same-sign OS 'LepGood1_charge*LepGood2_charge<0' --xP 'SR.*' --xP BR -X lep1_pt25 -X lep2_pt25"%GO # OS, inclusive baseline, all json
 GO=GO.replace("mca-Spring15-analysis-unblinded.txt","mca-Spring15-analysis-all.txt")
-print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/OS_BR"%(GO,PU_ALL)
+print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots_oct22/OS_BR"%(GO,PU_ALL)
 
 GO=SAVE
 GO="%s --xP 'SR.*' --xP BR -X lep1_pt25 -X lep2_pt25"%GO # SS, inclusive baseline, tight + FO non tight, all json
@@ -33,9 +34,9 @@ GO="%s -A alwaystrue TF '((%s) + (%s) == 1)'"%(GO,TIGHT.replace("LepGood","LepGo
 GO=GO.replace("susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt","susy-multilepton/susy_2lssinc_lepchoice_FO.txt")
 GO=GO.replace("0_allFriends_v1","2_leptonJetRecleanerFO_v1")
 GO=GO.replace("mca-Spring15-analysis-unblinded.txt","mca-Spring15-analysis-all.txt")
-print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/SS_TightFake_BR"%(GO,PU_ALL)
+print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots_oct22/SS_TightFake_BR"%(GO,PU_ALL)
 
 GO=SAVE
 GO="%s --xP 'SR.*' --xP BR -X lep1_pt25 -X lep2_pt25"%GO # SS, inclusive baseline, unblinded json
-print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots/SS_BR"%(GO,PU_UNBL)
+print "%s %s --pdir /afs/cern.ch/user/p/peruzzi/www/test_ra5plots_oct22/SS_BR --pgroup 'Fakes + flips':='TT','DY','WJets','Single top'"%(GO,PU_UNBL)
 

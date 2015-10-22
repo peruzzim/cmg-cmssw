@@ -764,6 +764,7 @@ class PlotMaker:
                             if 'background' in pmap: dump.write(fmts%'BACKGROUND')
                             dump.write(fmts%'TOTAL')
                             if 'data' in pmap: dump.write(fmts%'DATA')
+                            dump.write(fmts%'Bin range')
                             dump.write('\n')
                             plots={}
                             for p in cols+['signal','background','data']:
@@ -778,6 +779,7 @@ class PlotMaker:
                                     dump.write(fmt%(plots[p][b][0]))
                                 dump.write(fmt%sum([plots[p][b][0] for p in cols]))
                                 if 'data' in plots: dump.write(fmtd%(plots['data'][b][0]))
+                                dump.write(fmts%('[%f - %f]'%( pmap[cols[0]].GetBinLowEdge(b+1),pmap[cols[0]].GetBinLowEdge(b+2) )))
                                 dump.write('\n')
                             dump.write(fmts%'TOTAL')
                             for p in cols+['signal','background']:
