@@ -4,6 +4,8 @@ minMllAS8:  minMllAFAS > 8
 exclusive:  nLepGood10 == 2
 anyll: abs(LepGood1_pdgId) > 0 && abs(LepGood2_pdgId) > 0
 same-sign: LepGood1_charge*LepGood2_charge > 0
+lep1_pt15_ifel: abs(LepGood1_pdgId)!=11 || LepGood1_pt>15
+lep2_pt15_ifel: abs(LepGood2_pdgId)!=11 || LepGood2_pt>15
 lep1_pt25: LepGood1_pt > 25 
 lep2_pt25: LepGood2_pt > 25 
 ht: htJet40j > 80

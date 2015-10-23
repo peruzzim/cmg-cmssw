@@ -1,0 +1,76 @@
+# Prompt backgrounds
+
+ttW (prompt): TTWToLNu : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kAzure+2
+
+ttZ/H (prompt): TTZToLLNuNu : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kGreen-6
+ttZ/H (prompt): TTLLJets_m1to10 : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kGreen-6
+ttZ/H (prompt): TTHnobb : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kGreen-6
+
+WZ (prompt): WZTo3LNu: xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kOrange
+
+WW (same-sign): WWDouble : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kGreen+2
+
+T+G (conv.): TTGJets : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kMagenta
+T+G (conv.): TGJets : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kMagenta
+
+V+G (conv.): WGToLNuG : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kOrange-3
+V+G (conv.): ZGTo2LG : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kOrange-3
+
+Rares: ZZTo4L: xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kViolet+1
+#Rares: VH ???
+#Rares : WWZ (corrupted)
+Rares : ZZZ : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kViolet+1
+Rares : WZZ : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kViolet+1
+Rares : TTTT : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kViolet+1
+
+
+# Fakes+flips
+
+TT (fakes,flips): TTJets: xsec ;  FillColor=ROOT.kGray  
+
+DY (fakes,flips): DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan
+DY (fakes,flips): DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan
+
+WJets (fakes): WJetsToLNu :  xsec; FillColor=ROOT.kCyan+2
+
+Single top (fakes): TToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2
+Single top (fakes): TbarToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2
+Single top (fakes): TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2
+Single top (fakes): TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2
+Single top (fakes): TBar_tWch:     xsec ;  FillColor=ROOT.kGray+2
+Single top (fakes): T_tWch:     xsec ;  FillColor=ROOT.kGray+2
+
+WW (fakes,flips): WWTo2L2Nu: xsec ; FillColor=ROOT.kGray+1
+
+# 2015D 25ns data
+
+data: DoubleMuon_Run2015D_v3_runs_256630_257599
+data: DoubleEG_Run2015D_v3_runs_256630_257599
+data: MuonEG_Run2015D_v3_runs_256630_257599
+data: SingleMuon_Run2015D_v3_runs_256630_257599
+data: SingleElectron_Run2015D_v3_runs_256630_257599
+
+data: DoubleMuon_Run2015D_v3_run_256926
+data: DoubleEG_Run2015D_v3_run_256926
+data: MuonEG_Run2015D_v3_run_256926
+data: SingleMuon_Run2015D_v3_run_256926
+data: SingleElectron_Run2015D_v3_run_256926
+
+data: DoubleMuon_Run2015D_v3_runs_257600_258158
+data: DoubleEG_Run2015D_v3_runs_257600_258158
+data: MuonEG_Run2015D_v3_runs_257600_258158
+data: SingleMuon_Run2015D_v3_runs_257600_258158
+data: SingleElectron_Run2015D_v3_runs_257600_258158
+
+data: DoubleMuon_Run2015D_v4_runs_258159_258714_excl
+data: DoubleEG_Run2015D_v4_runs_258159_258714_excl
+data: MuonEG_Run2015D_v4_runs_258159_258714_excl
+data: SingleMuon_Run2015D_v4_runs_258159_258714_excl
+data: SingleElectron_Run2015D_v4_runs_258159_258714_excl
+
+data: DoubleMuon_Run2015D_v4_runs_258211_258750
+data: DoubleEG_Run2015D_v4_runs_258211_258750
+data: MuonEG_Run2015D_v4_runs_258211_258750
+data: SingleMuon_Run2015D_v4_runs_258211_258750
+data: SingleElectron_Run2015D_v4_runs_258211_258750
+

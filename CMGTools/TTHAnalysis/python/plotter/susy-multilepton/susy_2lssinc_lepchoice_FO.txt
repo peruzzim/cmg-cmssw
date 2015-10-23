@@ -1,0 +1,12 @@
+LepGood1_(\w+) : LepGood_\1[iL1TV_FOsel]; AlsoData
+LepGood2_(\w+) : LepGood_\1[iL2TV_FOsel]; AlsoData
+nLepGood10\b: nLepTightVeto10_FOsel; AlsoData
+\bmZ1\b: mZ1cut10TL_FOsel; AlsoData
+minMllAFOS\b: minMllAFOSTL_FOsel; AlsoData
+minMllAFAS\b: mllTV_FOsel; AlsoData
+nJet40\b: nJet40_FOsel; AlsoData
+htJet40j\b: htJet40j_FOsel; AlsoData
+nBJetMedium40\b: nBJetMedium40_FOsel; AlsoData
+nJet25\b: nJet25_FOsel; AlsoData
+htJet25j\b: htJet25j_FOsel; AlsoData
+nBJetMedium25\b: nBJetMedium25_FOsel; AlsoData

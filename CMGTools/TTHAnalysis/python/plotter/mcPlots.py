@@ -753,27 +753,58 @@ class PlotMaker:
                             if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+fdir)
                         if ext == "txt":
                             dump = open("%s/%s.%s" % (fdir, pspec.name, ext), "w")
-                            maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)]+[7])
-                            fmt    = "%%-%ds %%9.2f +/- %%9.2f (stat)" % (maxlen+1)
-                            for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True) + ["signal", "background"]:
+                            maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)]+[7]+[len(pspec.name)])
+                            fmts = "%%-%ds | " % (maxlen+1)
+                            fmt = "%%%d.2f | " % (maxlen+1)
+                            fmtd = "%%%d.0f | " % (maxlen+1)
+                            dump.write(fmts%(pspec.name))
+                            cols =  mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)
+                            for p in cols: dump.write(fmts % (_unTLatex(mca.getProcessOption(p,'Label',p))))
+                            if 'signal' in pmap: dump.write(fmts%'SIGNAL')
+                            if 'background' in pmap: dump.write(fmts%'BACKGROUND')
+                            dump.write(fmts%'TOTAL')
+                            if 'data' in pmap: dump.write(fmts%'DATA')
+                            dump.write(fmts%'Bin range')
+                            dump.write('\n')
+                            plots={}
+                            for p in cols+['signal','background','data']:
                                 if p not in pmap: continue
-                                plot = pmap[p]
-                                if plot.Integral() <= 0: continue
-                                norm = plot.Integral()
-                                if p not in ["signal","background"] and mca.isSignal(p): norm /= options.signalPlotScale # un-scale what was scaled
-                                stat = sqrt(sum([plot.GetBinError(b)**2 for b in xrange(1,plot.GetNbinsX()+1)]))
-                                syst = norm * mca.getProcessOption(p,'NormSystematic',0.0) if p not in ["signal", "background"] else 0;
-                                if p == "signal": dump.write(("-"*(maxlen+45))+"\n");
-                                dump.write(fmt % (_unTLatex(mca.getProcessOption(p,'Label',p) if p not in ["signal", "background"] else p.upper()), norm, stat))
-                                if syst: dump.write(" +/- %9.2f (syst)"  % syst)
-                                dump.write("\n")
-                            if 'data' in pmap: 
-                                dump.write(("-"*(maxlen+45))+"\n");
-                                dump.write(("%%%ds %%7.0f\n" % (maxlen+1)) % ('DATA', pmap['data'].Integral()))
+                                plot = pmap[p].Clone('clone_'+p)
+                                if p not in ["signal","background",'data'] and mca.isSignal(p): plot.Scale(1./options.signalPlotScale) # un-scale what was scaled
+                                plots[p]=[(plot.GetBinContent(b),plot.GetBinError(b)) for b in xrange(1,plot.GetNbinsX()+1)]
+                            for b in xrange(plot.GetNbinsX()):
+                                dump.write(fmts%str(b+1))
+                                for p in cols+['signal','background']:
+                                    if p not in pmap: continue
+                                    dump.write(fmt%(plots[p][b][0]))
+                                dump.write(fmt%sum([plots[p][b][0] for p in cols]))
+                                if 'data' in plots: dump.write(fmtd%(plots['data'][b][0]))
+                                dump.write(fmts%('[%f - %f]'%( pmap[cols[0]].GetBinLowEdge(b+1),pmap[cols[0]].GetBinLowEdge(b+2) )))
+                                dump.write('\n')
+                            dump.write(fmts%'TOTAL')
+                            for p in cols+['signal','background']:
+                                if p not in pmap: continue
+                                dump.write(fmt%(sum([x[0] for x in plots[p] ])))
+                            dump.write(fmt%( sum([sum([x[0] for x in plots[p]]) for p in cols]) ))
+                            if 'data' in pmap: dump.write(fmtd%(pmap['data'].Integral()))
+                            dump.write('\n')
+                            dump.write(fmts%'stat')
+                            for p in cols+['signal','background']:
+                                if p not in pmap: continue
+                                dump.write(fmt%( sqrt(sum([x[1]**2 for x in plots[p] ])) ))
+                            dump.write(fmt%( sqrt(sum([sum([x[1]**2 for x in plots[p]]) for p in cols])) ))
+                            dump.write('\n')
+                            dump.write(fmts%'syst')
+                            for p in cols:
+                                if p not in pmap: continue
+                                norm = sum([x[0] for x in plots[p] ])
+                                syst = norm * mca.getProcessOption(p,'NormSystematic',0.0) if p not in ["signal", "background"] else 0
+                                dump.write(fmt%syst)
+                            dump.write('\n')
                             for logname, loglines in pspec.allLogs():
                                 dump.write("\n\n --- %s --- \n" % logname)
                                 for line in loglines: dump.write("%s\n" % line)
-                                dump.write("\n")
+                            dump.write("\n")
                             dump.close()
                         else:
                             if "TH2" in total.ClassName() or "TProfile2D" in total.ClassName():

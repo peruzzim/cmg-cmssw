@@ -29,6 +29,13 @@ MODULES.append( ('leptonJetReCleanerSusy', LeptonJetReCleaner("Mini",
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4),
                 selectJet = lambda jet: abs(jet.eta)<2.4,
                 isMC = False ) )) # SET TO THE RIGHT THING
+MODULES.append( ('leptonJetReCleanerSusyFO', LeptonJetReCleaner("FOsel", 
+                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
+                lambda lep : (_susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep)), # cuts applied on top of previous selection
+                lambda lep,ht : _susy2lss_lepId_IPcuts(lep) and (_susy2lss_lepId_loosestFO(lep) if ht>300 else _susy2lss_lepId_tighterFO(lep)),
+                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4),
+                selectJet = lambda jet: abs(jet.eta)<2.4,
+                isMC = False ) )) # SET TO THE RIGHT THING
 from CMGTools.TTHAnalysis.tools.leptonFakeRateQCDVars import LeptonFakeRateQCDVars
 #--- TTH instances
 MODULES.append( ('leptonFakeRateQCDVarsTTH', LeptonFakeRateQCDVars(
@@ -69,9 +76,9 @@ MODULES.append ( ('leptonFakeRateFO2isoInSitu', ObjTagger('FO2isoInSitu','LepGoo
 #MODULES.append ( ('leptonIdEmuCuts', ObjTagger('idEmu','LepGood',[lambda lep: _susy2lss_idEmu_cuts(lep)]) ) )
 #MODULES.append ( ('leptonIdIsoEmuCuts', ObjTagger('idIsoEmu','LepGood',[lambda lep: _susy2lss_idIsoEmu_cuts(lep)]) ) )
 
-from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
-pufile="/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots_unbl/zjets-4-nvtx_plots.root"
-MODULES.append ( ('puWeights', VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
+#from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
+#pufile="/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots/zjets-4-nvtx_plots.root"
+#MODULES.append ( ('puWeights', VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
 
 
 from CMGTools.TTHAnalysis.tools.objFloatCalc import ObjFloatCalc
@@ -213,7 +220,7 @@ for D in glob(args[0]+"/*"):
                 if re.match(dm,short): found = True
             if not found: continue
         print 'short is %s'%short
-        data = ("DoubleMuon" in short or "MuonEG" in short or "DoubleEG" in short or "SingleMuon" in short or "SingleElectron")
+        data = ("DoubleMuon" in short or "MuonEG" in short or "DoubleEG" in short or "SingleMuon" in short or "SingleElectron" in short)
         f = ROOT.TFile.Open(fname)
         t = f.Get(treename)
         if not t:
