@@ -15,7 +15,7 @@ SAVE=GO
 TIGHT="(multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,2) && (abs(LepGood_pdgId)!=11 || mvaIdSpring15(LepGood_pdgId,LepGood_eta,LepGood_mvaIdSpring15,3,0)))"
 
 addsigs = True
-SIG = "--showIndivSigs" if addsigs else "--xp 'T1.*','T5.*','T6.*'"
+SIG = "--showIndivSigs --noStackSig" if addsigs else "--xp 'T1.*','T5.*','T6.*'"
 
 for LPt in ['hh','hl','ll']:
     for group in ["","--pgroup 'Fakes + flips':='.*fakes.*','.*flips.*'"]:
@@ -31,7 +31,7 @@ for LPt in ['hh','hl','ll']:
         if LPt=='hh': GO="%s -A alwaystrue SR_hh '(SR>0 && SR<=32)'"%GO
         elif LPt=='hl': GO="%s -A alwaystrue SR_hl '(SR>32 && SR<=58)'"%GO
         elif LPt=='ll': GO="%s -A alwaystrue SR_ll 'SR>58'"%GO
-        print "%s %s %s --sP SR_%s --xp data --pdir /afs/cern.ch/user/p/peruzzi/www/%s/%s%s %s"%(GO,SIG,PU_ALL,ODIR,LPt,LPt,'_group' if group!='' else '',group)
+        print "%s %s %s --sP SR_%s --xp data --pdir /afs/cern.ch/user/p/peruzzi/www/%s/%s%s %s"%(GO,SIG,PU_ALL,LPt,ODIR,LPt,'_group' if group!='' else '',group)
 
 GO=SAVE
 GO="%s -R same-sign OS 'LepGood1_charge*LepGood2_charge<0' --xP 'SR.*' --xP BR -X lep1_pt25 -X lep2_pt25"%GO # OS, inclusive baseline, all json
