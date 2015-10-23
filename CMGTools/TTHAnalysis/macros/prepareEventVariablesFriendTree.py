@@ -1,35 +1,33 @@
 #!/usr/bin/env python
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from glob import glob
-import os.path, re
+import os.path, re, types, itertools
 
 MODULES = []
 
-#from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS 
-#MODULES.append( ('2lss', EventVars2LSS()) )
+from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS 
+MODULES.append( ('ttH2lss', lambda : EventVars2LSS()) )
 from CMGTools.TTHAnalysis.tools.susyVars_2lssInc import SusyVars2LSSInc 
-MODULES.append( ('susy2lss', SusyVars2LSSInc()) )
+MODULES.append( ('susy2lss', lambda : SusyVars2LSSInc()) )
 from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner,_susy2lss_lepId_CB,_susy2lss_lepId_CBloose,_susy2lss_multiIso,_tthlep_lepId,_susy2lss_idEmu_cuts,_susy2lss_idIsoEmu_cuts,_susy2lss_lepId_loosestFO,_susy2lss_lepId_tighterFO,_susy2lss_lepId_IPcuts
-##--- TTH instances
-#MODULES.append( ('leptonJetReCleanerTTH', LeptonJetReCleaner("I03Sip8", 
-#                lambda lep : lep.relIso03 < 0.5 and lep.sip3d < 8 and _tthlep_lepId(lep), 
-#                lambda lep : lep.relIso03 < 0.5 and lep.sip3d < 8 and _tthlep_lepId(lep), 
-#                lambda lep : lep.mvaTTH > 0.6 and lep.mediumMuonId,
-#                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
-#MODULES.append( ('leptonJetReCleanerTTH', LeptonJetReCleaner("MiniSip8", 
-#                lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8 and _tthlep_lepId(lep), 
-#                lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8 and _tthlep_lepId(lep), 
-#                lambda lep : lep.mvaTTH > 0.6 and lep.mediumMuonId,
-#                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
+#--- TTH instances
+MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("I03Sip8", 
+                lambda lep : lep.relIso03 < 0.5 and lep.sip3d < 8 and _tthlep_lepId(lep), 
+                lambda lep : lep.mvaTTH > 0.6 and lep.mediumMuonId,
+                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
+MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("MiniSip8", 
+                lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8 and _tthlep_lepId(lep), 
+                lambda lep : lep.mvaTTH > 0.6 and lep.mediumMuonId,
+                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
 #--- Susy multilep instances
-MODULES.append( ('leptonJetReCleanerSusy', LeptonJetReCleaner("Mini", 
+MODULES.append( ('leptonJetReCleanerSusy', lambda : LeptonJetReCleaner("Mini", 
                 lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
                 lambda lep : (_susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep)), # cuts applied on top of previous selection
                 lambda lep,ht : _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)),
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4),
                 selectJet = lambda jet: abs(jet.eta)<2.4,
                 isMC = False ) )) # SET TO THE RIGHT THING
-MODULES.append( ('leptonJetReCleanerSusyFO', LeptonJetReCleaner("FOsel", 
+MODULES.append( ('leptonJetReCleanerSusyFO', lambda : LeptonJetReCleaner("FOsel", 
                 lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
                 lambda lep : (_susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep)), # cuts applied on top of previous selection
                 lambda lep,ht : _susy2lss_lepId_IPcuts(lep) and (_susy2lss_lepId_loosestFO(lep) if ht>300 else _susy2lss_lepId_tighterFO(lep)),
@@ -38,47 +36,47 @@ MODULES.append( ('leptonJetReCleanerSusyFO', LeptonJetReCleaner("FOsel",
                 isMC = False ) )) # SET TO THE RIGHT THING
 from CMGTools.TTHAnalysis.tools.leptonFakeRateQCDVars import LeptonFakeRateQCDVars
 #--- TTH instances
-MODULES.append( ('leptonFakeRateQCDVarsTTH', LeptonFakeRateQCDVars(
-                lambda lep : lep.sip3d < 8 and lep.relIso03 < 0.5 and _tthlep_lepId(lep),
+MODULES.append( ('leptonFakeRateQCDVarsTTH', lambda : LeptonFakeRateQCDVars(
+                lambda lep : lep.sip3d < 8, # and lep.relIso03 < 0.5 and _tthlep_lepId(lep),
                 lambda jet, lep, dr : jet.pt > (20 if abs(jet.eta)<2.4 else 30) and dr > 0.7) ) )
 #--- Susy multilep instances
-MODULES.append( ('leptonFakeRateQCDVarsSusy', LeptonFakeRateQCDVars(
+MODULES.append( ('leptonFakeRateQCDVarsSusy', lambda : LeptonFakeRateQCDVars(
                 lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep) and _susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep),
                 lambda jet, lep, dr : jet.pt > 40 and abs(jet.eta)<2.4 and dr > 1.0 and jet.id ) ) )
 
 #from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatio,_susy2lss_multiIso_withMiniIsoRelaxed_CutForFO4
 
 from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
-MODULES.append ( ('leptonFakeRateFO2', ObjTagger('FO2','LepGood',[
+MODULES.append ( ('leptonFakeRateFO2', lambda : ObjTagger('FO2','LepGood',[
                 lambda lep: lep.miniRelIso<0.4,
                 lambda lep: _susy2lss_lepId_CBloose(lep),
                 lambda lep: _susy2lss_lepId_loosestFO(lep),
                 lambda lep: _susy2lss_lepId_IPcuts(lep),
                 ] ) ) )
-MODULES.append ( ('leptonFakeRateFO2iso', ObjTagger('FO2iso','LepGood',[
+MODULES.append ( ('leptonFakeRateFO2iso', lambda : ObjTagger('FO2iso','LepGood',[
                 lambda lep: lep.miniRelIso<0.4,
                 lambda lep: _susy2lss_lepId_CBloose(lep),
                 lambda lep: _susy2lss_lepId_tighterFO(lep),
                 lambda lep: _susy2lss_lepId_IPcuts(lep),
                 ] ) ) )
-MODULES.append ( ('leptonFakeRateFO2InSitu', ObjTagger('FO2InSitu','LepGood',[
+MODULES.append ( ('leptonFakeRateFO2InSitu', lambda : ObjTagger('FO2InSitu','LepGood',[
                 lambda lep: lep.miniRelIso<0.4,
                 lambda lep: _susy2lss_lepId_CBloose(lep),
                 lambda lep: _susy2lss_lepId_loosestFO(lep),
                 ] ) ) )
-MODULES.append ( ('leptonFakeRateFO2isoInSitu', ObjTagger('FO2isoInSitu','LepGood',[
+MODULES.append ( ('leptonFakeRateFO2isoInSitu', lambda : ObjTagger('FO2isoInSitu','LepGood',[
                 lambda lep: lep.miniRelIso<0.4,
                 lambda lep: _susy2lss_lepId_CBloose(lep),
                 lambda lep: _susy2lss_lepId_tighterFO(lep),
                 ] ) ) )
 
 # obsolete: it is now calculated in ntupleTypes
-#MODULES.append ( ('leptonIdEmuCuts', ObjTagger('idEmu','LepGood',[lambda lep: _susy2lss_idEmu_cuts(lep)]) ) )
-#MODULES.append ( ('leptonIdIsoEmuCuts', ObjTagger('idIsoEmu','LepGood',[lambda lep: _susy2lss_idIsoEmu_cuts(lep)]) ) )
+#MODULES.append ( ('leptonIdEmuCuts', lambda : ObjTagger('idEmu','LepGood',[lambda lep: _susy2lss_idEmu_cuts(lep)]) ) )
+#MODULES.append ( ('leptonIdIsoEmuCuts', lambda : ObjTagger('idIsoEmu','LepGood',[lambda lep: _susy2lss_idIsoEmu_cuts(lep)]) ) )
 
 #from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
 #pufile="/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots/zjets-4-nvtx_plots.root"
-#MODULES.append ( ('puWeights', VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
+#MODULES.append ( ('puWeights', lambda : VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
 
 
 from CMGTools.TTHAnalysis.tools.objFloatCalc import ObjFloatCalc
@@ -142,7 +140,7 @@ MODULES.append ( ('recalcLepAwareVars',ObjFloatCalc("recalcLepAwareVars","LepGoo
 class VariableProducer(Module):
     def __init__(self,name,booker,modules):
         Module.__init__(self,name,booker)
-        self._modules = modules
+        self._modules = [ (n,m() if type(m) == types.FunctionType else m) for (n,m) in modules ]
     def beginJob(self):
         self.t = PyTree(self.book("TTree","t","t"))
         self.branches = {}
@@ -193,12 +191,19 @@ parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=F
 if options.listModules:
     print "List of modules"
     for (n,x) in MODULES:
+        if type(x) == types.FunctionType: x = x()
         print "   '%s': %s" % (n,x)
     exit()
 
-if len(args) != 2 or not os.path.isdir(args[0]) or not os.path.isdir(args[1]): 
+if "{P}" in args[1]: args[1] = args[1].replace("{P}",args[0])
+if len(args) != 2 or not os.path.isdir(args[0]):
     print "Usage: program <TREE_DIR> <OUT>"
     exit()
+if not os.path.isdir(args[1]): 
+    os.system("mkdir -p "+args[1])
+    if not os.path.isdir(args[1]): 
+        print "Could not create output directory"
+        exit()
 if len(options.chunks) != 0 and len(options.datasets) != 1:
     print "must specify a single dataset with -d if using -c to select chunks"
     exit()
@@ -219,8 +224,7 @@ for D in glob(args[0]+"/*"):
             for dm in  options.datasetMatches:
                 if re.match(dm,short): found = True
             if not found: continue
-        print 'short is %s'%short
-        data = ("DoubleMuon" in short or "MuonEG" in short or "DoubleEG" in short or "SingleMuon" in short or "SingleElectron" in short)
+        data =  any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl".split()) # FIXME
         f = ROOT.TFile.Open(fname)
         t = f.Get(treename)
         if not t:
