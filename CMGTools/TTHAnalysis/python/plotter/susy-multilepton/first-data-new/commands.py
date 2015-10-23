@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 
-ODIR="~/www/25ns_run2015d_upto258714_test"
+ODIR="~/www/25ns_run2015d_upto258750"
 MYTREEDIR="/data1/p/peruzzi/TREES_74X_161015_MiniIso"
-MYLUMI="0.83231"
+MYLUMI="1.26388"
 
 EXE="python mcPlots.py"
 WDIR="susy-multilepton/first-data-new"
 COMMOPT='--s2v --tree treeProducerSusyMultilepton --FMC sf/t {P}/1_puWeights_v1_run2015D_upto258714/evVarFriend_{cname}.root -W vtxWeight --noErrorBandOnRatio  --rspam "%(lumi) (13 TeV)  " --lspam "#bf{CMS} #it{Preliminary}" --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.35 --showRatio --maxRatioRange 0 2 --showRatio --poisson -j 8 -f --sp ".*"'
 
 SELECTIONS=["ZtoEE","ZtoMuMu","ttbar","Wl","Zl","ttbar_semiLeptonic"]
-SELECTIONS=["ZtoEE"]
 
 for SEL in SELECTIONS:
     print '#'+SEL
