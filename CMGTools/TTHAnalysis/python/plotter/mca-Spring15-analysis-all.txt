@@ -1,3 +1,13 @@
+# Signals
+
+T1t_1200_800+ : T1tttt_mGo1200_mChi800 : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kRed-1
+T1t_1500_100+ : T1tttt_mGo1500_mChi100 : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kRed-2
+T5Deg+ : T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kRed-3
+T5q+ : T5qqqqWW_mGo1200_mCh1000_mChi800_dilep : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kRed-4
+T5t+ : T5ttttDeg_mGo1000_mStop300_mCh285_mChi280 : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kRed-5
+T6_600_425+ : T6ttWW_mSbot600_mCh425_mChi50 : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kRed-6
+T6_650_150+ : T6ttWW_mSbot650_mCh150_mChi50 : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kRed-7
+
 # Prompt backgrounds
 
 ttW (prompt): TTWToLNu : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kAzure+2
