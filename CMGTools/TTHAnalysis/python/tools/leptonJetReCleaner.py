@@ -30,6 +30,7 @@ class LeptonJetReCleaner:
                  "minMllAFASTT"+label,"minMllAFOSTT"+label,"minMllSFOSTT"+label,
                  "mZ1"+label, "minMllAFAS"+label,"minMllAFOS"+label,"minMllSFOS"+label,"mllTV"+label,"mllV"+label,"mtWminTV"+label,"mtWminV"+label,  
                  ("SRTV"+label, "I"),("SRV"+label, "I"),
+                 ("nLepGood","I"), ("LepGood_conePt","F",20,"nLepGood"),
                 ]
         for jfloat in "pt eta phi mass btagCSV rawPt".split():
             biglist.append( ("JetSel"+label+"_"+jfloat,"F",20,"nJetSel"+label) )
@@ -40,6 +41,7 @@ class LeptonJetReCleaner:
         return biglist
     def __call__(self,event):
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
+        for lep in leps: lep.conept = conept(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)
         jetsc = [j for j in Collection(event,"Jet","nJet")]
         jetsd = [j for j in Collection(event,"DiscJet","nDiscJet")]
         (met, metphi)  = event.met_pt, event.met_phi
@@ -51,13 +53,13 @@ class LeptonJetReCleaner:
         for il,lep in enumerate(leps):
             if self.looseLeptonSel(lep):
                 ret["iL"].append(il)
-                if lep.pt > 10: ret["nLepGood10"] += 1
+                if lep.conept > (10 if abs(lep.pdgId)==13 else 15): ret["nLepGood10"] += 1
         ret["nLepGood"] = len(ret["iL"])
         lepsl = [ leps[il] for il in ret["iL"]  ]
         for il,lep in enumerate(lepsl):
             if self.passMllTLVeto(lep, lepsl, 76, 106, True) and self.passMllTLVeto(lep, lepsl, 0, 12, True):
                     ret["iLV"].append(il)
-                    if lep.pt > 10: ret["nLepGoodVeto10"] += 1
+                    if lep.conept > (10 if abs(lep.pdgId)==13 else 15): ret["nLepGoodVeto10"] += 1
         ret["nLepGoodVeto"] = len(ret["iLV"])
         lepslv = [ leps[il] for il in ret["iLV"] ]            
         #
@@ -121,10 +123,10 @@ class LeptonJetReCleaner:
             lep = leps[il]
             if self.tightLeptonSel(lep,ret["htJet40j"]):
                 ret["iLT"].append(il)
-                if lep.pt > 10: ret["nLepTight10"] += 1
+                if lep.conept > (10 if abs(lep.pdgId)==13 else 15): ret["nLepTight10"] += 1
                 if self.passMllTLVeto(lep, lepsl, 76, 106, True) and self.passMllTLVeto(lep, lepsl, 0, 12, True):
                     ret["iLTV"].append(il)
-                    if lep.pt > 10: ret["nLepTightVeto10"] += 1
+                    if lep.conept > (10 if abs(lep.pdgId)==13 else 15): ret["nLepTightVeto10"] += 1
         ret["nLepTight"] = len(ret["iLT"])
         lepst = [ leps[il] for il in ret["iLT"] ]
         ret["nLepTightVeto"] = len(ret["iLTV"])
@@ -132,7 +134,7 @@ class LeptonJetReCleaner:
         #
         ### 2lss specific things
         ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
-        ret['mZ1cut10TL'] = self.bestZ1TL(lepsl, lepst, cut=lambda l:l.pt>10)
+        ret['mZ1cut10TL'] = self.bestZ1TL(lepsl, lepst, cut=lambda l:l.conept>(10 if abs(l.pdgId)==13 else 15))
         ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
         ret['minMllAFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
         ret['minMllSFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
@@ -152,7 +154,7 @@ class LeptonJetReCleaner:
                       ("TVp",lepstv,ret["iLTV"],False, False)
             ]
         for (name,lepcoll,lepIdxs, byflav, bypassMV) in pairTypes:
-            iL1iL2 = self.bestSSPair(lepcoll, byflav,bypassMV, cut = lambda lep : lep.pt > 10)
+            iL1iL2 = self.bestSSPair(lepcoll, byflav,bypassMV, cut = lambda lep : lep.conept > (10 if abs(lep.pdgId)==13 else 15))
             sizeIdxs=len(lepIdxs)
             ret["iL1"+name] = lepIdxs[ iL1iL2[0] ] if sizeIdxs >=1 else 0
             ret["iL2"+name] = lepIdxs[ iL1iL2[1] ] if sizeIdxs >=2 else 1
@@ -160,13 +162,15 @@ class LeptonJetReCleaner:
         ret["mllV"]= (leps[ret["iL1V"]].p4() + leps[ret["iL2V"]].p4()).M()    
         #
         ### 2lss SR definitions
-        ret["mtWminTV"] = min(sqrt(2*leps[ret["iL1TV"]].pt*met*(1-cos(leps[ret["iL1TV"]].phi-metphi))),sqrt(2*leps[ret["iL2TV"]].pt*met*(1-cos(leps[ret["iL2TV"]].phi-metphi))))
-        ret["mtWminV"] = min(sqrt(2*leps[ret["iL1V"]].pt*met*(1-cos(leps[ret["iL1V"]].phi-metphi))),sqrt(2*leps[ret["iL2V"]].pt*met*(1-cos(leps[ret["iL2V"]].phi-metphi))))
-        ret["SRTV"] = self.SR(leps[ret["iL1TV"]].pt,leps[ret["iL2TV"]].pt,ret["htJet40j"],met,ret["nJet40"],ret["nBJetMedium25"],ret["mtWminTV"])
-        ret["SRV"] = self.SR(leps[ret["iL1V"]].pt,leps[ret["iL2V"]].pt,ret["htJet40j"],met,ret["nJet40"],ret["nBJetMedium25"],ret["mtWminV"])   
+        ret["mtWminTV"] = min(sqrt(2*leps[ret["iL1TV"]].conept*met*(1-cos(leps[ret["iL1TV"]].phi-metphi))),sqrt(2*leps[ret["iL2TV"]].conept*met*(1-cos(leps[ret["iL2TV"]].phi-metphi))))
+        ret["mtWminV"] = min(sqrt(2*leps[ret["iL1V"]].conept*met*(1-cos(leps[ret["iL1V"]].phi-metphi))),sqrt(2*leps[ret["iL2V"]].conept*met*(1-cos(leps[ret["iL2V"]].phi-metphi))))
+        ret["SRTV"] = self.SR(leps[ret["iL1TV"]].conept,leps[ret["iL2TV"]].conept,ret["htJet40j"],met,ret["nJet40"],ret["nBJetMedium25"],ret["mtWminTV"])
+        ret["SRV"] = self.SR(leps[ret["iL1V"]].conept,leps[ret["iL2V"]].conept,ret["htJet40j"],met,ret["nJet40"],ret["nBJetMedium25"],ret["mtWminV"])   
         #
         ### attach labels and return
         fullret = {}
+        fullret["nLepGood"]=len(leps)
+        fullret["LepGood_conePt"] = [lep.conept for lep in leps]
         for k,v in ret.iteritems(): 
             fullret[k+self.label] = v
         for k,v in jetret.iteritems(): 
@@ -226,7 +230,7 @@ class LeptonJetReCleaner:
                     if not self.passMllVeto(l1, l2, 0, 8, False) and not bypassMV: continue
                     if l1.charge == l2.charge:
                         flav = abs(l1.pdgId) + abs(l2.pdgId) if byflav else 0
-                        ht   = l1.pt + l2.pt
+                        ht   = l1.conept + l2.conept
                         pairs.append( (-flav,-ht,il1,il2) )
             if len(pairs):
                 pairs.sort()
@@ -334,7 +338,7 @@ def _susy2lss_lepId_CBloose(lep):
 
 def _susy2lss_lepId_loosestFO(lep):
     if not _susy2lss_lepId_CBloose(lep): return False
-    if lep.pt <= 10: return False
+    if lep.conept <= (10 if abs(lep.pdgId)==13 else 15): return False
     if abs(lep.pdgId) == 13:
         return lep.mediumMuonId > 0 and lep.tightCharge > 0
     elif abs(lep.pdgId) == 11:
@@ -357,7 +361,7 @@ def _susy2lss_lepId_IPcuts(lep):
 
 def _susy2lss_lepId_CB(lep):
     if not _susy2lss_lepId_CBloose(lep): return False
-    if lep.pt <= 10: return False
+    if lep.conept <= (10 if abs(lep.pdgId)==13 else 15): return False
     if not _susy2lss_lepId_IPcuts(lep): return False
     if abs(lep.pdgId) == 13:
         return lep.mediumMuonId > 0 and lep.tightCharge > 0
