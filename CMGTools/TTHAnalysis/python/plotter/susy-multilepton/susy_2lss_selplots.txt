@@ -18,3 +18,5 @@ mtWmin_log: min(mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_pt,L
 nJet40_log : nJet40 : 10,-0.5,9.5 ; XTitle='N(jet\, p_{T} > 40)', Logy
 nBJet25_log : nBJetMedium25 : 5,-0.5,4.5 ; XTitle='N(b-jet\, p_{T} > 25\, CSVM)', Logy
 
+#tightness : LepGood2_isTight\:LepGood1_isTight : 2,-0.5,1.5,2,-0.5,1.5 ; XTitle="LepGood1_isTight",YTitle="LepGood2_isTight"
+#one : 1 : 1,0.5,1.5; XTitle="1"

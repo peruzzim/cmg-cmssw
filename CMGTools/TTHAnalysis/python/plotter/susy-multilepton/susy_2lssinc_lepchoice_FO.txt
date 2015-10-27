@@ -1,3 +1,6 @@
+LepGood_isTight : (multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,2) && (abs(LepGood_pdgId)!=11 || mvaIdSpring15(LepGood_pdgId,LepGood_eta,LepGood_mvaIdSpring15,3,0))); AlsoData
+LepGood1_isTight : (multiIso_multiWP(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,LepGood1_miniRelIso,LepGood1_jetPtRatiov2,LepGood1_jetPtRelv2,2) && (abs(LepGood1_pdgId)!=11 || mvaIdSpring15(LepGood1_pdgId,LepGood1_eta,LepGood1_mvaIdSpring15,3,0))); AlsoData
+LepGood2_isTight : (multiIso_multiWP(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,LepGood2_miniRelIso,LepGood2_jetPtRatiov2,LepGood2_jetPtRelv2,2) && (abs(LepGood2_pdgId)!=11 || mvaIdSpring15(LepGood2_pdgId,LepGood2_eta,LepGood2_mvaIdSpring15,3,0))); AlsoData
 LepGood1_(\w+) : LepGood_\1[iL1TV_FOsel]; AlsoData
 LepGood2_(\w+) : LepGood_\1[iL2TV_FOsel]; AlsoData
 nLepGood10\b: nLepTightVeto10_FOsel; AlsoData
@@ -10,3 +13,4 @@ nBJetMedium40\b: nBJetMedium40_FOsel; AlsoData
 nJet25\b: nJet25_FOsel; AlsoData
 htJet25j\b: htJet25j_FOsel; AlsoData
 nBJetMedium25\b: nBJetMedium25_FOsel; AlsoData
+SR\b: SRTV_FOsel; AlsoData

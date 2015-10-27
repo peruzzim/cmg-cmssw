@@ -37,6 +37,13 @@ TH2 * FR_el_FO4_insitu = 0;
 TH2 * FRi_FO_mu[8];
 TH2 * FRi_FO_el[8];
 
+TH2 * FR_mu_QCD_iso = 0;
+TH2 * FR_mu_QCD_noniso = 0;
+TH2 * FR_el_QCD_iso = 0;
+TH2 * FR_el_QCD_noniso = 0;
+TH2 * FRi_fHT_FO_mu[2];
+TH2 * FRi_fHT_FO_el[2];
+
 bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
     TH2 **histo = 0, **hptr2 = 0;
     if      (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
@@ -66,6 +73,10 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     else if (histoName == "FR_el_FO3_insitu")  { histo = &FR_el_FO3_insitu ;  hptr2 = & FRi_FO_el[5]; }
     else if (histoName == "FR_el_FO4_QCD")  { histo = &FR_el_FO4_QCD ;  hptr2 = & FRi_FO_el[6]; }
     else if (histoName == "FR_el_FO4_insitu")  { histo = &FR_el_FO4_insitu ;  hptr2 = & FRi_FO_el[7]; }
+    else if (histoName == "FR_mu_QCD_iso")  { histo = &FR_mu_QCD_iso ;  hptr2 = & FRi_fHT_FO_mu[0]; }
+    else if (histoName == "FR_mu_QCD_noniso")  { histo = &FR_mu_QCD_noniso ;  hptr2 = & FRi_fHT_FO_mu[1]; }
+    else if (histoName == "FR_el_QCD_iso")  { histo = &FR_el_QCD_iso ;  hptr2 = & FRi_fHT_FO_el[0]; }
+    else if (histoName == "FR_el_QCD_noniso")  { histo = &FR_el_QCD_noniso ;  hptr2 = & FRi_fHT_FO_el[1]; }
     if (histo == 0)  {
         std::cerr << "ERROR: histogram " << histoName << " is not defined in fakeRate.cc." << std::endl;
         return 0;
@@ -738,6 +749,42 @@ float fakeRateReader_2lss_FO(float l1eta, float l1pt, float l2eta, float l2pt, i
 	   int ptbin2  = std::max(1, std::min(hist2->GetNbinsX(), hist2->GetXaxis()->FindBin(l2pt)));
 	   int etabin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2eta))));
 	   double fr2 = hist2->GetBinContent(ptbin2,etabin2);
+            return -fr1*fr2/((1-fr1)*(1-fr2));
+      }
+        default: return 0;
+    }
+}
+
+float fakeRateReader_2lss_fHT_FO(float l1eta, float l1pt, float l2eta, float l2pt, int l1pdgId, int l2pdgId, int pass1, int pass2, int isiso)
+{
+  int ind = isiso ? 0 : 1;
+  int nfail = 2-pass1-pass2;
+    switch (nfail) {
+        case 1: {
+            double fpt,feta; int fid;
+            if (pass2)   { fpt = l1pt; feta = std::abs(l1eta); fid = abs(l1pdgId); }
+            else         { fpt = l2pt; feta = std::abs(l2eta); fid = abs(l2pdgId); }
+            TH2 *hist = (fid == 11 ? FRi_fHT_FO_el[ind] : FRi_fHT_FO_mu[ind]);
+	    if (!hist){
+	      std::cout << "Error: FR histo not filled " << fid << " " << ind << std::endl;
+	      assert(false);
+	    }
+	    int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(fpt)));
+	    int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(feta)));
+	    double fr = hist->GetBinContent(ptbin,etabin);
+	    //	    std::cout << "returning " << fr/(1-fr) << std::endl;
+            return fr/(1-fr);
+        }
+      case 2: {
+            TH2 *hist1 = (abs(l1pdgId) == 11 ? FRi_fHT_FO_el[ind] : FRi_fHT_FO_mu[ind]);
+	    int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
+	    int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
+	    double fr1 = hist1->GetBinContent(ptbin1,etabin1);
+           TH2 *hist2 = (abs(l2pdgId) == 11 ? FRi_fHT_FO_el[ind] : FRi_fHT_FO_mu[ind]);
+	   int ptbin2  = std::max(1, std::min(hist2->GetNbinsX(), hist2->GetXaxis()->FindBin(l2pt)));
+	   int etabin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2eta))));
+	   double fr2 = hist2->GetBinContent(ptbin2,etabin2);
+	   //	   std::cout << "returning " << -fr1*fr2/((1-fr1)*(1-fr2)) << std::endl;
             return -fr1*fr2/((1-fr1)*(1-fr2));
       }
         default: return 0;

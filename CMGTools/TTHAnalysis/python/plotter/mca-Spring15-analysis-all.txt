@@ -19,6 +19,7 @@ ttZ/H (prompt): TTHnobb : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); 
 WZ (prompt): WZTo3LNu: xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kOrange
 
 WW (same-sign): WWDouble : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kGreen+2
+WW (same-sign): WpWpJJ : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kGreen+2
 
 T+G (conv.): TTGJets : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kMagenta
 T+G (conv.): TGJets : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kMagenta
@@ -27,8 +28,10 @@ V+G (conv.): WGToLNuG : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); Fi
 V+G (conv.): ZGTo2LG : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kOrange-3
 
 Rares: ZZTo4L: xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kViolet+1
-#Rares: VH ???
-#Rares : WWZ (corrupted)
+Rares: tZqll : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kViolet+1
+Rares: GGHZZ4L : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kViolet+1
+Rares: VHToNonbb : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kViolet+1
+Rares: WWZ : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0) ; FillColor=ROOT.kViolet+1
 Rares : ZZZ : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kViolet+1
 Rares : WZZ : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kViolet+1
 Rares : TTTT : xsec*(LepGood1_mcMatchId!=0)*(LepGood2_mcMatchId!=0); FillColor=ROOT.kViolet+1
