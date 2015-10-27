@@ -2,36 +2,31 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from CMGTools.TTHAnalysis.tools.conept import conept
 
 class LeptonJetReCleaner:
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,tightLeptonSel,cleanJet,selectJet,isMC=True):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,isMC=True):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
-        self.cleaningLeptonSel = cleaningLeptonSel
-        self.tightLeptonSel = tightLeptonSel
+        self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
+        self.FOLeptonSel = FOLeptonSel # applied on top of looseLeptonSel
+        self.tightLeptonSel = tightLeptonSel # applied on top of looseLeptonSel
         self.cleanJet = cleanJet
         self.selectJet = selectJet
         self.isMC = isMC
     def listBranches(self):
         label = self.label
-        biglist = [ ("nLepGood"+label, "I"), ("nLepGoodVeto"+label, "I"),("nLepTight"+label, "I"), ("nLepTightVeto"+label, "I"), ("nJetSel"+label, "I"), 
-                 ("iL"+label,"I",20,"nLepGood"+label), ("iLV"+label,"I",20,"nLepGoodVeto"+label), ("iLT"+label,"I",20,"nLepTight"+label), ("iLTV"+label,"I",20,"nLepTightVeto"+label),
-                 ("iJ"+label,"I",20,"nJetSel"+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
-                 ("nLepGood10"+label, "I"), ("nLepGoodVeto10"+label, "I"), ("nLepTight10"+label, "I"),("nLepTightVeto10"+label, "I"),
-                 ("nJet40"+label, "I"), "htJet40j"+label, ("nBJetLoose40"+label, "I"), ("nBJetMedium40"+label, "I"),
-                 ("nJet25"+label, "I"), "htJet25j"+label, ("nBJetLoose25"+label, "I"), ("nBJetMedium25"+label, "I"), 
-                 ("iL1"+label, "I"), ("iL2"+label, "I"),
-                 ("iL1T"+label, "I"), ("iL2T"+label, "I"), 
-                 ("iL1p"+label, "I"), ("iL2p"+label, "I"), 
-                 ("iL1Tp"+label, "I"), ("iL2Tp"+label, "I"), 
-                 ("iL1V"+label, "I"), ("iL2V"+label, "I"), 
-                 ("iL1TV"+label, "I"), ("iL2TV"+label, "I"), 
-                 ("iL1Vp"+label, "I"), ("iL2Vp"+label, "I"), 
-                 ("iL1TVp"+label, "I"), ("iL2TVp"+label, "I"), 
-                 "mZ1cut10TL"+label, "minMllAFASTL"+label,"minMllAFOSTL"+label,"minMllSFOSTL"+label,
-                 "minMllAFASTT"+label,"minMllAFOSTT"+label,"minMllSFOSTT"+label,
-                 "mZ1"+label, "minMllAFAS"+label,"minMllAFOS"+label,"minMllSFOS"+label,"mllTV"+label,"mllV"+label,"mtWminTV"+label,"mtWminV"+label,  
-                 ("SRTV"+label, "I"),("SRV"+label, "I"),
-                 ("nLepGood","I"), ("LepGood_conePt","F",20,"nLepGood"),
-                ]
+        biglist = [
+            ("nLepGood","I"), ("LepGood_conePt","F",20,"nLepGood"), # calculate conept
+            ("nLepLoose"+label, "I"), ("iL"+label,"I",20,"nLepLoose"+label), # passing loose
+            ("nLepLooseVeto"+label, "I"), ("iLV"+label,"I",20,"nLepLooseVeto"+label), # passing loose + veto
+            ("nLepCleaning"+label, "I"), ("iC"+label,"I",20,"nLepCleaning"+label), # passing cleaning
+            ("nLepCleaningVeto"+label, "I"), ("iCV"+label,"I",20,"nLepCleaningVeto"+label), # passing cleaning + veto
+            ("nLepFO"+label, "I"), ("iF"+label,"I",20,"nLepFO"+label), # passing FO
+            ("nLepFOVeto"+label, "I"), ("iFV"+label,"I",20,"nLepFOVeto"+label), # passing FO + veto
+            ("nLepTight"+label, "I"), ("iT"+label,"I",20,"nLepTight"+label), # passing tight
+            ("nLepTightVeto"+label, "I"), ("iTV"+label,"I",20,"nLepTightVeto"+label), # passing tight + veto
+            ("nJetSel"+label, "I"), ("iJ"+label,"I",20,"nJetSel"+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
+            ("nJet40"+label, "I"), "htJet40j"+label, ("nBJetLoose40"+label, "I"), ("nBJetMedium40"+label, "I"),
+            ("nJet25"+label, "I"), "htJet25j"+label, ("nBJetLoose25"+label, "I"), ("nBJetMedium25"+label, "I"), 
+            ]
         for jfloat in "pt eta phi mass btagCSV rawPt".split():
             biglist.append( ("JetSel"+label+"_"+jfloat,"F",20,"nJetSel"+label) )
         if self.isMC:
@@ -39,6 +34,25 @@ class LeptonJetReCleaner:
             biglist.append( ("JetSel"+label+"_mcFlavour","I",20,"nJetSel"+label) )
             biglist.append( ("JetSel"+label+"_mcMatchId","I",20,"nJetSel"+label) )
         return biglist
+
+    def fillCollWithVeto(self,ret,refcollection,leps,lab,labcount,selection,lepsforveto,ht=-1):
+        ret[lab] = [];
+        ret[lab+'V'] = [];
+        for lep in leps:
+            if ht<0:
+                if selection(lep): ret[lab].append(refcollection.index(lep))
+            else:
+                if selection(lep,ht): ret[lab].append(refcollection.index(lep))
+        ret[labcount] = len(ret[lab])
+        lepspass = [ refcollection[il] for il in ret[lab]  ]
+        if lepsforveto==None: lepsforveto = lepspass # if lepsforveto==None, veto selected leptons among themselves
+        for lep in lepspass:
+            if passMllTLVeto(lep, lepsforveto, 76, 106, True) and passMllTLVeto(lep, lepsforveto, 0, 12, True):
+                ret[lab+'V'].append(refcollection.index(lep))
+        ret[labcount+'Veto'] = len(ret[lab+'V'])
+        lepspassveto = [ refcollection[il] for il in ret[lab+'V']  ]
+        return (ret,lepspass,lepspassveto)
+
     def __call__(self,event):
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         for lep in leps: lep.conept = conept(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)
@@ -46,31 +60,18 @@ class LeptonJetReCleaner:
         jetsd = [j for j in Collection(event,"DiscJet","nDiscJet")]
         (met, metphi)  = event.met_pt, event.met_phi
         ret = {}; jetret = {}
-        #
-        ### Define loose leptons
-        ret["iL"] = []; ret["nLepGood10"] = 0
-        ret["iLV"] = []; ret["nLepGoodVeto10"] = 0
-        for il,lep in enumerate(leps):
-            if self.looseLeptonSel(lep):
-                ret["iL"].append(il)
-                if lep.conept > (10 if abs(lep.pdgId)==13 else 15): ret["nLepGood10"] += 1
-        ret["nLepGood"] = len(ret["iL"])
-        lepsl = [ leps[il] for il in ret["iL"]  ]
-        for il,lep in enumerate(lepsl):
-            if self.passMllTLVeto(lep, lepsl, 76, 106, True) and self.passMllTLVeto(lep, lepsl, 0, 12, True):
-                    ret["iLV"].append(il)
-                    if lep.conept > (10 if abs(lep.pdgId)==13 else 15): ret["nLepGoodVeto10"] += 1
-        ret["nLepGoodVeto"] = len(ret["iLV"])
-        lepslv = [ leps[il] for il in ret["iLV"] ]            
-        #
-        # define leptons for cleaning
-        cleaningLeps = [il for il in ret["iL"] if self.cleaningLeptonSel(leps[il])]
+
+        lepsl = []; lepslv = [];
+        ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'iL','nLepLoose',self.looseLeptonSel,None)
+        lepsc = []; lepscv = [];
+        ret, lepct, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'iC','nLepCleaning',self.cleaningLeptonSel,lepsl)
+
         ### Define jets
         ret["iJ"] = []
         # 0. mark each jet as clean
         for j in jetsc+jetsd: j._clean = True if self.selectJet(j) else False
         # 1. associate to each lepton passing the cleaning selection its nearest jet 
-        for il in cleaningLeps:
+        for il in lepsc:
             lep = leps[il]
             best = None; bestdr = 0.4
             for j in jetsc+jetsd:
@@ -115,58 +116,13 @@ class LeptonJetReCleaner:
                 ret["nJet40"] += 1; ret["htJet40j"] += j.pt; 
                 if j.btagCSV>0.423: ret["nBJetLoose40"] += 1
                 if j.btagCSV>0.814: ret["nBJetMedium40"] += 1
-        #
-        ### Define tight leptons
-        ret["iLT"] = []; ret["nLepTight10"] = 0
-        ret["iLTV"] = []; ret["nLepTightVeto10"] = 0
-        for il in ret["iL"]:
-            lep = leps[il]
-            if self.tightLeptonSel(lep,ret["htJet40j"]):
-                ret["iLT"].append(il)
-                if lep.conept > (10 if abs(lep.pdgId)==13 else 15): ret["nLepTight10"] += 1
-                if self.passMllTLVeto(lep, lepsl, 76, 106, True) and self.passMllTLVeto(lep, lepsl, 0, 12, True):
-                    ret["iLTV"].append(il)
-                    if lep.conept > (10 if abs(lep.pdgId)==13 else 15): ret["nLepTightVeto10"] += 1
-        ret["nLepTight"] = len(ret["iLT"])
-        lepst = [ leps[il] for il in ret["iLT"] ]
-        ret["nLepTightVeto"] = len(ret["iLTV"])
-        lepstv = [ leps[il] for il in ret["iLTV"] ]
-        #
-        ### 2lss specific things
-        ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
-        ret['mZ1cut10TL'] = self.bestZ1TL(lepsl, lepst, cut=lambda l:l.conept>(10 if abs(l.pdgId)==13 else 15))
-        ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
-        ret['minMllAFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ret['minMllSFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-        ret['minMllAFASTL'] = self.minMllTL(lepsl, lepst) 
-        ret['minMllAFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ret['minMllSFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-        ret['minMllAFASTT'] = self.minMllTL(lepst, lepst)
-        ret['minMllAFOSTT'] = self.minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ret['minMllSFOSTT'] = self.minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-        pairTypes = [ ("",lepsl,ret["iL"],True, True),
-                      ("p",lepsl,ret["iL"],False, True),
-                      ("V",lepslv,ret["iLV"],True, False),
-                      ("Vp",lepslv,ret["iLV"],False, False),
-                      ("T",lepst,ret["iLT"],True, True),                      
-                      ("Tp",lepst,ret["iLT"],False, True),
-                      ("TV",lepstv,ret["iLTV"],True, False),
-                      ("TVp",lepstv,ret["iLTV"],False, False)
-            ]
-        for (name,lepcoll,lepIdxs, byflav, bypassMV) in pairTypes:
-            iL1iL2 = self.bestSSPair(lepcoll, byflav,bypassMV, cut = lambda lep : lep.conept > (10 if abs(lep.pdgId)==13 else 15))
-            sizeIdxs=len(lepIdxs)
-            ret["iL1"+name] = lepIdxs[ iL1iL2[0] ] if sizeIdxs >=1 else 0
-            ret["iL2"+name] = lepIdxs[ iL1iL2[1] ] if sizeIdxs >=2 else 1
-        ret["mllTV"]= (leps[ret["iL1TV"]].p4() + leps[ret["iL2TV"]].p4()).M()
-        ret["mllV"]= (leps[ret["iL1V"]].p4() + leps[ret["iL2V"]].p4()).M()    
-        #
-        ### 2lss SR definitions
-        ret["mtWminTV"] = min(sqrt(2*leps[ret["iL1TV"]].conept*met*(1-cos(leps[ret["iL1TV"]].phi-metphi))),sqrt(2*leps[ret["iL2TV"]].conept*met*(1-cos(leps[ret["iL2TV"]].phi-metphi))))
-        ret["mtWminV"] = min(sqrt(2*leps[ret["iL1V"]].conept*met*(1-cos(leps[ret["iL1V"]].phi-metphi))),sqrt(2*leps[ret["iL2V"]].conept*met*(1-cos(leps[ret["iL2V"]].phi-metphi))))
-        ret["SRTV"] = self.SR(leps[ret["iL1TV"]].conept,leps[ret["iL2TV"]].conept,ret["htJet40j"],met,ret["nJet40"],ret["nBJetMedium25"],ret["mtWminTV"])
-        ret["SRV"] = self.SR(leps[ret["iL1V"]].conept,leps[ret["iL2V"]].conept,ret["htJet40j"],met,ret["nJet40"],ret["nBJetMedium25"],ret["mtWminV"])   
-        #
+
+        # calculate FOs and tight leptons using the cleaned HT
+        lepsf = []; lepsfv = [];
+        ret, lepft, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'iF','nLepFO',self.FOLeptonSel,lepsl,ret["htJet40j"])
+        lepst = []; lepstv = [];
+        ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'iT','nLepTight',self.tightLeptonSel,lepsl,ret["htJet40j"])
+
         ### attach labels and return
         fullret = {}
         fullret["nLepGood"]=len(leps)
@@ -177,138 +133,18 @@ class LeptonJetReCleaner:
             fullret["JetSel%s_%s" % (self.label,k)] = v
         return fullret
 
-    def passMllVeto(self, l1, l2, mZmin, mZmax, isOSSF ):
-        if  l1.pdgId == -l2.pdgId or not isOSSF:
-            mz = (l1.p4() + l2.p4()).M()
-            if mz > mZmin and  mz < mZmax:
-                return False
+def passMllVeto(l1, l2, mZmin, mZmax, isOSSF ):
+    if  l1.pdgId == -l2.pdgId or not isOSSF:
+        mz = (l1.p4() + l2.p4()).M()
+        if mz > mZmin and  mz < mZmax:
+            return False
+    return True
+def passMllTLVeto(lep, lepsl, mZmin, mZmax, isOSSF):
+    for ll in lepsl:
+        if ll == lep: continue
+        if not passMllVeto(lep, ll, mZmin, mZmax, isOSSF):
+            return False
         return True
-    def passMllTLVeto(self, lep, lepsl, mZmin, mZmax, isOSSF):
-        for ll in lepsl:
-            if ll == lep: continue
-            if not self.passMllVeto(lep, ll, mZmin, mZmax, isOSSF):
-                return False
-        return True
-    def bestZ1TL(self,lepsl,lepst,cut=lambda lep:True):
-          pairs = []
-          for l1 in lepst:
-            if not cut(l1): continue
-            for l2 in lepsl:
-                if not cut(l2): continue
-                if l1.pdgId == -l2.pdgId:
-                   mz = (l1.p4() + l2.p4()).M()
-                   diff = abs(mz-91.2)
-                   pairs.append( (diff,mz) )
-          if len(pairs):
-              pairs.sort()
-              return pairs[0][1]
-          return 0.
-    def minMllTL(self, lepsl, lepst, bothcut=lambda lep:True, onecut=lambda lep:True, paircut=lambda lep1,lep2:True):
-            pairs = []
-            for l1 in lepst:
-                if not bothcut(l1): continue
-                for l2 in lepsl:
-                    if l2 == l1 or not bothcut(l2): continue
-                    if not onecut(l1) and not onecut(l2): continue
-                    if not paircut(l1,l2): continue
-                    mll = (l1.p4() + l2.p4()).M()
-                    pairs.append(mll)
-            if len(pairs):
-                return min(pairs)
-            return -1
-    def bestSSPair(self,leps,byflav,bypassMV,cut=lambda lep:True):
-        ret = (0,1)
-        if len(leps) < 2:
-            ret = (0,1)
-        if len(leps) > 2:
-            pairs = []
-            for il1 in xrange(len(leps)-1):
-                for il2 in xrange(il1+1,len(leps)): 
-                    l1 = leps[il1]
-                    l2 = leps[il2]
-                    if not cut(l1) or not cut(l2): continue
-                    if not self.passMllVeto(l1, l2, 0, 8, False) and not bypassMV: continue
-                    if l1.charge == l2.charge:
-                        flav = abs(l1.pdgId) + abs(l2.pdgId) if byflav else 0
-                        ht   = l1.conept + l2.conept
-                        pairs.append( (-flav,-ht,il1,il2) )
-            if len(pairs):
-                pairs.sort()
-                ret = (pairs[0][2],pairs[0][3])
-        return ret
-    def SR(self, l1pt, l2pt, ht, met, nj, nb, mtw):
-        if l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 1
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 2
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 300 and nj >= 2 and mtw < 120) or (met > 50 and met < 300 and nj >= 2 and mtw > 120))   : SR = 3
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 0 and mtw < 120  : SR = 4
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 5
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 0 and mtw < 120  : SR = 6
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw > 120  : SR = 7
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 300 and nj >= 2 and mtw > 120)) : SR = 8
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 9
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120  : SR = 10
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 1 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 300 and nj >= 2 and mtw < 120) or (met > 50 and met < 300 and nj >= 2 and mtw > 120))   : SR = 11
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 1 and mtw < 120  : SR = 12
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120  : SR = 13
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 1 and mtw < 120  : SR = 14
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw > 120  : SR = 15
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and nb == 1 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 300 and nj >= 2 and mtw > 120)) : SR = 16
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 17
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120  : SR = 18
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 2 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 300 and nj >= 2 and mtw < 120) or (met > 50 and met < 300 and nj >= 2 and mtw > 120))   : SR = 19
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 2 and mtw < 120  : SR = 20
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120  : SR = 21
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 2 and mtw < 120  : SR = 22
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw > 120  : SR = 23
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and nb == 2 and ((met > 50 and met < 200 and nj >= 5 and mtw > 120) or (met > 200 and met < 300 and nj >= 2 and mtw > 120)) : SR = 24
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 25
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 26
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 27
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 28
-        elif l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 300 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 29
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 300 and nj >= 2 and nb >= 3 and mtw > 120 : SR = 30
-        elif l1pt > 25 and l2pt > 25 and ht > 300 and met > 300 and nj >= 2 : SR = 31
-        elif l1pt > 25 and l2pt > 25 and ht > 1125 and met > 50 and met < 300 and nj >= 2 : SR = 32
-        ####
-        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 33 #1B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 34 #2B
-        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 300 and nj >= 2)) and nb == 0 and mtw < 120 : SR = 35 #3B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 0 and mtw < 120 : SR = 36  #4B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 37 #5B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 0 and mtw < 120 : SR = 38 #6B
-        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 39 #7B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 40 #8B
-        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 300 and nj >= 2)) and nb == 1 and mtw < 120 : SR = 41 #9B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 1 and mtw < 120 : SR = 42 #10B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 1 and mtw < 120 : SR = 43 #11B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 1 and mtw < 120 : SR = 44 #12B
-        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 45 #13B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 46 #14B
-        elif l1pt > 25 and l2pt < 25 and ht < 300  and ((met > 50 and met < 200 and nj >= 5) or (met > 200 and met < 300 and nj >= 2)) and nb == 2 and mtw < 120 : SR = 47 #15B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 5 and nb == 2 and mtw < 120 : SR = 48 #16B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nj <= 4 and nb == 2 and mtw < 120 : SR = 49 #17B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 5 and nb == 2 and mtw < 120 : SR = 50 #18B
-       
-        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 51 #19B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 52 #20B
-        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 53 #21B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 200 and met < 300 and nj >= 2 and nb >= 3 and mtw < 120 : SR = 54 #21B       
-        elif l1pt > 25 and l2pt < 25 and ht < 300 and met > 50 and met < 300 and nj >= 2 and mtw > 120 : SR = 55 #23B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and ht < 1125 and met > 50 and met < 300 and nj >= 2 and mtw > 120 : SR = 56 #24B
-        elif l1pt > 25 and l2pt < 25 and ht > 300 and met > 300 and nj >= 2 : SR = 57 #25B
-        elif l1pt > 25 and l2pt < 25 and ht > 1125 and met > 50 and met < 300 and nj >= 2 : SR = 58 #26B
-        ####
-        elif l1pt < 25 and l2pt < 25 and  met > 50 and met < 200 and nb == 0 and mtw < 120 : SR = 59 #C1 
-        elif l1pt < 25 and l2pt < 25 and  met > 200 and nb == 0 and mtw < 120 : SR = 60 #C2 
-        elif l1pt < 25 and l2pt < 25 and  met > 50 and met < 200 and nb == 1 and mtw < 120 : SR = 61 #C3 
-        elif l1pt < 25 and l2pt < 25 and  met > 200 and nb == 1 and mtw < 120 : SR = 62 #C4 
-        elif l1pt < 25 and l2pt < 25 and  met > 50 and met < 200 and nb == 2 and mtw < 120 : SR = 63 #C5 
-        elif l1pt < 25 and l2pt < 25 and  met > 200 and nb == 2 and mtw < 120 : SR = 64 #C6 
-        elif l1pt < 25 and l2pt < 25 and  nb >= 3 and mtw < 120 : SR = 65 #C7 
-        elif l1pt < 25 and l2pt < 25 and  mtw > 120 : SR = 66 #C8 
-        else : SR = 0 
-        return SR
-
 
 def _tthlep_lepId(lep):
         #if lep.pt <= 10: return False
@@ -336,9 +172,12 @@ def _susy2lss_lepId_CBloose(lep):
             return True
         return False
 
+def _susy2lss_lepConePt1015(lep):
+    if lep.conept <= (10 if abs(lep.pdgId)==13 else 15): return False
+    return True
+
 def _susy2lss_lepId_loosestFO(lep):
     if not _susy2lss_lepId_CBloose(lep): return False
-    if lep.conept <= (10 if abs(lep.pdgId)==13 else 15): return False
     if abs(lep.pdgId) == 13:
         return lep.mediumMuonId > 0 and lep.tightCharge > 0
     elif abs(lep.pdgId) == 11:
@@ -361,7 +200,6 @@ def _susy2lss_lepId_IPcuts(lep):
 
 def _susy2lss_lepId_CB(lep):
     if not _susy2lss_lepId_CBloose(lep): return False
-    if lep.conept <= (10 if abs(lep.pdgId)==13 else 15): return False
     if not _susy2lss_lepId_IPcuts(lep): return False
     if abs(lep.pdgId) == 13:
         return lep.mediumMuonId > 0 and lep.tightCharge > 0
@@ -392,22 +230,23 @@ def _susy2lss_multiIso(lep):
         if abs(lep.pdgId) == 13: A,B,C = (0.16,0.76,7.2)
         else:                    A,B,C = (0.12,0.80,7.2)
         return lep.miniRelIso < A and (lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
-def _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatiov2(lep):
-        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
-        else:                    A,B,C = (0.4,0.80,7.2)
-        return lep.miniRelIso < A and (conept(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)/lep.pt*lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
-def _susy2lss_multiIso_withMiniIsoRelaxed_CutForFO4(lep):
-        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
-        else:                    A,B,C = (0.4,0.80,7.2)
-        return lep.miniRelIso < A and (1/lep.jetPtRatiov2 < (1/B + lep.miniRelIso))
 
-def _susy2lss_lepId_CBOld(lep):
-        if lep.pt <= 10: return False
-        if abs(lep.pdgId) == 13:
-            return lep.tightId > 0
-        elif abs(lep.pdgId) == 11:
-            return lep.tightId >= 2 and lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0
-        return False
+#def _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatiov2(lep):
+#        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
+#        else:                    A,B,C = (0.4,0.80,7.2)
+#        return lep.miniRelIso < A and (conept(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)/lep.pt*lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
+#def _susy2lss_multiIso_withMiniIsoRelaxed_CutForFO4(lep):
+#        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
+#        else:                    A,B,C = (0.4,0.80,7.2)
+#        return lep.miniRelIso < A and (1/lep.jetPtRatiov2 < (1/B + lep.miniRelIso))
+
+#def _susy2lss_lepId_CBOld(lep):
+#        if lep.pt <= 10: return False
+#        if abs(lep.pdgId) == 13:
+#            return lep.tightId > 0
+#        elif abs(lep.pdgId) == 11:
+#            return lep.tightId >= 2 and lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0
+#        return False
 
 if __name__ == '__main__':
     from sys import argv
