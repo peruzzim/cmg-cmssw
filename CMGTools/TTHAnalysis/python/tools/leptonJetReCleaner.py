@@ -23,6 +23,10 @@ class LeptonJetReCleaner:
             ("nLepFOVeto"+label, "I"), ("iFV"+label,"I",20,"nLepFOVeto"+label), # passing FO + veto
             ("nLepTight"+label, "I"), ("iT"+label,"I",20,"nLepTight"+label), # passing tight
             ("nLepTightVeto"+label, "I"), ("iTV"+label,"I",20,"nLepTightVeto"+label), # passing tight + veto
+            ("isLepLoose"+label,"I",20,"nLepGood"),("isLepLooseVeto"+label,"I",20,"nLepGood"),
+            ("isLepCleaning"+label,"I",20,"nLepGood"),("isLepCleaningVeto"+label,"I",20,"nLepGood"),
+            ("isLepFO"+label,"I",20,"nLepGood"),("isLepFOVeto"+label,"I",20,"nLepGood"),
+            ("isLepTight"+label,"I",20,"nLepGood"),("isLepTightVeto"+label,"I",20,"nLepGood"),
             ("nJetSel"+label, "I"), ("iJ"+label,"I",20,"nJetSel"+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
             ("nJet40"+label, "I"), "htJet40j"+label, ("nBJetLoose40"+label, "I"), ("nBJetMedium40"+label, "I"),
             ("nJet25"+label, "I"), "htJet25j"+label, ("nBJetLoose25"+label, "I"), ("nBJetMedium25"+label, "I"), 
@@ -35,22 +39,22 @@ class LeptonJetReCleaner:
             biglist.append( ("JetSel"+label+"_mcMatchId","I",20,"nJetSel"+label) )
         return biglist
 
-    def fillCollWithVeto(self,ret,refcollection,leps,lab,labcount,selection,lepsforveto,ht=-1):
-        ret[lab] = [];
-        ret[lab+'V'] = [];
+    def fillCollWithVeto(self,ret,refcollection,leps,lab,labext,selection,lepsforveto,ht=-1):
+        ret['i'+lab] = [];
+        ret['i'+lab+'V'] = [];
         for lep in leps:
-            if ht<0:
-                if selection(lep): ret[lab].append(refcollection.index(lep))
-            else:
-                if selection(lep,ht): ret[lab].append(refcollection.index(lep))
-        ret[labcount] = len(ret[lab])
-        lepspass = [ refcollection[il] for il in ret[lab]  ]
+            if (selection(lep) if ht<0 else selection(lep,ht)):
+                    ret['i'+lab].append(refcollection.index(lep))
+        ret['nLep'+labext] = len(ret['i'+lab])
+        ret['isLep'+labext] = [(1 if i in ret['i'+lab] else 0) for i in xrange(len(refcollection))]
+        lepspass = [ refcollection[il] for il in ret['i'+lab]  ]
         if lepsforveto==None: lepsforveto = lepspass # if lepsforveto==None, veto selected leptons among themselves
         for lep in lepspass:
             if passMllTLVeto(lep, lepsforveto, 76, 106, True) and passMllTLVeto(lep, lepsforveto, 0, 12, True):
-                ret[lab+'V'].append(refcollection.index(lep))
-        ret[labcount+'Veto'] = len(ret[lab+'V'])
-        lepspassveto = [ refcollection[il] for il in ret[lab+'V']  ]
+                ret['i'+lab+'V'].append(refcollection.index(lep))
+        ret['nLep'+labext+'Veto'] = len(ret['i'+lab+'V'])
+        ret['isLep'+labext+'Veto'] = [(1 if i in ret['i'+lab+'V'] else 0) for i in xrange(len(refcollection))]
+        lepspassveto = [ refcollection[il] for il in ret['i'+lab+'V']  ]
         return (ret,lepspass,lepspassveto)
 
     def __call__(self,event):
@@ -62,9 +66,9 @@ class LeptonJetReCleaner:
         ret = {}; jetret = {}
 
         lepsl = []; lepslv = [];
-        ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'iL','nLepLoose',self.looseLeptonSel,None)
+        ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'L','Loose',self.looseLeptonSel,None)
         lepsc = []; lepscv = [];
-        ret, lepsc, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'iC','nLepCleaning',self.cleaningLeptonSel,lepsl)
+        ret, lepsc, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'C','Cleaning',self.cleaningLeptonSel,lepsl)
 
         ### Define jets
         ret["iJ"] = []
@@ -118,9 +122,9 @@ class LeptonJetReCleaner:
 
         # calculate FOs and tight leptons using the cleaned HT
         lepsf = []; lepsfv = [];
-        ret, lepsf, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'iF','nLepFO',self.FOLeptonSel,lepsl,ret["htJet40j"])
+        ret, lepsf, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'F','FO',self.FOLeptonSel,lepsl,ret["htJet40j"])
         lepst = []; lepstv = [];
-        ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'iT','nLepTight',self.tightLeptonSel,lepsl,ret["htJet40j"])
+        ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'T','Tight',self.tightLeptonSel,lepsl,ret["htJet40j"])
 
         ### attach labels and return
         fullret = {}

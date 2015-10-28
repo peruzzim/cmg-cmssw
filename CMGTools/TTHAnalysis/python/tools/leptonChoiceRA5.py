@@ -30,7 +30,7 @@ class LeptonChoiceRA5:
             ("nPairs"+label,"I"),
             ("i1"+label,"I",20,"nPairs"+label),
             ("i2"+label,"I",20,"nPairs"+label),
-            ("weight"+label,"F",20,"nPairs"+label),
+            ("appWeight"+label,"F",20,"nPairs"+label),
             ("SR"+label,"I",20,"nPairs"+label),
             ("hasTT"+label, "I"), ("hasTF"+label, "I"), ("hasFF"+label, "I"),
 #            "mZ1cut10TL"+label, "minMllAFASTL"+label,"minMllAFOSTL"+label,"minMllSFOSTL"+label,
@@ -70,7 +70,7 @@ class LeptonChoiceRA5:
         ret["nPairs"]=0
         ret["i1"] = [0]*20
         ret["i2"] = [0]*20
-        ret["weight"] = [0]*20
+        ret["appWeight"] = [0]*20
         ret["SR"] = [0]*20
         ret["hasTT"]=False
         ret["hasTF"]=False
@@ -125,7 +125,7 @@ class LeptonChoiceRA5:
                 if self.whichApplication == self.appl_Fakes:
                     if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
                         if ret["hasTT"]:
-                            ret["weight"][npair] = 0.0
+                            ret["appWeight"][npair] = 0.0
                         elif ret["hasTF"]:
                             prev = 1.0
                             for x in _probs:
@@ -133,16 +133,16 @@ class LeptonChoiceRA5:
                             prob = self.FRprob(leps[i2],ht)
                             transf = self.FRtransfer_fromprob(prob)
                             _probs.append(prob)
-                            ret["weight"][npair] = prev * transf
+                            ret["appWeight"][npair] = prev * transf
                         elif ret["hasFF"]:
-                            ret["weight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht) if len(choice)<2 else 0.0 # throw away events with three FO non Tight
+                            ret["appWeight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht) if len(choice)<2 else 0.0 # throw away events with three FO non Tight
                     elif self.lepChoiceMethod==self.style_sort_FO:
                         if ret["hasTT"]:
-                            ret["weight"][npair] = 0.0
+                            ret["appWeight"][npair] = 0.0
                         elif ret["hasTF"]:
-                            ret["weight"][npair] = self.FRtransfer(leps[i2 if tt_sort_FO[0] else i1],ht)
+                            ret["appWeight"][npair] = self.FRtransfer(leps[i2 if tt_sort_FO[0] else i1],ht)
                         elif ret["hasFF"]:
-                            ret["weight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht)
+                            ret["appWeight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht)
                 elif self.whichApplication == self.appl_Flips:
                     print 'TODO'
 
