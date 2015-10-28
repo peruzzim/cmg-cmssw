@@ -86,7 +86,7 @@ class LeptonChoiceRA5:
                     choice = self.findPairs(lepstv,lepsfv,byflav=True,bypassMV=False,choose_SS_else_OS=True)
                     if choice:
                         ret["hasTF"]=True
-                        _transf = []
+                        _probs = []
                     else:
                         choice = self.findPairs(lepsfv,lepsfv,byflav=True,bypassMV=False,choose_SS_else_OS=True)
                         if choice:
@@ -128,10 +128,12 @@ class LeptonChoiceRA5:
                             ret["weight"][npair] = 0.0
                         elif ret["hasTF"]:
                             prev = 1.0
-                            for x in _transf:
+                            for x in _probs:
                                 prev *= (1-x)
-                            _transf.append(self.FRtransfer(leps[i2],ht))
-                            ret["weight"][npair] = prev * _transf[npair]
+                            prob = self.FRprob(leps[i2],ht)
+                            transf = self.FRtransfer_fromprob(prob)
+                            _probs.append(prob)
+                            ret["weight"][npair] = prev * transf
                         elif ret["hasFF"]:
                             ret["weight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht) if len(choice)<2 else 0.0 # throw away events with three FO non Tight
                     elif self.lepChoiceMethod==self.style_sort_FO:
@@ -154,13 +156,16 @@ class LeptonChoiceRA5:
         self.FR_mu = (self.FRfile.Get("FRMuPtCorr_ETH_non"),self.FRfile.Get("FRMuPtCorr_ETH_iso"))
         self.FR_el = (self.FRfile.Get("FRElPtCorr_ETH_non"),self.FRfile.Get("FRElPtCorr_ETH_iso"))
 
-    def FRtransfer(self,lep,ht):
+    def FRprob(self,lep,ht):
         isiso = (ht<=300)
         h = self.FR_el[isiso] if abs(lep.pdgId)==11 else self.FR_mu[isiso]
         ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(lep.conePt)))
         etabin = max(1,min(h.GetNbinsY(),h.GetYaxis().FindBin(abs(lep.eta))))
-        fr = h.GetBinContent(ptbin,etabin)
-        return fr/(1-fr)
+        return h.GetBinContent(ptbin,etabin)
+    def FRtransfer_fromprob(self,prob):
+        return prob/(1-prob)
+    def FRtransfer(self,lep,ht):
+        return self.FRtransfer_fromprob(self.FRprob(lep,ht))
 
     def bestZ1TL(self,lepsl,lepst,cut=lambda lep:True):
           pairs = []
