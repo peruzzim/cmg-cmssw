@@ -29,8 +29,9 @@ MODULES.append( ('leptonJetReCleanerSusy', lambda : LeptonJetReCleaner("Mini",
                 cleanJet = lambda lep,jet,dr : dr<0.4,
                 selectJet = lambda jet: abs(jet.eta)<2.4,
                 isMC = True ) )) # SET TO THE RIGHT THING
-MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Choice_loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName="../python/plotter/FakeRates_241015.root"))) 
-MODULES.append( ('leptonChoiceRA5_FO', lambda : LeptonChoiceRA5("Choice_sortFO","Mini",whichApplication="Fakes",lepChoiceMethod="sort_FO",FRFileName="../python/plotter/FakeRates_241015.root"))) 
+FRname="/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/FakeRates_241015.root"
+MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName=FRname))) 
+MODULES.append( ('leptonChoiceRA5_FO', lambda : LeptonChoiceRA5("SortFO","Mini",whichApplication="Fakes",lepChoiceMethod="sort_FO",FRFileName=FRname))) 
 
 #MODULES.append( ('leptonJetReCleanerSusyFO', lambda : LeptonJetReCleaner("FOsel", 
 #                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 

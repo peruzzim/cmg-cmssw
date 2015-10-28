@@ -64,15 +64,14 @@ class LeptonJetReCleaner:
         lepsl = []; lepslv = [];
         ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'iL','nLepLoose',self.looseLeptonSel,None)
         lepsc = []; lepscv = [];
-        ret, lepct, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'iC','nLepCleaning',self.cleaningLeptonSel,lepsl)
+        ret, lepsc, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'iC','nLepCleaning',self.cleaningLeptonSel,lepsl)
 
         ### Define jets
         ret["iJ"] = []
         # 0. mark each jet as clean
         for j in jetsc+jetsd: j._clean = True if self.selectJet(j) else False
         # 1. associate to each lepton passing the cleaning selection its nearest jet 
-        for il in lepsc:
-            lep = leps[il]
+        for lep in lepsc:
             best = None; bestdr = 0.4
             for j in jetsc+jetsd:
                 dr = deltaR(lep,j)
@@ -119,7 +118,7 @@ class LeptonJetReCleaner:
 
         # calculate FOs and tight leptons using the cleaned HT
         lepsf = []; lepsfv = [];
-        ret, lepft, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'iF','nLepFO',self.FOLeptonSel,lepsl,ret["htJet40j"])
+        ret, lepsf, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'iF','nLepFO',self.FOLeptonSel,lepsl,ret["htJet40j"])
         lepst = []; lepstv = [];
         ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'iT','nLepTight',self.tightLeptonSel,lepsl,ret["htJet40j"])
 
@@ -144,7 +143,7 @@ def passMllTLVeto(lep, lepsl, mZmin, mZmax, isOSSF):
         if ll == lep: continue
         if not passMllVeto(lep, ll, mZmin, mZmax, isOSSF):
             return False
-        return True
+    return True
 
 def _tthlep_lepId(lep):
         #if lep.pt <= 10: return False
