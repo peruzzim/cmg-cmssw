@@ -12,18 +12,28 @@ class LeptonChoiceRA5:
     appl_Fakes = 0
     appl_Flips = 1
 
-    def __init__(self,label,inputlabel,whichApplication,lepChoiceMethod,FRFileName=None):
+    def __init__(self,label,inputlabel,whichApplication,lepChoiceMethod=None,FRFileName=None):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.inputlabel = '_'+inputlabel
         if whichApplication=="Fakes": self.whichApplication = self.appl_Fakes
         elif whichApplication=="Flips": self.whichApplication = self.appl_Flips
         else: raise RuntimeError, 'Unknown whichApplication'
-        if lepChoiceMethod=="TT_loopTF_2FF": self.lepChoiceMethod = self.style_TT_loopTF_2FF
-        elif lepChoiceMethod=="sort_FO": self.lepChoiceMethod = self.style_sort_FO
-        else: raise RuntimeError, 'Unknown lepChoiceMethod'
-        if FRFileName:
-            self.FRfile = ROOT.TFile(FRFileName,"read")
-            self.initFRhistos()
+        self.lepChoiceMethod = None
+        self.apply = False
+        if self.whichApplication == self.appl_Fakes:
+            if lepChoiceMethod=="TT_loopTF_2FF": self.lepChoiceMethod = self.style_TT_loopTF_2FF
+            elif lepChoiceMethod=="sort_FO": self.lepChoiceMethod = self.style_sort_FO
+            else: raise RuntimeError, 'Unknown lepChoiceMethod'
+            if FRFileName:
+                self.apply = True
+                self.initFRhistos(FRFileName)
+        elif self.whichApplication == self.appl_Flips:
+            if FRFileName:
+                self.apply = True
+                self.initFlipAppHistos(FRFileName)
+        if not self.apply:
+            print 'WARNING: running leptonChoiceRA5 %s in pure tagging mode (no weights applied)'%label
+
     def listBranches(self):
         label = self.label
         biglist = [ 
@@ -91,7 +101,7 @@ class LeptonChoiceRA5:
                         choice = self.findPairs(lepsfv,lepsfv,byflav=True,bypassMV=False,choose_SS_else_OS=True)
                         if choice:
                             ret["hasFF"]=True
-            if self.lepChoiceMethod==self.style_sort_FO:
+            elif self.lepChoiceMethod==self.style_sort_FO:
                 choice = self.findPairs(lepsfv,lepsfv,byflav=True,bypassMV=False,choose_SS_else_OS=True)
                 if choice:
                     choice = choice[:1]
@@ -122,29 +132,30 @@ class LeptonChoiceRA5:
                 mtwmin = min(sqrt(2*leps[i1].conePt*met*(1-cos(leps[i1].phi-metphi))),sqrt(2*leps[i2].conePt*met*(1-cos(leps[i2].phi-metphi))))
                 ht = getattr(event,"htJet40j"+self.inputlabel)
                 ret["SR"][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,ht,met,getattr(event,"nJet40"+self.inputlabel),getattr(event,"nBJetMedium25"+self.inputlabel),mtwmin)
-                if self.whichApplication == self.appl_Fakes:
-                    if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
-                        if ret["hasTT"]:
-                            ret["appWeight"][npair] = 0.0
-                        elif ret["hasTF"]:
-                            prev = 1.0
-                            for x in _probs:
-                                prev *= (1-x)
-                            prob = self.FRprob(leps[i2],ht)
-                            transf = self.FRtransfer_fromprob(prob)
-                            _probs.append(prob)
-                            ret["appWeight"][npair] = prev * transf
-                        elif ret["hasFF"]:
-                            ret["appWeight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht) if len(choice)<2 else 0.0 # throw away events with three FO non Tight
-                    elif self.lepChoiceMethod==self.style_sort_FO:
-                        if ret["hasTT"]:
-                            ret["appWeight"][npair] = 0.0
-                        elif ret["hasTF"]:
-                            ret["appWeight"][npair] = self.FRtransfer(leps[i2 if tt_sort_FO[0] else i1],ht)
-                        elif ret["hasFF"]:
-                            ret["appWeight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht)
-                elif self.whichApplication == self.appl_Flips:
-                    print 'TODO'
+                if self.apply:
+                    if self.whichApplication == self.appl_Fakes:
+                        if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
+                            if ret["hasTT"]:
+                                ret["appWeight"][npair] = 0.0
+                            elif ret["hasTF"]:
+                                prev = 1.0
+                                for x in _probs:
+                                    prev *= (1-x)
+                                prob = self.FRprob(leps[i2],ht)
+                                transf = self.FRtransfer_fromprob(prob)
+                                _probs.append(prob)
+                                ret["appWeight"][npair] = prev * transf
+                            elif ret["hasFF"]:
+                                ret["appWeight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht) if len(choice)<2 else 0.0 # throw away events with three FO non Tight
+                        elif self.lepChoiceMethod==self.style_sort_FO:
+                            if ret["hasTT"]:
+                                ret["appWeight"][npair] = 0.0
+                            elif ret["hasTF"]:
+                                ret["appWeight"][npair] = self.FRtransfer(leps[i2 if tt_sort_FO[0] else i1],ht)
+                            elif ret["hasFF"]:
+                                ret["appWeight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht)
+                    elif self.whichApplication == self.appl_Flips:
+                        ret["appWeight"][npair] = 0.0 # TODO
 
         ### attach labels and return
         fullret = {}
@@ -152,9 +163,12 @@ class LeptonChoiceRA5:
             fullret[k+self.label] = v
         return fullret
 
-    def initFRhistos(self):
+    def initFRhistos(self,FRFileName):
+        self.FRfile = ROOT.TFile(FRFileName,"read")
         self.FR_mu = (self.FRfile.Get("FRMuPtCorr_ETH_non"),self.FRfile.Get("FRMuPtCorr_ETH_iso"))
         self.FR_el = (self.FRfile.Get("FRElPtCorr_ETH_non"),self.FRfile.Get("FRElPtCorr_ETH_iso"))
+    def initFlipAppHistos(self,filenames):
+        return # TODO
 
     def FRprob(self,lep,ht):
         isiso = (ht<=300)

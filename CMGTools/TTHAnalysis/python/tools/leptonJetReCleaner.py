@@ -195,6 +195,21 @@ def _susy2lss_lepId_tighterFO(lep):
         if not _susy2lss_idIsoEmu_cuts(lep): return False
     return True
 
+def _susy2lss_lepId_inSituLoosestFO(lep):
+    if not _susy2lss_lepId_loosestFO(lep): return False
+    if abs(lep.pdgId)==11:
+        if not lep.mvaIdSpring15 > -0.363+(-0.579+0.363)*(abs(lep.eta)>0.8)+(-0.623+0.579)*(abs(lep.eta)>1.479):
+            return False
+    return True
+
+def _susy2lss_lepId_inSituTighterFO(lep):
+    if not _susy2lss_lepId_loosestFO(lep): return False
+    if abs(lep.pdgId)==11:
+        if not lep.mvaIdSpring15 > 0.051+(-0.261-0.051)*(abs(lep.eta)>0.8)+(-0.403+0.261)*(abs(lep.eta)>1.479):
+            return False
+        if not _susy2lss_idIsoEmu_cuts(lep): return False
+    return True
+
 def _susy2lss_lepId_IPcuts(lep):
     if not lep.sip3d<4: return False
     if not (abs(lep.dxy)<0.05): return False
@@ -233,6 +248,11 @@ def _susy2lss_multiIso(lep):
         if abs(lep.pdgId) == 13: A,B,C = (0.16,0.76,7.2)
         else:                    A,B,C = (0.12,0.80,7.2)
         return lep.miniRelIso < A and (lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
+
+def _susy2lss_multiIso_relaxedForInSituApp(lep):
+        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
+        else:                    A,B,C = (0.4,0.80,7.2)
+        return lep.miniRelIso < A and (1/lep.jetPtRatiov2 < (1/B + lep.miniRelIso) or lep.jetPtRelv2 > C)
 
 #def _susy2lss_multiIso_withMiniIsoRelaxed_ConePtJetPtRatiov2(lep):
 #        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
