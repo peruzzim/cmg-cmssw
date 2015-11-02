@@ -68,6 +68,8 @@ if SOS == True:
 
     # Lepton-Jet Cleaning
     jetAna.minLepPt = 20 
+    jetAnaScaleUp.minLepPt = 20 
+    jetAnaScaleDown.minLepPt = 20 
     # otherwise with only absIso cut at 10 GeV and no relIso we risk cleaning away good jets
 
 #isolation = "ptRel"
@@ -76,6 +78,7 @@ if isolation == "ptRel":
     lepAna.loose_muon_isoCut     = lambda muon : muon.relIso03 < 0.5 or muon.pt() > 10
     lepAna.loose_electron_isoCut = lambda elec : elec.relIso03 < 0.5 or elec.pt() > 10
     # in the cleaning, keep the jet if the lepton fails relIso or ptRel
+    raise RuntimeError, 'jetAnalyzer is being run multiple times, the following is not supported'
     jetAna.jetLepArbitration = lambda jet,lepton : (
         lepton if (lepton.relIso03 < 0.4 or ptRelv1(lepton.p4(),jet.p4()) > 5) else jet
     )
@@ -107,6 +110,8 @@ else:
 
 # Switch on slow QGL
 jetAna.doQG = True
+jetAnaScaleUp.doQG = True
+jetAnaScaleDown.doQG = True
 
 # Switch off slow photon MC matching
 photonAna.do_mc_match = False
@@ -121,6 +126,8 @@ tauAna.loose_etaMax = 2.3
 #tauAna.loose_tauAntiElectronID = "againstElectronLoose"
 if False: #if cleaning jet-loose tau cleaning
     jetAna.cleanJetsFromTaus = True
+    jetAnaScaleUp.cleanJetsFromTaus = True
+    jetAnaScaleDown.cleanJetsFromTaus = True
 
 
 #-------- ADDITIONAL ANALYZERS -----------
@@ -241,6 +248,8 @@ treeProducer.globalVariables.append(NTupleVariable("hbheFilterIso", lambda ev: e
 
 #additional MET quantities
 metAna.doTkMet = True
+metAnaScaleUp.doTkMet = True
+metAnaScaleDown.doTkMet = True
 treeProducer.globalVariables.append(NTupleVariable("met_trkPt", lambda ev : ev.tkMet.pt() if  hasattr(ev,'tkMet') else  0, help="tkmet p_{T}"))
 treeProducer.globalVariables.append(NTupleVariable("met_trkPhi", lambda ev : ev.tkMet.phi() if  hasattr(ev,'tkMet') else  0, help="tkmet phi"))
 
@@ -257,11 +266,17 @@ if doT1METCorr:
     jetAna.calculateType1METCorrection = True
     metAna.recalibrate = "type1"
     metAna.old74XMiniAODs = old74XMiniAODs
+    jetAnaScaleUp.calculateType1METCorrection = True
+    metAnaScaleUp.recalibrate = "type1"
+    metAnaScaleUp.old74XMiniAODs = old74XMiniAODs
+    jetAnaScaleDown.calculateType1METCorrection = True
+    metAnaScaleDown.recalibrate = "type1"
+    metAnaScaleDown.old74XMiniAODs = old74XMiniAODs
 
 if doAK4PFCHSchargedJets:
     if not doMETpreprocessor: raise RuntimeError, "ak4PFchs charged-only jets are reclustered in the MET preprocessor, but this configuration is not going to run it"
     treeProducer.collections["cleanJetsPFChargedCHS"] = NTupleCollection("JetPFChargedCHS", jetTypeSusyExtra, 15, help="Central PFChargedCHS jets after full selection and cleaning, sorted by pt") # ak4PFchs charged-only jets
-    susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), pfChargedCHSjetAna)
+#    susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), pfChargedCHSjetAna)
 #treeProducer.collections["jetsAllNoID"] = NTupleCollection("AllJet", jetTypeSusyExtra, 15, help="Central jets, sorted by pt") # warning, increases tree size considerably
 
 #-------- SAMPLES AND TRIGGERS -----------
@@ -477,13 +492,19 @@ if runFRMC: # QCD
 if is50ns:
     jetAna.mcGT     = "Summer15_50nsV5_MC"
     jetAna.dataGT   = "Summer15_50nsV5_DATA"
-    pfChargedCHSjetAna.mcGT     = "Summer15_50nsV5_MC"
-    pfChargedCHSjetAna.dataGT   = "Summer15_50nsV5_DATA"
+    jetAnaScaleUp.mcGT     = "Summer15_50nsV5_MC"
+    jetAnaScaleUp.dataGT   = "Summer15_50nsV5_DATA"
+    jetAnaScaleDown.mcGT     = "Summer15_50nsV5_MC"
+    jetAnaScaleDown.dataGT   = "Summer15_50nsV5_DATA"
+#    pfChargedCHSjetAna.mcGT     = "Summer15_50nsV5_MC"
+#    pfChargedCHSjetAna.dataGT   = "Summer15_50nsV5_DATA"
 
 if removeJetReCalibration:
     ## NOTE: jets will still be recalibrated, since calculateSeparateCorrections is True,
     ##       however the code will check that the output 4-vector is unchanged.
     jetAna.recalibrateJets = False
+    jetAnaScaleUp.recalibrateJets = False
+    jetAnaScaleDown.recalibrateJets = False
 
 if forcedSplitFactor>0 or forcedFineSplitFactor>0:
     if forcedFineSplitFactor>0 and forcedSplitFactor!=1: raise RuntimeError, 'splitFactor must be 1 if setting fineSplitFactor'
