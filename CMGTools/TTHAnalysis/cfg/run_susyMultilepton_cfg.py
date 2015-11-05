@@ -337,7 +337,7 @@ triggerFlagsAna.checkL1Prescale = True
 from CMGTools.RootTools.samples.samples_13TeV_74X import *
 from CMGTools.RootTools.samples.samples_13TeV_74X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_8TeVReReco_74X import *
-from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
+#from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
 selectedComponents = [];
 
@@ -383,35 +383,28 @@ if runData and not isTest: # For running on data
 #    json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_254833_13TeV_PromptReco_Collisions15_JSON.txt"; # taken at 50 ns with 25 ns reconstruction
 #    processing = "Run2015C-PromptReco-v1"; short = "Run2015C_v1"; run_ranges = [ (254833,254833) ]; useAAA=False; is50ns=True; triggerFlagsAna.checkL1Prescale = False;
 
+#    normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
+
     is50ns = False
     dataChunks = []
 
-    # Run2015C, 25 ns, 3.8T
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258714_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-    processing = "Run2015C-PromptReco-v1"; short = "Run2015C_v1"; run_ranges = [ (254231,254914) ]; useAAA=False; triggerFlagsAna.checkL1Prescale = False;
+    # Oct05 rereco of Run2015C, Oct19 JSON
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    processing = "Run2015C_25ns-05Oct2015-v1"; short = "Run2015C_Oct05"; run_ranges = [ (254231,254914) ]; useAAA=False;
+    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
-#    # Run2015D-v3, unblinded JSON - WARNING: beware of CACHING in .cmgdataset
-#    # normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON_v3.txt' # and Run2015D = ???/pb
-#    processing = "Run2015D-PromptReco-v3"; short = "Run2015D_v3"; run_ranges = [ (256630,257599) ]; useAAA=False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-#
-#    # Run2015D-v3, blinded - WARNING: beware of CACHING in .cmgdataset
-#    # normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258714_13TeV_PromptReco_Collisions15_25ns_JSON.txt' # and Run2015D = ???/pb
-#    processing = "Run2015D-PromptReco-v3"; short = "Run2015D_v3"; run_ranges = [ (256926,256926),(257600,258158) ]; useAAA=False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-#
-#    # Run2015D-v4, blinded - WARNING: beware of CACHING in .cmgdataset
-#    # normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258714_13TeV_PromptReco_Collisions15_25ns_JSON.txt' # and Run2015D = ???/pb
-#    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258159,258714) ]; useAAA=False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-#
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON_MINUS_UP_TO_258714.txt' # and Run2015D = ???/pb
-#    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258211,258750) ]; useAAA=False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    # Oct05 rereco of Run2015D-PromptReco-v3 (up to run 258158), Oct19 JSON
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    processing = "Run2015D-05Oct2015-v1"; short = "Run2015D_Oct05"; run_ranges = [ (256630,258158) ]; useAAA=False;
+    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+
+    # Run2015D PromptReco-v4 (from run 258159), Oct19 JSON (up to run 258750) - WARNING: beware of CACHING in .cmgdataset
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_PromptV4"; run_ranges = [ (258159,258750) ]; useAAA=False;
+    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
