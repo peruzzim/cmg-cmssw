@@ -353,8 +353,10 @@ selectedComponents = [];
 
 ### ra5 prod
 #selectedComponents = [TTJets, WJetsToLNu, DYJetsToLL_M10to50,  DYJetsToLL_M50, WZTo3LNu, ZZTo4L, WWTo2L2Nu, GGHZZ4L, TTHnobb, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTGJets, T5ttttDeg_mGo1000_mStop300_mCh285_mChi280, T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep, WGToLNuG, ZGTo2LG, WWDouble, VHToNonbb, WpWpJJ] + SingleTop + TopPlusX + T1tttt + T6ttWW + T5qqqqWW + Rares
+#selectedComponents = [WZTo3LNu, ZZTo4L, GGHZZ4L, TTHnobb, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTGJets, T5ttttDeg_mGo1000_mStop300_mCh285_mChi280, T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep, WGToLNuG, ZGTo2LG, WWDouble, VHToNonbb, WpWpJJ] + T1tttt + T6ttWW + T5qqqqWW + Rares + TriBosons + TopPlusX
+#for c in selectedComponents: c.splitFactor = len(c.files)/2
+#selectedComponents = [tZqll,ZZTo4L,ZGTo2LG,GGHZZ4L]
 #for c in selectedComponents: c.splitFactor = len(c.files)
-
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -384,10 +386,10 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-#    # Run2015C, 25 ns, 3.8T
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258714_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-#    processing = "Run2015C-PromptReco-v1"; short = "Run2015C_v1"; run_ranges = [ (254231,254914) ]; useAAA=False; triggerFlagsAna.checkL1Prescale = False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    # Run2015C, 25 ns, 3.8T
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258714_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    processing = "Run2015C-PromptReco-v1"; short = "Run2015C_v1"; run_ranges = [ (254231,254914) ]; useAAA=False; triggerFlagsAna.checkL1Prescale = False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
 
 #    # Run2015D-v3, unblinded JSON - WARNING: beware of CACHING in .cmgdataset
 #    # normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
@@ -406,10 +408,10 @@ if runData and not isTest: # For running on data
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258714_13TeV_PromptReco_Collisions15_25ns_JSON.txt' # and Run2015D = ???/pb
 #    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258159,258714) ]; useAAA=False;
 #    dataChunks.append((json,processing,short,run_ranges,useAAA))
-
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON_MINUS_UP_TO_258714.txt' # and Run2015D = ???/pb
-    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258211,258750) ]; useAAA=False;
-    dataChunks.append((json,processing,short,run_ranges,useAAA))
+#
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON_MINUS_UP_TO_258714.txt' # and Run2015D = ???/pb
+#    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258211,258750) ]; useAAA=False;
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
@@ -540,12 +542,13 @@ sequence = cfg.Sequence(susyCoreSequence+[
 preprocessor = None
 
 if doMETpreprocessor:
+    raise RuntimeError, 'Probably outdated; check especially the uncertainty file (Uncertainty or UncertaintySources? ; is the right version used throughout the produced py file for CmsRun?)'
     removeResiduals = False # residuals are set to 1 in MC, no need to remove them
     import tempfile
     # -------------------- Running pre-processor
     import subprocess
     if is50ns: jectag = '50nsV5'
-    else: jectag = '25nsV5' if runData else '25nsV2'
+    else: jectag = '25nsV6' if runData else '25nsV6'
     jecDBFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_%s_%s.db'%(jectag,'DATA' if runData else 'MC')
     jecEra    = 'Summer15_%s_%s'%(jectag, 'DATA'if runData else 'MC')
     tempfile.tempdir=os.environ['CMSSW_BASE']+'/tmp'
