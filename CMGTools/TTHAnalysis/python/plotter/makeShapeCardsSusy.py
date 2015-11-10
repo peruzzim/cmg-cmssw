@@ -23,6 +23,7 @@ binname = os.path.basename(args[1]).replace(".txt","") if options.outname == Non
 outdir  = options.outdir+"/" if options.outdir else ""
 
 report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+print report
 
 if options.asimov:
     tomerge = []
@@ -36,13 +37,17 @@ allyields = dict([(p,h.Integral()) for p,h in report.iteritems()])
 procs = []; iproc = {}
 signals, backgrounds = [], []
 for i,s in enumerate(mca.listSignals()):
-    if allyields[s] == 0: continue
+    if (s not in allyields) or allyields[s] == 0: continue
     signals.append(s)
     procs.append(s); iproc[s] = i-len(mca.listSignals())+1
 for i,b in enumerate(mca.listBackgrounds()):
-    if allyields[b] == 0: continue
+    if (b not in allyields) or allyields[b] == 0: continue
     backgrounds.append(b)
     procs.append(b); iproc[b] = i+1
+
+print 'signals',signals
+print 'backgrounds',backgrounds
+print 'procs',procs
 
 systs = {}
 systsEnv = {}
@@ -64,6 +69,10 @@ for sysfile in args[4:]:
             if re.match(binmap,binname) == None: continue
             if name not in systs: systsEnv[name] = []
             systsEnv[name].append((re.compile(procmap),amount,field[4]))
+        elif field[4] in ["lnN_in_shape_bins","stat_foreach_shape_bins"]:
+            if re.match(binmap,binname) == None: continue
+            if name not in systs: systsEnv[name] = []
+            systsEnv[name].append((re.compile(procmap),amount,field[4],[float(x) for x in field[5].split(',')]))
         else:
             raise RuntimeError, "Unknown systematic type %s" % field[4]
     if options.verbose > 0:
@@ -87,7 +96,7 @@ for name in systsEnv.keys():
         effect = "-"
         effect0  = "-"
         effect12 = "-"
-        for (procmap,amount,mode) in systsEnv[name]:
+        for (procmap,amount,mode) in systsEnv[name][:3]:
             if re.match(procmap, p): effect = float(amount) if mode not in ["templates","alternateShape", "alternateShapeOnly"] else amount
         if mca._projection != None and effect not in ["-","0","1",1.0,0.0] and type(effect) == type(1.0):
             effect = mca._projection.scaleSyst(name, effect)
@@ -143,6 +152,47 @@ for name in systsEnv.keys():
             if mca._projection != None:
                 mca._projection.scaleSystTemplate(name,nominal,p0Up)
                 mca._projection.scaleSystTemplate(name,nominal,p0Dn)
+        elif mode in ["lnN_in_shape_bins"]:
+            nominal = report[p]
+            p0Up = nominal.Clone("%s_%sUp"% (nominal.GetName(),name))
+            p0Dn = nominal.Clone("%s_%sDn"% (nominal.GetName(),name))
+            binlist=systsEnv[name][4]
+            for bin in xrange(1,nominal.GetNbinsX()+1):
+                for binmatch in systsEnv[name][4]:
+                    if re.match(binmatch,'%d'%bin):
+                        p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)*amount)
+                        p0Up.SetBinError(bin,p0Up.GetBinError(bin)*amount)
+                        p0Dn.SetBinContent(bin,p0Down.GetBinContent(bin)/amount)
+                        p0Dn.SetBinError(bin,p0Down.GetBinError(bin)/amount)
+                        break # otherwise you apply more than once to the same bin if more regexps match
+            report[str(p0Up.GetName())[2:]] = p0Up
+            report[str(p0Dn.GetName())[2:]] = p0Dn
+            effect0  = "1"
+            effect12 = "-"
+            if mca._projection != None:
+                mca._projection.scaleSystTemplate(name,nominal,p0Up)
+                mca._projection.scaleSystTemplate(name,nominal,p0Dn)
+        elif mode in ["stat_foreach_shape_bins"]:
+            nominal = report[p]
+            binlist=systsEnv[name][4]
+            for bin in xrange(1,nominal.GetNbinsX()+1):
+                for binmatch in systsEnv[name][4]:
+                    if re.match(binmatch,'%d'%bin):
+                        p0Up = nominal.Clone("%s_%s_%s_bin%dUp"% (nominal.GetName(),name,p,bin))
+                        p0Dn = nominal.Clone("%s_%s_%s_bin%dDn"% (nominal.GetName(),name,p,bin))
+                        p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)+amount*p0Up.GetBinError(bin))
+                        p0Up.SetBinError(bin,p0Up.GetBinError(bin)*p0Up.GetBinContent(bin)/nominal.GetBinContent(bin))
+                        p0Dn.SetBinContent(bin,p0Down.GetBinContent(bin)-amount*p0Down.GetBinError(bin))
+                        p0Dn.SetBinError(bin,p0Down.GetBinError(bin)*p0Down.GetBinContent(bin)/nominal.GetBinContent(bin))
+                        report[str(p0Up.GetName())[2:]] = p0Up
+                        report[str(p0Dn.GetName())[2:]] = p0Dn
+                        break # otherwise you apply more than once to the same bin if more regexps match
+            effect0  = "1"
+            effect12 = "-"
+            if mca._projection != None:
+                raise RuntimeError,'mca._projection.scaleSystTemplate not implemented in the case of stat_foreach_shape_bins'
+###                mca._projection.scaleSystTemplate(name,nominal,p0Up) # should be implemented differently
+###                mca._projection.scaleSystTemplate(name,nominal,p0Dn) # should be implemented differently
         elif mode in ["alternateShape", "alternateShapeOnly"]:
             nominal = report[p]
             alternate = report[effect]
@@ -204,8 +254,11 @@ for signal in mca.listSignals():
     for name,effmap in systs.iteritems():
         datacard.write(('%-12s lnN' % name) + " ".join([kpatt % effmap[p]   for p in myprocs]) +"\n")
     for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
-        if mode == "templates":
+        if mode in ["templates","lnN_in_shape_bins"]:
             datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in myprocs]) +"\n")
+        if mode == "stat_foreach_shape_bins":
+            for myp in myprocs:
+                datacard.write(('%-10s shape' % ("%s_%s_bin%d"%(name,myp,bin))) + " ".join([kpatt % (effmap0[p] if p==myp else '-')  for p in myprocs]) +"\n")
         if mode == "envelop":
             datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in myprocs]) +"\n")
         if mode in ["envelop", "shapeOnly"]:

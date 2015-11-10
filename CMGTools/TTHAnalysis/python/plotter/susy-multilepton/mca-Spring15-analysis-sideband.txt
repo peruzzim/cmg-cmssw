@@ -1,0 +1,32 @@
+
+# Fakes+flips
+
+_sideband_fakes_TT: TTJets: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/sideband_sel.txt", Label="TT (fakes\,flips)"
+_sideband_fakes_DY: DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/sideband_sel.txt", Label="DY (fakes\,flips)"
+_sideband_fakes_DY: DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/sideband_sel.txt", Label="DY (fakes\,flips)"
+_sideband_fakes_WJets: WJetsToLNu :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/sideband_sel.txt", Label="WJets (fakes)"
+_sideband_fakes_SingleTop: TToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/sideband_sel.txt", Label="Single top (fakes)"
+_sideband_fakes_SingleTop: TbarToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/sideband_sel.txt", Label="Single top (fakes)"
+_sideband_fakes_SingleTop: TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/sideband_sel.txt", Label="Single top (fakes)"
+_sideband_fakes_SingleTop: TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/sideband_sel.txt", Label="Single top (fakes)"
+_sideband_fakes_SingleTop: TBar_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/sideband_sel.txt", Label="Single top (fakes)"
+_sideband_fakes_SingleTop: T_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/sideband_sel.txt", Label="Single top (fakes)"
+_sideband_fakes_WW: WWTo2L2Nu: xsec ; FillColor=ROOT.kGray+1, FakeRate="susy-multilepton/sideband_sel.txt", Label="WW (fakes\,flips)"
+
+# 2015D 25ns data
+
+data: DoubleEG_Run2015C_Oct05_runs_254231_254914 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: DoubleEG_Run2015D_Oct05_runs_256630_258158 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: DoubleEG_Run2015D_PromptV4_runs_258159_258750 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: DoubleMuon_Run2015C_Oct05_runs_254231_254914 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: DoubleMuon_Run2015D_Oct05_runs_256630_258158 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: DoubleMuon_Run2015D_PromptV4_runs_258159_258750 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: MuonEG_Run2015C_Oct05_runs_254231_254914 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: MuonEG_Run2015D_Oct05_runs_256630_258158 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: MuonEG_Run2015D_PromptV4_runs_258159_258750 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: SingleElectron_Run2015C_Oct05_runs_254231_254914 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: SingleElectron_Run2015D_Oct05_runs_256630_258158 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: SingleElectron_Run2015D_PromptV4_runs_258159_258750 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: SingleMuon_Run2015C_Oct05_runs_254231_254914 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: SingleMuon_Run2015D_Oct05_runs_256630_258158 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"
+data: SingleMuon_Run2015D_PromptV4_runs_258159_258750 ; FakeRate="susy-multilepton/sideband_sel.txt", Label="Data"

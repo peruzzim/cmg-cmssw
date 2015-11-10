@@ -1,35 +1,51 @@
 #!/bin/bash
 
-T="/afs/cern.ch/work/p/peruzzi/ra5trees/ra5sync_131015"
+T="/data1/p/peruzzi/skimmed_nov06_mix"
 CORE="-P $T --s2v --tree treeProducerSusyMultilepton"
-CORE="${CORE} -F sf/t {P}/0_allFriends_v1/evVarFriend_{cname}.root"
-CORE="${CORE} -X exclusive --mcc susy-multilepton/susy_2lssinc_lepchoice_multiiso.txt --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt"
+CORE="${CORE} -F sf/t {P}/3_recleanermix/evVarFriend_{cname}.root -F sf/t {P}/4_choicemix/evVarFriend_{cname}.root"
+
+#CORE="${CORE} -p TTWv2_RA5_sync --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A alwaystrue TT 'hasTT'"
+#FMT='"{run:1d} {lumi:9d} {evt:12d}\t{nLepLoose_Mini:2d}\t{LepGood1_pdgId:+2d} {LepGood1_pt:5.1f}\t{LepGood2_pdgId:+2d} {LepGood2_pt:5.1f}\t{nJet40}\t{nBJetMedium25:2d}\t{met_pt:5.1f}\t{htJet40j:6.1f}\t{SR:2d}"'
+
+CORE="${CORE} -p 'data' --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A alwaystrue not_hasTT '(hasTF || hasFF)' -A alwaystrue SR '(SR>0)'"
+#FMT='"{evt:1d}\t{LepGood1_pt:5.2f}\t{LepGood2_pt:5.2f}\t{LepGood2_conePt:5.2f}\t{LepGood2_jetPtRelv2:5.2f}\t{LepGood2_pt/LepGood2_jetPtRatiov2:5.2f}\tHH SR{SR:2d}"'
+
+#CORE="${CORE} -p data_forflips --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A alwaystrue onlyTF 'hasTF' -A alwaystrue SR 'SR>0' -A alwaystrue nomumu '(abs(LepGood1_pdgId)!=13 || abs(LepGood2_pdgId)!=13)' -A alwaystrue etares '(abs(LepGood1_eta)>0.8 && abs(LepGood2_eta)>0.8)'" #-A alwaystrue weightnon0 'appWeight!=0'"
+#FMT='"{evt:1d}\t{LepGood1_pt:5.2f}\t{LepGood2_pt:5.2f}\t{LepGood2_conePt:5.2f}\t{LepGood2_jetPtRelv2:5.2f}\t{LepGood2_pt/LepGood2_jetPtRatiov2:5.2f}\t{SR:2d}"' # formato matthieu
+FMT='"{run:1d} {lumi:9d} {evt:12d}\t{nLepLoose_Mini:2d}\t{LepGood1_pdgId:+2d} {LepGood1_pt:5.1f}\t{LepGood2_pdgId:+2d} {LepGood2_pt:5.1f}\t{nJet40}\t{nBJetMedium25:2d}\t{met_pt:5.1f}\t{htJet40j:6.1f}\t{SR:2d}"' # formato ttW
+
+#FMT='"{evt:1d}\t{LepGood1_pdgId:d} {LepGood2_pdgId:d}\t\t{LepGood1_pt:7.4f}\t{LepGood1_eta:7.4f}\t{LepGood1_miniRelIso:7.4f}\t{LepGood1_jetPtRelv2:7.4f}\t{LepGood1_jetPtRatiov2:7.4f}\t\t{LepGood2_pt:7.4f}\t{LepGood2_eta:7.4f}\t{LepGood2_miniRelIso:7.4f}\t{LepGood2_jetPtRelv2:7.4f}\t{LepGood2_jetPtRatiov2:7.4f}\t\t{nJet40_Mini:d} {nBJetMedium25_Mini:d} {htJet40j_Mini:.1f} {met_pt:.1f}"' # formato debug 2 leg
+
+
 
 POST="";
 WHAT="$1"; shift;
 if [[ "$WHAT" == "mccounts" ]]; then
-    GO="python mcAnalysis.py $CORE mca-Spring15-sync.txt susy-multilepton/susy_2lss_multiiso.txt -p TTWv2_RA5_sync -f -G -u "
-    POST="| awk '/all/{print \$2}' "
+    FMT='"{run:1d} {lumi:9d} {evt:12d}"'
+    GO="python mcDump.py $CORE susy-multilepton/mca-Spring15-analysis-all.txt susy-multilepton/susy_2lss_multiiso.txt  $FMT"
+    POST="| awk '{print \$3}' "
 elif [[ "$WHAT" == "mcyields" ]]; then
-    GO="python mcAnalysis.py $CORE mca-Spring15-sync.txt susy-multilepton/susy_2lss_multiiso.txt -p TTWv2_RA5_sync  -f -G"
+    GO="python mcAnalysis.py $CORE susy-multilepton/mca-Spring15-analysis-sideband.txt susy-multilepton/susy_2lss_multiiso.txt   -f -G"
 elif [[ "$WHAT" == "mcplots" ]]; then
-    GO="python mcPlots.py $CORE mca-Spring15-sync.txt susy-multilepton/susy_2lss_multiiso.txt -f -G -p TTWv2_RA5_sync -j 8 -f --legendWidth 0.30 susy-multilepton/susy_2lss_plots.txt"
+    GO="python mcPlots.py $CORE susy-multilepton/mca-Spring15-analysis-all.txt susy-multilepton/susy_2lss_multiiso.txt -f -G  -j 8 -f --legendWidth 0.30 susy-multilepton/susy_2lss_plots.txt"
 elif [[ "$WHAT" == "mcdumps" ]]; then
-    FMT='"{run:1d} {lumi:9d} {evt:12d}\t{nLepGood_Mini:2d}\t{LepGood1_pdgId:+2d} {LepGood1_pt:5.1f}\t{LepGood2_pdgId:+2d} {LepGood2_pt:5.1f}\t{nJet40}\t{nBJetMedium25:2d}\t{met_pt:5.1f}\t{htJet40j:6.1f}\t{SRTV_Mini:2d}"'
-    GO="python mcDump.py $CORE mca-Spring15-sync.txt susy-multilepton/susy_2lss_multiiso.txt -p TTWv2_RA5_sync  $FMT"
-    POST="| sort -n -k1 -k2"
+    GO="python mcDump.py --dumpFile .fdump.txt $CORE susy-multilepton/mca-Spring15-analysis-all.txt  susy-multilepton/susy_2lss_multiiso.txt   $FMT"
+    POST=" &&  sort -n -k1 -k2 -k3 .fdump.txt > fdump.txt && rm .fdump.txt"
 else
     echo "I don't know what you want"
     exit;
 fi
 
 SAVE="${GO}"
-for LL  in ee em mm ll; do 
-for SR  in 0 10 20 30; do # 0X 1X 2X 3X; do 
-for LPt in hh hl; do
+#for LL  in ee em mm ll; do 
+#for SR  in 0 10 20 30; do # 0X 1X 2X 3X; do 
+#for LPt in hh hl; do
 #for LL  in ll; do 
 #for SR  in 0; do # 0X 1X 2X 3X; do 
 #for LPt in hh; do
+for LL  in ll; do 
+for SR  in 0; do # 0X 1X 2X 3X; do 
+for LPt in ii; do
 for MOD in multiiso; do #oldpresel ptrel miniiso; do
 
 GO="${SAVE}"
@@ -61,7 +77,7 @@ esac;
 
 if [[ "${WHAT}" == "mcplots" || "${WHAT}" == "mcrocs" ]]; then
     if [[ "${WHAT}" == "mcplots" ]]; then
-        echo "$GO --pdir /afs/cern.ch/user/p/peruzzi/www/ra5sync//2lss_${MOD}/${LL}_pt_${LPt}/${SR}${PF}/"
+        echo "$GO --pdir /afs/cern.ch/user/p/peruzzi/www/ra5sync_oct29//2lss_${MOD}/${LL}_pt_${LPt}/${SR}${PF}/"
     else
         echo "$GO -o plots/72X/v2/4fb/vars/2lss_${MOD}/${LL}_pt_${LPt}/${SR}${PF}/rocs.root"
     fi

@@ -1,11 +1,7 @@
 alwaystrue: 1
->= 2 good leptons: nLepGood10 >= 2
-minMllAS8:  minMllAFAS > 8
-exclusive:  nLepGood10 == 2
+haspair: hasTT || hasTF || hasFF
 anyll: abs(LepGood1_pdgId) > 0 && abs(LepGood2_pdgId) > 0
-same-sign: LepGood1_charge*LepGood2_charge > 0
-lep1_pt15_ifel: abs(LepGood1_pdgId)!=11 || LepGood1_conePt>15
-lep2_pt15_ifel: abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15
+trigger: (abs(LepGood1_pdgId) != 11 || abs(LepGood2_pdgId) != 11 || Triggers_ee) && (abs(LepGood1_pdgId) != 13 || abs(LepGood2_pdgId) != 13 || Triggers_mm) && (abs(LepGood1_pdgId)==abs(LepGood2_pdgId) || Triggers_em)
 lep1_pt25: LepGood1_conePt > 25 
 lep2_pt25: LepGood2_conePt > 25 
 ht: htJet40j > 80

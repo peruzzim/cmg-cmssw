@@ -1,0 +1,21 @@
+lumi         : .* : .* : 1.12
+
+lepeff	     : _sig_.*,_standard_prompt_.* : .* : 1.04
+trigeff_lep  : _sig_.*,_standard_prompt_.* : .* : 1.02
+trigeff_ht   : _sig_.*,_standard_prompt_.* : .* : 1.02	: lnN_in_shape_bins : 1,3,5,7,9
+jec	     : _sig_.*,_standard_prompt_.* : .* : jec	: templates
+btag	     : _sig_.*,_standard_prompt_.* : .* : bTag	: templates
+
+#teoriche
+stat_pr	     : _sig_.*,_standard_prompt_.* : .*	: stat_foreach_shape_bins
+
+fakesrate    : _fakesappl_data : .* : 1.30
+stat_fakes   : _fakesappl_data : .* : stat_foreach_shape_bins
+ewk_sub	     : _fakesappl_data : .* : ewk : templates
+
+flipsrate    : _flipsappl_data : .* : 1.30
+stat_flips   : _flipsappl_data : .* : stat_foreach_shape_bins
+
+
+
+

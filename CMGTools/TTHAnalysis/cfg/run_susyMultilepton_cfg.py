@@ -715,14 +715,20 @@ elif test == "ra5-sync-mc-v2":
     if is50ns or runData: raise RuntimeError, 'Wrong configuration'
 elif test == "ra5-sync-data":
     comp = cfg.DataComponent( files = [
-            "root://eoscms.cern.ch//store/data/Run2015D/DoubleMuon/MINIAOD/PromptReco-v3/000/257/531/00000/B26DC190-8166-E511-AE66-02163E0133A7.root",
-            "root://eoscms.cern.ch//store/data/Run2015D/DoubleEG/MINIAOD/PromptReco-v3/000/257/531/00000/2CFA9A0A-0F66-E511-88FF-02163E013484.root",
-            "root://eoscms.cern.ch//store/data/Run2015D/MuonEG/MINIAOD/PromptReco-v3/000/257/531/00000/D62608D5-FB65-E511-B031-02163E0145C1.root",
+    "root://eoscms.cern.ch//store/data/Run2015D/DoubleMuon/MINIAOD/PromptReco-v3/000/257/531/00000/B26DC190-8166-E511-AE66-02163E0133A7.root",
+    "root://eoscms.cern.ch//store/data/Run2015D/DoubleMuon/MINIAOD/PromptReco-v3/000/257/599/00000/908F5705-8666-E511-8362-02163E01432A.root",
+    "root://eoscms.cern.ch//store/data/Run2015D/DoubleMuon/MINIAOD/PromptReco-v3/000/256/941/00000/10AA8DF0-0062-E511-B01C-02163E0146ED.root",
+    "root://eoscms.cern.ch//store/data/Run2015D/DoubleEG/MINIAOD/PromptReco-v3/000/257/531/00000/2CFA9A0A-0F66-E511-88FF-02163E013484.root",
+    "root://eoscms.cern.ch//store/data/Run2015D/DoubleEG/MINIAOD/PromptReco-v3/000/257/599/00000/4EF0C7A4-8E66-E511-AF95-02163E011C53.root",
+    "root://eoscms.cern.ch//store/data/Run2015D/DoubleEG/MINIAOD/PromptReco-v3/000/256/941/00000/5A9CB350-3462-E511-A04D-02163E014393.root",
+    "root://eoscms.cern.ch//store/data/Run2015D/MuonEG/MINIAOD/PromptReco-v3/000/257/531/00000/D62608D5-FB65-E511-B031-02163E0145C1.root",
+    "root://eoscms.cern.ch//store/data/Run2015D/MuonEG/MINIAOD/PromptReco-v3/000/257/599/00000/FCE8F3F5-6066-E511-8E56-02163E014781.root",
+    "root://eoscms.cern.ch//store/data/Run2015D/MuonEG/MINIAOD/PromptReco-v3/000/256/941/00000/C4AEA503-0462-E511-B2AE-02163E012B0C.root",
             ], name="data_RA5_sync", intLumi=1 )
     comp.triggers = []
+    comp.splitFactor = len(comp.files)
+    comp.json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
     selectedComponents = [ comp ]
-    comp.json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-    comp.triggers = triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_ee + triggers_ee_ht + triggers_3e + triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu
     if is50ns or (not runData): raise RuntimeError, 'Wrong configuration'
 
 ## output histogram
