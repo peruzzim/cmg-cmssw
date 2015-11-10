@@ -492,7 +492,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         leg.SetTextFont(42)
         leg.SetTextSize(textSize)
         if 'data' in pmap: 
-            leg.AddEntry(pmap['data'], 'Data', 'LP')
+            leg.AddEntry(pmap['data'], mca.getProcessOption('data','Label','Data'), 'LP')
         total = sum([x.Integral() for x in pmap.itervalues()])
         for (plot,label,style) in sigEntries: leg.AddEntry(plot,label,style)
         for (plot,label,style) in  bgEntries: leg.AddEntry(plot,label,style)
@@ -511,6 +511,7 @@ class PlotMaker:
         ROOT.gStyle.SetOptStat(0)
         ROOT.gStyle.SetOptTitle(0)
     def run(self,mca,cuts,plots,makeStack=True,makeCanvas=True):
+        if self._options.wideplot: ROOT.gStyle.SetTitleYOffset(0.55)
         sets = [ (None, 'all cuts', cuts.allCuts()) ]
         if not self._options.final:
             allcuts = cuts.sequentialCuts()
@@ -608,7 +609,18 @@ class PlotMaker:
                 for p in itertools.chain(reversed(mca.listBackgrounds(allProcs=True)), reversed(mca.listSignals(allProcs=True))):
                     if p in pmap: 
                         plot = pmap[p]
-                        if plot.Integral() <= 0: continue
+                        if plot.Integral() == 0:
+                            print 'Warning: plotting histo %s with zero integral, there might be problems in the following'%p
+                        if plot.Integral() < 0:
+                            print 'Warning: plotting histo %s with negative integral (%f), the stack plot will probably be incorrect.'%(p,plot.Integral())
+                        if 'TH1' in plot.ClassName():
+                            for b in xrange(1,plot.GetNbinsX()+1):
+                                if plot.GetBinContent(b)<0: print 'Warning: histo %s has bin %d with negative content (%f), the stack plot will probably be incorrect.'%(p,b,plot.GetBinContent(b))
+                        elif 'TH2' in plot.ClassName():
+                            for b1 in xrange(1,plot.GetNbinsX()+1):
+                                for b2 in xrange(1,plot.GetNbinsY()+1):
+                                    if plot.GetBinContent(b1,b2)<0: print 'Warning: histo %s has bin %d,%d with negative content (%f), the stack plot will probably be incorrect.'%(p,b1,b2,plot.GetBinContent(b))
+#                        if plot.Integral() <= 0: continue
                         if mca.isSignal(p): plot.Scale(options.signalPlotScale)
                         if mca.isSignal(p) and options.noStackSig == True: continue 
                         if self._options.plotmode == "stack":
@@ -635,6 +647,13 @@ class PlotMaker:
                             plot.SetMarkerSize(1.5)
                         else:
                             plot.SetMarkerStyle(0)
+
+
+                # define aspect ratio
+                plotformat = (1200,600) if self._options.wideplot else (600,600)
+                sf = 20./plotformat[0]
+                ROOT.gStyle.SetPadLeftMargin(600.*0.18/plotformat[0])
+
                 stack.Draw("GOFF")
                 stack.GetYaxis().SetTitle(pspec.getOption('YTitle',"Events"))
                 stack.GetXaxis().SetTitle(pspec.getOption('XTitle',pspec.name))
@@ -644,17 +663,16 @@ class PlotMaker:
                 if not makeCanvas and not self._options.printPlots: continue
                 doRatio = self._options.showRatio and ('data' in pmap or (self._options.plotmode != "stack" and len(pmap) == 4)) and ("TH2" not in total.ClassName())
                 islog = pspec.hasOption('Logy'); 
-                # define aspect ratio
-                if doRatio: ROOT.gStyle.SetPaperSize(20.,25.)
-                else:       ROOT.gStyle.SetPaperSize(20.,20.)
+                if doRatio: ROOT.gStyle.SetPaperSize(20.,sf*(plotformat[1]+150))
+                else:       ROOT.gStyle.SetPaperSize(20.,sf*plotformat[1])
                 # create canvas
-                c1 = ROOT.TCanvas(pspec.name+"_canvas", pspec.name, 600, (750 if doRatio else 600))
+                c1 = ROOT.TCanvas(pspec.name+"_canvas", pspec.name, plotformat[0], (plotformat[1]+150 if doRatio else plotformat[1]))
                 c1.SetTopMargin(c1.GetTopMargin()*options.topSpamSize);
                 c1.Draw()
                 p1, p2 = c1, None # high and low panes
                 # set borders, if necessary create subpads
                 if doRatio:
-                    c1.SetWindowSize(600 + (600 - c1.GetWw()), (750 + (750 - c1.GetWh())));
+                    c1.SetWindowSize(plotformat[0] + (plotformat[0] - c1.GetWw()), (plotformat[1]+150 + (plotformat[1]+150 - c1.GetWh())));
                     p1 = ROOT.TPad("pad1","pad1",0,0.31,1,1);
                     p1.SetTopMargin(p1.GetTopMargin()*options.topSpamSize);
                     p1.SetBottomMargin(0);
@@ -666,7 +684,7 @@ class PlotMaker:
                     p2.Draw();
                     p1.cd();
                 else:
-                    c1.SetWindowSize(600 + (600 - c1.GetWw()), 600 + (600 - c1.GetWh()));
+                    c1.SetWindowSize(plotformat[0] + (plotformat[0] - c1.GetWw()), plotformat[1] + (plotformat[1] - c1.GetWh()));
                 p1.SetLogy(islog)
                 if pspec.hasOption('Logx'):
                     p1.SetLogx(True)
@@ -752,19 +770,25 @@ class PlotMaker:
                             os.makedirs(fdir); 
                             if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+fdir)
                         if ext == "txt":
+                            cols =  [p for p in (mca.listSignals(allProcs=True)+mca.listBackgrounds(allProcs=True)) if p in pmap]
                             dump = open("%s/%s.%s" % (fdir, pspec.name, ext), "w")
-                            maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)]+[7]+[len(pspec.name)])
+                            dump_dcard = open("%s/%s_fordatacard.%s" % (fdir, pspec.name, ext), "w")
+                            dump_dcard.write('#Normalized to %.2f /fb\n'%self._options.lumi)
+                            dump_dcard.write('#Bin Process Value StatUnc%s\n'%(" UnweightedNrEvents" if options.doPrintOutNev else ""))
+                            maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in cols]+[16]+[len(pspec.name)])
+                            if maxlen%2==0: maxlen = maxlen+1
                             fmts = "%%-%ds | " % (maxlen+1)
-                            fmt = "%%%d.2f | " % (maxlen+1)
-                            fmtd = "%%%d.0f | " % (maxlen+1)
+                            fmt = "%%%d.4f | " % (maxlen+1)
+                            fmtw = "%%%d.3f(%%%d.3f) | " % (int((maxlen-1)/2),int((maxlen-1)/2))
+                            fmtd = "%%%d.2f | " % (maxlen+1)
+                            fmt_dcard = "%d %s %f %f %d\n"
                             dump.write(fmts%(pspec.name))
-                            cols =  mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)
                             for p in cols: dump.write(fmts % (_unTLatex(mca.getProcessOption(p,'Label',p))))
                             if 'signal' in pmap: dump.write(fmts%'SIGNAL')
                             if 'background' in pmap: dump.write(fmts%'BACKGROUND')
                             dump.write(fmts%'TOTAL')
                             if 'data' in pmap: dump.write(fmts%'DATA')
-                            dump.write(fmts%'Bin range')
+#                            dump.write(fmts%'Bin range')
                             dump.write('\n')
                             plots={}
                             for p in cols+['signal','background','data']:
@@ -774,12 +798,23 @@ class PlotMaker:
                                 plots[p]=[(plot.GetBinContent(b),plot.GetBinError(b)) for b in xrange(1,plot.GetNbinsX()+1)]
                             for b in xrange(plot.GetNbinsX()):
                                 dump.write(fmts%str(b+1))
+                                eventcounts = None
+                                if options.doPrintOutNev:
+                                    print 'getting unweighted number of events for bin %d'%(b+1)
+                                    if len(pspecs)>1: raise RuntimeError,'doPrintOutNev can only be used when plotting only one variable'
+                                    cut_b = CutsFile([['mymergedcuts',cut]],ignoreEmptyOptionsEnforcement=True)
+                                    cut_b.add('bin%d'%(b+1),"((%s)==%d)"%(options.doPrintOutNev,(b+1)))
+                                    eventcounts = mca.getYields(cut_b,makeSummary=True)
+                                    for p in eventcounts: eventcounts[p] = dict(eventcounts[p])['all']
                                 for p in cols+['signal','background']:
                                     if p not in pmap: continue
-                                    dump.write(fmt%(plots[p][b][0]))
+                                    dump.write(fmtw%(plots[p][b][0],plots[p][b][1]))
+                                    if p not in ['signal','background']: dump_dcard.write(fmt_dcard%(b+1,p,plots[p][b][0],plots[p][b][1],(eventcounts[p][2] if eventcounts else -1)))
                                 dump.write(fmt%sum([plots[p][b][0] for p in cols]))
-                                if 'data' in plots: dump.write(fmtd%(plots['data'][b][0]))
-                                dump.write(fmts%('[%f - %f]'%( pmap[cols[0]].GetBinLowEdge(b+1),pmap[cols[0]].GetBinLowEdge(b+2) )))
+                                if 'data' in plots:
+                                    dump.write(fmtd%(plots['data'][b][0]))
+                                    dump_dcard.write(fmt_dcard%(b+1,'data',plots['data'][b][0],plots['data'][b][1],(eventcounts['data'][2] if eventcounts else -1)))
+#                                dump.write(fmts%('[%f - %f]'%( pmap[cols[0]].GetBinLowEdge(b+1),pmap[cols[0]].GetBinLowEdge(b+2) )))
                                 dump.write('\n')
                             dump.write(fmts%'TOTAL')
                             for p in cols+['signal','background']:
@@ -805,7 +840,9 @@ class PlotMaker:
                                 dump.write("\n\n --- %s --- \n" % logname)
                                 for line in loglines: dump.write("%s\n" % line)
                             dump.write("\n")
+                            dump.write('\n#Normalized to %.2f /fb\n'%self._options.lumi)
                             dump.close()
+                            dump_dcard.close()
                         else:
                             if "TH2" in total.ClassName() or "TProfile2D" in total.ClassName():
                                 for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True) + ["signal", "background", "data"]:
@@ -818,6 +855,8 @@ class PlotMaker:
                             else:
                                 c1.Print("%s/%s.%s" % (fdir, pspec.name, ext))
                 c1.Close()
+
+
 def addPlotMakerOptions(parser):
     addMCAnalysisOptions(parser)
     parser.add_option("--ss",  "--scale-signal", dest="signalPlotScale", default=1.0, type="float", help="scale the signal in the plots by this amount");
@@ -854,6 +893,8 @@ def addPlotMakerOptions(parser):
     parser.add_option("--flagDifferences", dest="flagDifferences", action="store_true", default=False, help="Flag plots that are different (when using only two processes, and plotmode nostack")
     parser.add_option("--toleranceForDiff", dest="toleranceForDiff", default=0.0, type="float", help="set numerical tollerance to define when two histogram bins are considered different");
     parser.add_option("--pseudoData", dest="pseudoData", type="string", default=None, help="If set to 'background' or 'all', it will plot also a pseudo-dataset made from background (or signal+background) with Poisson fluctuations in each bin.")
+    parser.add_option("--wide", dest="wideplot", action="store_true", default=False, help="Draw a wide canvas")
+    parser.add_option("--doPrintOutNev", dest="doPrintOutNev", default=None, help="Prints out in datacard the unweighted number of events with non-zero weight used to populate each bin (slow). Use only when plotting one variable. Pass an expression that returns the bin number (1...N) as a function of the event quantities.")
 
 if __name__ == "__main__":
     from optparse import OptionParser
