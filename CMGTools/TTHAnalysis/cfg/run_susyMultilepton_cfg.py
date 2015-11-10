@@ -68,6 +68,8 @@ if SOS == True:
 
     # Lepton-Jet Cleaning
     jetAna.minLepPt = 20 
+    jetAnaScaleUp.minLepPt = 20 
+    jetAnaScaleDown.minLepPt = 20 
     # otherwise with only absIso cut at 10 GeV and no relIso we risk cleaning away good jets
 
 #isolation = "ptRel"
@@ -76,6 +78,7 @@ if isolation == "ptRel":
     lepAna.loose_muon_isoCut     = lambda muon : muon.relIso03 < 0.5 or muon.pt() > 10
     lepAna.loose_electron_isoCut = lambda elec : elec.relIso03 < 0.5 or elec.pt() > 10
     # in the cleaning, keep the jet if the lepton fails relIso or ptRel
+    raise RuntimeError, 'jetAnalyzer is being run multiple times, the following is not supported'
     jetAna.jetLepArbitration = lambda jet,lepton : (
         lepton if (lepton.relIso03 < 0.4 or ptRelv1(lepton.p4(),jet.p4()) > 5) else jet
     )
@@ -107,6 +110,8 @@ else:
 
 # Switch on slow QGL
 jetAna.doQG = True
+jetAnaScaleUp.doQG = True
+jetAnaScaleDown.doQG = True
 
 # Switch off slow photon MC matching
 photonAna.do_mc_match = False
@@ -121,6 +126,8 @@ tauAna.loose_etaMax = 2.3
 #tauAna.loose_tauAntiElectronID = "againstElectronLoose"
 if False: #if cleaning jet-loose tau cleaning
     jetAna.cleanJetsFromTaus = True
+    jetAnaScaleUp.cleanJetsFromTaus = True
+    jetAnaScaleDown.cleanJetsFromTaus = True
 
 
 #-------- ADDITIONAL ANALYZERS -----------
@@ -241,6 +248,8 @@ treeProducer.globalVariables.append(NTupleVariable("hbheFilterIso", lambda ev: e
 
 #additional MET quantities
 metAna.doTkMet = True
+metAnaScaleUp.doTkMet = True
+metAnaScaleDown.doTkMet = True
 treeProducer.globalVariables.append(NTupleVariable("met_trkPt", lambda ev : ev.tkMet.pt() if  hasattr(ev,'tkMet') else  0, help="tkmet p_{T}"))
 treeProducer.globalVariables.append(NTupleVariable("met_trkPhi", lambda ev : ev.tkMet.phi() if  hasattr(ev,'tkMet') else  0, help="tkmet phi"))
 
@@ -257,11 +266,17 @@ if doT1METCorr:
     jetAna.calculateType1METCorrection = True
     metAna.recalibrate = "type1"
     metAna.old74XMiniAODs = old74XMiniAODs
+    jetAnaScaleUp.calculateType1METCorrection = True
+    metAnaScaleUp.recalibrate = "type1"
+    metAnaScaleUp.old74XMiniAODs = old74XMiniAODs
+    jetAnaScaleDown.calculateType1METCorrection = True
+    metAnaScaleDown.recalibrate = "type1"
+    metAnaScaleDown.old74XMiniAODs = old74XMiniAODs
 
 if doAK4PFCHSchargedJets:
     if not doMETpreprocessor: raise RuntimeError, "ak4PFchs charged-only jets are reclustered in the MET preprocessor, but this configuration is not going to run it"
     treeProducer.collections["cleanJetsPFChargedCHS"] = NTupleCollection("JetPFChargedCHS", jetTypeSusyExtra, 15, help="Central PFChargedCHS jets after full selection and cleaning, sorted by pt") # ak4PFchs charged-only jets
-    susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), pfChargedCHSjetAna)
+#    susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), pfChargedCHSjetAna)
 #treeProducer.collections["jetsAllNoID"] = NTupleCollection("AllJet", jetTypeSusyExtra, 15, help="Central jets, sorted by pt") # warning, increases tree size considerably
 
 #-------- SAMPLES AND TRIGGERS -----------
@@ -322,7 +337,7 @@ triggerFlagsAna.checkL1Prescale = True
 from CMGTools.RootTools.samples.samples_13TeV_74X import *
 from CMGTools.RootTools.samples.samples_13TeV_74X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_8TeVReReco_74X import *
-from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
+#from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
 selectedComponents = [];
 
@@ -338,8 +353,10 @@ selectedComponents = [];
 
 ### ra5 prod
 #selectedComponents = [TTJets, WJetsToLNu, DYJetsToLL_M10to50,  DYJetsToLL_M50, WZTo3LNu, ZZTo4L, WWTo2L2Nu, GGHZZ4L, TTHnobb, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTGJets, T5ttttDeg_mGo1000_mStop300_mCh285_mChi280, T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep, WGToLNuG, ZGTo2LG, WWDouble, VHToNonbb, WpWpJJ] + SingleTop + TopPlusX + T1tttt + T6ttWW + T5qqqqWW + Rares
+#selectedComponents = [WZTo3LNu, ZZTo4L, GGHZZ4L, TTHnobb, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTGJets, T5ttttDeg_mGo1000_mStop300_mCh285_mChi280, T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep, WGToLNuG, ZGTo2LG, WWDouble, VHToNonbb, WpWpJJ] + T1tttt + T6ttWW + T5qqqqWW + Rares + TriBosons + TopPlusX
+#for c in selectedComponents: c.splitFactor = len(c.files)/2
+#selectedComponents = [tZqll,ZZTo4L,ZGTo2LG,GGHZZ4L]
 #for c in selectedComponents: c.splitFactor = len(c.files)
-
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -366,34 +383,27 @@ if runData and not isTest: # For running on data
 #    json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_254833_13TeV_PromptReco_Collisions15_JSON.txt"; # taken at 50 ns with 25 ns reconstruction
 #    processing = "Run2015C-PromptReco-v1"; short = "Run2015C_v1"; run_ranges = [ (254833,254833) ]; useAAA=False; is50ns=True; triggerFlagsAna.checkL1Prescale = False;
 
+#    normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
+
     is50ns = False
     dataChunks = []
 
-#    # Run2015C, 25 ns, 3.8T
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258714_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-#    processing = "Run2015C-PromptReco-v1"; short = "Run2015C_v1"; run_ranges = [ (254231,254914) ]; useAAA=False; triggerFlagsAna.checkL1Prescale = False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    # Oct05 rereco of Run2015C, Oct19 JSON
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    processing = "Run2015C_25ns-05Oct2015-v1"; short = "Run2015C_Oct05"; run_ranges = [ (254231,254914) ]; useAAA=False;
+    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
 
-#    # Run2015D-v3, unblinded JSON - WARNING: beware of CACHING in .cmgdataset
-#    # normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON_v3.txt' # and Run2015D = ???/pb
-#    processing = "Run2015D-PromptReco-v3"; short = "Run2015D_v3"; run_ranges = [ (256630,257599) ]; useAAA=False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-#
-#    # Run2015D-v3, blinded - WARNING: beware of CACHING in .cmgdataset
-#    # normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258714_13TeV_PromptReco_Collisions15_25ns_JSON.txt' # and Run2015D = ???/pb
-#    processing = "Run2015D-PromptReco-v3"; short = "Run2015D_v3"; run_ranges = [ (256926,256926),(257600,258158) ]; useAAA=False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-#
-#    # Run2015D-v4, blinded - WARNING: beware of CACHING in .cmgdataset
-#    # normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258714_13TeV_PromptReco_Collisions15_25ns_JSON.txt' # and Run2015D = ???/pb
-#    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258159,258714) ]; useAAA=False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    # Oct05 rereco of Run2015D-PromptReco-v3 (up to run 258158), Oct19 JSON
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    processing = "Run2015D-05Oct2015-v1"; short = "Run2015D_Oct05"; run_ranges = [ (256630,258158) ]; useAAA=False;
+    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
 
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON_MINUS_UP_TO_258714.txt' # and Run2015D = ???/pb
-    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_v4"; run_ranges = [ (258211,258750) ]; useAAA=False;
+    # Run2015D PromptReco-v4 (from run 258159), Oct19 JSON (up to run 258750) - WARNING: beware of CACHING in .cmgdataset
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_PromptV4"; run_ranges = [ (258159,258750) ]; useAAA=False;
+    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -477,13 +487,19 @@ if runFRMC: # QCD
 if is50ns:
     jetAna.mcGT     = "Summer15_50nsV5_MC"
     jetAna.dataGT   = "Summer15_50nsV5_DATA"
-    pfChargedCHSjetAna.mcGT     = "Summer15_50nsV5_MC"
-    pfChargedCHSjetAna.dataGT   = "Summer15_50nsV5_DATA"
+    jetAnaScaleUp.mcGT     = "Summer15_50nsV5_MC"
+    jetAnaScaleUp.dataGT   = "Summer15_50nsV5_DATA"
+    jetAnaScaleDown.mcGT     = "Summer15_50nsV5_MC"
+    jetAnaScaleDown.dataGT   = "Summer15_50nsV5_DATA"
+#    pfChargedCHSjetAna.mcGT     = "Summer15_50nsV5_MC"
+#    pfChargedCHSjetAna.dataGT   = "Summer15_50nsV5_DATA"
 
 if removeJetReCalibration:
     ## NOTE: jets will still be recalibrated, since calculateSeparateCorrections is True,
     ##       however the code will check that the output 4-vector is unchanged.
     jetAna.recalibrateJets = False
+    jetAnaScaleUp.recalibrateJets = False
+    jetAnaScaleDown.recalibrateJets = False
 
 if forcedSplitFactor>0 or forcedFineSplitFactor>0:
     if forcedFineSplitFactor>0 and forcedSplitFactor!=1: raise RuntimeError, 'splitFactor must be 1 if setting fineSplitFactor'
@@ -519,12 +535,13 @@ sequence = cfg.Sequence(susyCoreSequence+[
 preprocessor = None
 
 if doMETpreprocessor:
+    raise RuntimeError, 'Probably outdated; check especially the uncertainty file (Uncertainty or UncertaintySources? ; is the right version used throughout the produced py file for CmsRun?)'
     removeResiduals = False # residuals are set to 1 in MC, no need to remove them
     import tempfile
     # -------------------- Running pre-processor
     import subprocess
     if is50ns: jectag = '50nsV5'
-    else: jectag = '25nsV5' if runData else '25nsV2'
+    else: jectag = '25nsV5' if runData else '25nsV5'
     jecDBFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_%s_%s.db'%(jectag,'DATA' if runData else 'MC')
     jecEra    = 'Summer15_%s_%s'%(jectag, 'DATA'if runData else 'MC')
     tempfile.tempdir=os.environ['CMSSW_BASE']+'/tmp'
