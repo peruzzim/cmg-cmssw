@@ -1,8 +1,24 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from CMGTools.TTHAnalysis.tools.conept import conept
+from PhysicsTools.HeppyCore.utils.deltar import matchObjectCollection3
+import ROOT
+ROOT.gSystem.Load('libCondFormatsBTauObjects') 
+
+class MyVarProxy:
+    def __init__(self,lep):
+        self._ob = lep
+    def __getitem__(self,name):
+        return self.__getattr__(name)
+    def __getattr__(self,name):
+        if name in self.__dict__: return self.__dict__[name]
+        else: return getattr(self._ob,name)
+    def eta(self): return self._ob.eta
+    def phi(self): return self._ob.phi
+    def pt(self): return self._ob.pt
+    def pdgId(self): return self._ob.pdgId
 
 class LeptonJetReCleaner:
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,isMC=True):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,isMC=True,CSVbtagFileName=None,EFFbtagFileName=None):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
@@ -11,10 +27,14 @@ class LeptonJetReCleaner:
         self.cleanJet = cleanJet
         self.selectJet = selectJet
         self.isMC = isMC
+        self.do_btagSF = False
+        if (CSVbtagFileName or EFFbtagFileName) and self.isMC: self.init_btagMediumScaleFactor(CSVbtagFileName,EFFbtagFileName)
+        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
     def listBranches(self):
         label = self.label
+
         biglist = [
-            ("nLepGood","I"), ("LepGood_conePt","F",20,"nLepGood"), # calculate conept
+            ("nLepGood","I"), ("LepGood_conePt","F",20,"nLepGood"),
             ("nLepLoose"+label, "I"), ("iL"+label,"I",20,"nLepLoose"+label), # passing loose
             ("nLepLooseVeto"+label, "I"), ("iLV"+label,"I",20,"nLepLooseVeto"+label), # passing loose + veto
             ("nLepCleaning"+label, "I"), ("iC"+label,"I",20,"nLepCleaning"+label), # passing cleaning
@@ -23,14 +43,19 @@ class LeptonJetReCleaner:
             ("nLepFOVeto"+label, "I"), ("iFV"+label,"I",20,"nLepFOVeto"+label), # passing FO + veto
             ("nLepTight"+label, "I"), ("iT"+label,"I",20,"nLepTight"+label), # passing tight
             ("nLepTightVeto"+label, "I"), ("iTV"+label,"I",20,"nLepTightVeto"+label), # passing tight + veto
-            ("isLepLoose"+label,"I",20,"nLepGood"),("isLepLooseVeto"+label,"I",20,"nLepGood"),
-            ("isLepCleaning"+label,"I",20,"nLepGood"),("isLepCleaningVeto"+label,"I",20,"nLepGood"),
-            ("isLepFO"+label,"I",20,"nLepGood"),("isLepFOVeto"+label,"I",20,"nLepGood"),
-            ("isLepTight"+label,"I",20,"nLepGood"),("isLepTightVeto"+label,"I",20,"nLepGood"),
-            ("nJetSel"+label, "I"), ("iJ"+label,"I",20,"nJetSel"+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
-            ("nJet40"+label, "I"), "htJet40j"+label, ("nBJetLoose40"+label, "I"), ("nBJetMedium40"+label, "I"),
-            ("nJet25"+label, "I"), "htJet25j"+label, ("nBJetLoose25"+label, "I"), ("nBJetMedium25"+label, "I"), 
+            ("LepGood_isLoose"+label,"I",20,"nLepGood"),("LepGood_isLooseVeto"+label,"I",20,"nLepGood"),
+            ("LepGood_isCleaning"+label,"I",20,"nLepGood"),("LepGood_isCleaningVeto"+label,"I",20,"nLepGood"),
+            ("LepGood_isFO"+label,"I",20,"nLepGood"),("LepGood_isFOVeto"+label,"I",20,"nLepGood"),
+            ("LepGood_isTight"+label,"I",20,"nLepGood"),("LepGood_isTightVeto"+label,"I",20,"nLepGood"),
+            ("btagMediumSF"+label, "F"), ("btagMediumSFup"+label, "F"), ("btagMediumSFdown"+label, "F"),
+#            ("LepGood_mcMatchPdgId","F",20,"nLepGood"), # calculate conept and matched charge, now calculated in production
             ]
+        for key in self.systsJEC:
+            biglist.extend([
+                    ("nJetSel"+self.systsJEC[key]+label, "I"), ("iJ"+self.systsJEC[key]+label,"I",20,"nJetSel"+self.systsJEC[key]+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
+                    ("nJet40"+self.systsJEC[key]+label, "I"), "htJet40j"+self.systsJEC[key]+label, ("nBJetLoose40"+self.systsJEC[key]+label, "I"), ("nBJetMedium40"+self.systsJEC[key]+label, "I"),
+                    ("nJet25"+self.systsJEC[key]+label, "I"), "htJet25j"+self.systsJEC[key]+label, ("nBJetLoose25"+self.systsJEC[key]+label, "I"), ("nBJetMedium25"+self.systsJEC[key]+label, "I"),
+                    ])
         for jfloat in "pt eta phi mass btagCSV rawPt".split():
             biglist.append( ("JetSel"+label+"_"+jfloat,"F",20,"nJetSel"+label) )
         if self.isMC:
@@ -46,23 +71,159 @@ class LeptonJetReCleaner:
             if (selection(lep) if ht<0 else selection(lep,ht)):
                     ret['i'+lab].append(refcollection.index(lep))
         ret['nLep'+labext] = len(ret['i'+lab])
-        ret['isLep'+labext] = [(1 if i in ret['i'+lab] else 0) for i in xrange(len(refcollection))]
+        ret['LepGood_is'+labext] = [(1 if i in ret['i'+lab] else 0) for i in xrange(len(refcollection))]
         lepspass = [ refcollection[il] for il in ret['i'+lab]  ]
         if lepsforveto==None: lepsforveto = lepspass # if lepsforveto==None, veto selected leptons among themselves
         for lep in lepspass:
             if passMllTLVeto(lep, lepsforveto, 76, 106, True) and passMllTLVeto(lep, lepsforveto, 0, 12, True):
                 ret['i'+lab+'V'].append(refcollection.index(lep))
         ret['nLep'+labext+'Veto'] = len(ret['i'+lab+'V'])
-        ret['isLep'+labext+'Veto'] = [(1 if i in ret['i'+lab+'V'] else 0) for i in xrange(len(refcollection))]
+        ret['LepGood_is'+labext+'Veto'] = [(1 if i in ret['i'+lab+'V'] else 0) for i in xrange(len(refcollection))]
         lepspassveto = [ refcollection[il] for il in ret['i'+lab+'V']  ]
         return (ret,lepspass,lepspassveto)
+
+
+#    def matchLeptons(self, ret, leps, genleps, genlepsfromtau, event):
+#        allgenleps = genleps+genlepsfromtau
+#        ret["LepGood_mcMatchPdgId"] = [0] * len(leps)
+#
+#        def plausible(rec,gen):
+#            if abs(rec.pdgId()) == 11 and abs(gen.pdgId()) != 11:   return False
+#            if abs(rec.pdgId()) == 13 and abs(gen.pdgId()) != 13:   return False
+#            dr = deltaR(rec.eta(),rec.phi(),gen.eta(),gen.phi())
+#            if dr < 0.3: return True
+#            if rec.pt() < 10 and abs(rec.pdgId()) == 13 and gen.pdgId() != rec.pdgId(): return False
+#            if dr < 0.7: return True
+#            if min(rec.pt(),gen.pt())/max(rec.pt(),gen.pt()) < 0.3: return False
+#            return True
+#
+#        myleps = [MyVarProxy(lep) for lep in leps]
+#        mygenleps = [MyVarProxy(glep) for glep in allgenleps]
+#        match = matchObjectCollection3(myleps,mygenleps, 
+#                                       deltaRMax = 1.2, filter = plausible)
+#
+#        for il,mylep in enumerate(myleps):
+#            mygen = match[mylep]
+#            if mygen:
+#                if (mygen.sourceId != mylep.mcMatchId): raise RuntimeError, "Error in lepton re-matching: sourceId/mcMatchId %d %d"%(mygen.sourceId,mylep.mcMatchId)
+#                ret["LepGood_mcMatchPdgId"][il] = mygen.pdgId()
+#            else:
+#                if mylep.mcMatchId != 0:
+#                    if mylep.mcMatchId == 100:
+#                        print 'Warning (evt. %d): reco lepton which has mcMatchId==100, mcMatchAny==%d had been matched to a prompt lepton that was not included in the genLepton collections. It was not re-matched: assuming correct charge reconstruction in this case!'%(event.evt,mylep.mcMatchAny)
+#                        ret["LepGood_mcMatchPdgId"][il] = mylep.pdgId()
+#                    else: raise RuntimeError, "Error in lepton re-matching: lep.mcMatchId is %d for not matched"%(mylep.mcMatchId)
+
+
+
+    def init_btagMediumScaleFactor(self,CSVbtagFileName,EFFbtagFileName):
+        self.do_btagSF = True
+        self.btagMediumCalib = ROOT.BTagCalibration("CSVv2", CSVbtagFileName)
+        self.btagMediumReader=[]
+        self.btagMediumReader.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "mujets", "down"))
+        self.btagMediumReader.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "mujets", "central"))
+        self.btagMediumReader.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "mujets", "up"))
+        self.btagMediumReaderLight=[]
+        self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "down"))
+        self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "central"))
+        self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "up"))
+        self.btagEffFile = ROOT.TFile(EFFbtagFileName,"read")
+        self.btagEffHistos = (self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_udsg"),self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_b"))
+    def read_btagMediumScaleFactor(self,jet,isB,shift=0):
+        # agreed upon: include jets in under/overflow in last bins
+        pt = min(max(jet.pt,30.001),669.999)
+        eta = min(max(jet.eta,-2.399),2.399)
+        res = 0
+        if isB:
+            res = self.btagMediumReader[shift+1].eval(0,eta,pt)
+        else:
+            res = self.btagMediumReaderLight[shift+1].eval(2,eta,pt)
+        if res==0: raise RuntimeError,'Btag SF returned zero, something is not correct: isB=%d, eta=%f, pt=%f'%(isB,jet.eta,jet.pt)
+        return res
+    def read_btagMediumEfficiency(self,jet,isB):
+        h = self.btagEffHistos[isB]
+        ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(jet.pt)))
+        etabin = max(1,min(h.GetNbinsY(),h.GetYaxis().FindBin(abs(jet.eta))))
+        return h.GetBinContent(ptbin,etabin)
+    def btagMediumScaleFactor(self,bjets,alljets,shift=0):
+        if not (self.isMC and self.do_btagSF): return 1.0
+        pmc = 1.0; pdata = 1.0
+        for j in alljets:
+            if j in bjets:
+                pmc = pmc * self.read_btagMediumEfficiency(j,True)
+                pdata = pdata * self.read_btagMediumEfficiency(j,True)*self.read_btagMediumScaleFactor(j,True,shift)
+            else:
+                pmc = pmc * (1-self.read_btagMediumEfficiency(j,False))
+                pdata = pdata * (1-self.read_btagMediumEfficiency(j,False)*self.read_btagMediumScaleFactor(j,False,shift))
+        res = pdata/pmc if pmc!=0 else 1.
+        return res
+
+    def recleanJets(self,jetcollcleaned,jetcolldiscarded,lepcoll,postfix,ret,jetret,doMatchQuantities=False):
+        ### Define jets
+        ret["iJ"+postfix] = []
+        # 0. mark each jet as clean
+        for j in jetcollcleaned+jetcolldiscarded: j._clean = True if self.selectJet(j) else False
+        # 1. associate to each lepton passing the cleaning selection its nearest jet 
+        for lep in lepcoll:
+            best = None; bestdr = 0.4
+            for j in jetcollcleaned+jetcolldiscarded:
+                dr = deltaR(lep,j)
+                if dr < bestdr:
+                    best = j; bestdr = dr
+            if best is not None and self.cleanJet(lep,best,bestdr):
+                best._clean = False
+        # 2. compute the jet list
+        for ijc,j in enumerate(jetcollcleaned):
+            if not j._clean: continue
+            ret["iJ"+postfix].append(ijc)
+        for ijd,j in enumerate(jetcolldiscarded):
+            if not j._clean: continue
+            ret["iJ"+postfix].append(-1-ijd)
+        # 3. sort the jets by pt
+        ret["iJ"+postfix].sort(key = lambda idx : jetcollcleaned[idx].pt if idx >= 0 else jetcolldiscarded[-1-idx].pt, reverse = True)
+        ret["nJetSel"+postfix] = len(ret["iJ"+postfix])
+        # 4. compute the variables
+        if doMatchQuantities:
+            if not postfix=="": raise RuntimeError,'Inconsistent usage of postfix in LeptonJetReCleaner'
+            for jfloat in "pt eta phi mass btagCSV rawPt".split():
+                jetret[jfloat] = []
+            if self.isMC:
+                for jmc in "mcPt mcFlavour mcMatchId".split():
+                    jetret[jmc] = []
+            for idx in ret["iJ"+postfix]:
+                jet = jetcollcleaned[idx] if idx >= 0 else jetcolldiscarded[-1-idx]
+                for jfloat in "pt eta phi mass btagCSV rawPt".split():
+                    jetret[jfloat].append( getattr(jet,jfloat) )
+                if self.isMC:
+                    for jmc in "mcPt mcFlavour mcMatchId".split():
+                        jetret[jmc].append( getattr(jet,jmc) )
+        # 5. compute the sums
+        ret["nJet25"+postfix] = 0; ret["htJet25j"+postfix] = 0; ret["nBJetLoose25"+postfix] = 0; ret["nBJetMedium25"+postfix] = 0
+        ret["nJet40"+postfix] = 0; ret["htJet40j"+postfix] = 0; ret["nBJetLoose40"+postfix] = 0; ret["nBJetMedium40"+postfix] = 0
+        cleanjets = []; cleanBjets = []
+        for j in jetcollcleaned+jetcolldiscarded:
+            if not j._clean: continue
+            cleanjets.append(j)
+            if j.btagCSV>0.890: cleanBjets.append(j)
+            if j.pt > 25:
+                ret["nJet25"+postfix] += 1; ret["htJet25j"+postfix] += j.pt; 
+                if j.btagCSV>0.605: ret["nBJetLoose25"+postfix] += 1
+                if j.btagCSV>0.890: ret["nBJetMedium25"+postfix] += 1
+            if j.pt > 40:
+                ret["nJet40"+postfix] += 1; ret["htJet40j"+postfix] += j.pt; 
+                if j.btagCSV>0.605: ret["nBJetLoose40"+postfix] += 1
+                if j.btagCSV>0.890: ret["nBJetMedium40"+postfix] += 1
+        return (cleanjets,cleanBjets)
+
 
     def __call__(self,event):
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         for lep in leps: lep.conept = conept(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)
-        jetsc = [j for j in Collection(event,"Jet","nJet")]
-        jetsd = [j for j in Collection(event,"DiscJet","nDiscJet")]
-        (met, metphi)  = event.met_pt, event.met_phi
+        jetsc={}
+        jetsd={}
+        for var in self.systsJEC:
+            jetsc[var] = [j for j in Collection(event,"Jet"+self.systsJEC[var],"nJet"+self.systsJEC[var])]
+            jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[var],"nDiscJet"+self.systsJEC[var])]
         ret = {}; jetret = {}
 
         lepsl = []; lepslv = [];
@@ -70,55 +231,16 @@ class LeptonJetReCleaner:
         lepsc = []; lepscv = [];
         ret, lepsc, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'C','Cleaning',self.cleaningLeptonSel,lepsl)
 
-        ### Define jets
-        ret["iJ"] = []
-        # 0. mark each jet as clean
-        for j in jetsc+jetsd: j._clean = True if self.selectJet(j) else False
-        # 1. associate to each lepton passing the cleaning selection its nearest jet 
-        for lep in lepsc:
-            best = None; bestdr = 0.4
-            for j in jetsc+jetsd:
-                dr = deltaR(lep,j)
-                if dr < bestdr:
-                    best = j; bestdr = dr
-            if best is not None and self.cleanJet(lep,best,bestdr):
-                best._clean = False
-        # 2. compute the jet list
-        for ijc,j in enumerate(jetsc):
-            if not j._clean: continue
-            ret["iJ"].append(ijc)
-        for ijd,j in enumerate(jetsd):
-            if not j._clean: continue
-            ret["iJ"].append(-1-ijd)
-        # 3. sort the jets by pt
-        ret["iJ"].sort(key = lambda idx : jetsc[idx].pt if idx >= 0 else jetsd[-1-idx].pt, reverse = True)
-        ret["nJetSel"] = len(ret["iJ"])
-        # 4. compute the variables
-        for jfloat in "pt eta phi mass btagCSV rawPt".split():
-            jetret[jfloat] = []
-        if self.isMC:
-            for jmc in "mcPt mcFlavour mcMatchId".split():
-                jetret[jmc] = []
-        for idx in ret["iJ"]:
-            jet = jetsc[idx] if idx >= 0 else jetsd[-1-idx]
-            for jfloat in "pt eta phi mass btagCSV rawPt".split():
-                jetret[jfloat].append( getattr(jet,jfloat) )
-            if self.isMC:
-                for jmc in "mcPt mcFlavour mcMatchId".split():
-                    jetret[jmc].append( getattr(jet,jmc) )
-        # 5. compute the sums
-        ret["nJet25"] = 0; ret["htJet25j"] = 0; ret["nBJetLoose25"] = 0; ret["nBJetMedium25"] = 0
-        ret["nJet40"] = 0; ret["htJet40j"] = 0; ret["nBJetLoose40"] = 0; ret["nBJetMedium40"] = 0
-        for j in jetsc+jetsd:
-            if not j._clean: continue
-            if j.pt > 25:
-                ret["nJet25"] += 1; ret["htJet25j"] += j.pt; 
-                if j.btagCSV>0.423: ret["nBJetLoose25"] += 1
-                if j.btagCSV>0.814: ret["nBJetMedium25"] += 1
-            if j.pt > 40:
-                ret["nJet40"] += 1; ret["htJet40j"] += j.pt; 
-                if j.btagCSV>0.423: ret["nBJetLoose40"] += 1
-                if j.btagCSV>0.814: ret["nBJetMedium40"] += 1
+        cleanjets={}
+        cleanBjets={}
+        for var in self.systsJEC:
+            cleanjets[var]=[]
+            cleanBjets[var]=[]
+            cleanjets[var],cleanBjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc,self.systsJEC[var],ret,jetret,(var==0))
+
+        ret["btagMediumSF"] = self.btagMediumScaleFactor(cleanBjets[0],cleanjets[0],0) if self.do_btagSF else 1.0
+        ret["btagMediumSFup"] = self.btagMediumScaleFactor(cleanBjets[0],cleanjets[0],+1) if self.do_btagSF else 1.0
+        ret["btagMediumSFdown"] = self.btagMediumScaleFactor(cleanBjets[0],cleanjets[0],-1) if self.do_btagSF else 1.0
 
         # calculate FOs and tight leptons using the cleaned HT
         lepsf = []; lepsfv = [];
@@ -130,6 +252,7 @@ class LeptonJetReCleaner:
         fullret = {}
         fullret["nLepGood"]=len(leps)
         fullret["LepGood_conePt"] = [lep.conept for lep in leps]
+#        if self.isMC: self.matchLeptons(fullret,leps,[l for l in Collection(event,"genLep","ngenLep")],[l for l in Collection(event,"genLepFromTau","ngenLepFromTau")],event)
         for k,v in ret.iteritems(): 
             fullret[k+self.label] = v
         for k,v in jetret.iteritems(): 

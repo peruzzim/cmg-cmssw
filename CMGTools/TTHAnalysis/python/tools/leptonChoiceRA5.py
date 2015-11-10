@@ -41,11 +41,12 @@ class LeptonChoiceRA5:
             ("i1"+label,"I",20,"nPairs"+label),
             ("i2"+label,"I",20,"nPairs"+label),
             ("appWeight"+label,"F",20,"nPairs"+label),
+            ("appWeight_ewkUp"+label,"F",20,"nPairs"+label),
+            ("appWeight_ewkDown"+label,"F",20,"nPairs"+label),
             ("SR"+label,"I",20,"nPairs"+label),
+            ("SR_jecUp"+label,"I",20,"nPairs"+label),
+            ("SR_jecDown"+label,"I",20,"nPairs"+label),
             ("hasTT"+label, "I"), ("hasTF"+label, "I"), ("hasFF"+label, "I"),
-#            "mZ1cut10TL"+label, "minMllAFASTL"+label,"minMllAFOSTL"+label,"minMllSFOSTL"+label,
-#            "minMllAFASTT"+label,"minMllAFOSTT"+label,"minMllSFOSTT"+label,
-#            "mZ1"+label, "minMllAFAS"+label,"minMllAFOS"+label,"minMllSFOS"+label
             ]
         return biglist
 
@@ -60,7 +61,17 @@ class LeptonChoiceRA5:
 #        lepscv = [leps[il] for il in getattr(event,"iCV"+self.inputlabel)]
         lepsfv = [leps[il] for il in getattr(event,"iFV"+self.inputlabel)]
         lepstv = [leps[il] for il in getattr(event,"iTV"+self.inputlabel)]
-        (met, metphi)  = event.met_pt, event.met_phi
+        
+        systsFR={0:"", 1:"_ewkUp", -1:"_ewkDown"}
+        systsJEC={0:"", 1:"_jecUp", -1:"_jecDown"}
+        met={}
+        metphi={}
+        met[0]=event.met_pt
+        met[1]=event.met_jecUp_pt
+        met[-1]=event.met_jecDown_pt
+        metphi[0]= event.met_phi
+        metphi[1]= event.met_jecUp_phi
+        metphi[-1]= event.met_jecDown_phi
 
         ret = {};
 
@@ -81,7 +92,11 @@ class LeptonChoiceRA5:
         ret["i1"] = [0]*20
         ret["i2"] = [0]*20
         ret["appWeight"] = [0]*20
+        ret["appWeight_ewkUp"] = [0]*20
+        ret["appWeight_ewkDown"] = [0]*20
         ret["SR"] = [0]*20
+        ret["SR_jecUp"] = [0]*20
+        ret["SR_jecDown"] = [0]*20
         ret["hasTT"]=False
         ret["hasTF"]=False
         ret["hasFF"]=False
@@ -96,7 +111,7 @@ class LeptonChoiceRA5:
                     choice = self.findPairs(lepstv,lepsfv,byflav=True,bypassMV=False,choose_SS_else_OS=True)
                     if choice:
                         ret["hasTF"]=True
-                        _probs = []
+                        _probs = {}
                     else:
                         choice = self.findPairs(lepsfv,lepsfv,byflav=True,bypassMV=False,choose_SS_else_OS=True)
                         if choice:
@@ -127,35 +142,37 @@ class LeptonChoiceRA5:
             for npair in xrange(len(choice)):
                 i1 = leps.index(choice[npair][0])
                 i2 = leps.index(choice[npair][1])
-                ret["i1"][npair]=i1
-                ret["i2"][npair]=i2
-                mtwmin = min(sqrt(2*leps[i1].conePt*met*(1-cos(leps[i1].phi-metphi))),sqrt(2*leps[i2].conePt*met*(1-cos(leps[i2].phi-metphi))))
-                ht = getattr(event,"htJet40j"+self.inputlabel)
-                ret["SR"][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,ht,met,getattr(event,"nJet40"+self.inputlabel),getattr(event,"nBJetMedium25"+self.inputlabel),mtwmin)
+                ret["i1"][npair], ret["i2"][npair] = (i1,i2) if leps[i1].conePt>=leps[i2].conePt else (i2,i1) # warning: they are not necessarily ordered by pt!
+                for var in systsJEC:
+                    mtwmin = min(sqrt(2*leps[i1].conePt*met[var]*(1-cos(leps[i1].phi-metphi[var]))),sqrt(2*leps[i2].conePt*met[var]*(1-cos(leps[i2].phi-metphi[var]))))
+                    ret["SR"+systsJEC[var]][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,getattr(event,"htJet40j"+systsJEC[var]+self.inputlabel),met[var],getattr(event,"nJet40"+systsJEC[var]+self.inputlabel),getattr(event,"nBJetMedium25"+systsJEC[var]+self.inputlabel),mtwmin)
+                ht = getattr(event,"htJet40j"+self.inputlabel) # central value
                 if self.apply:
                     if self.whichApplication == self.appl_Fakes:
-                        if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
-                            if ret["hasTT"]:
-                                ret["appWeight"][npair] = 0.0
-                            elif ret["hasTF"]:
-                                prev = 1.0
-                                for x in _probs:
-                                    prev *= (1-x)
-                                prob = self.FRprob(leps[i2],ht)
-                                transf = self.FRtransfer_fromprob(prob)
-                                _probs.append(prob)
-                                ret["appWeight"][npair] = prev * transf
-                            elif ret["hasFF"]:
-                                ret["appWeight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht) if len(choice)<2 else 0.0 # throw away events with three FO non Tight
-                        elif self.lepChoiceMethod==self.style_sort_FO:
-                            if ret["hasTT"]:
-                                ret["appWeight"][npair] = 0.0
-                            elif ret["hasTF"]:
-                                ret["appWeight"][npair] = self.FRtransfer(leps[i2 if tt_sort_FO[0] else i1],ht)
-                            elif ret["hasFF"]:
-                                ret["appWeight"][npair] = -self.FRtransfer(leps[i1],ht)*self.FRtransfer(leps[i2],ht)
+                        for var in systsFR:
+                            if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
+                                if ret["hasTT"]:
+                                    ret["appWeight"+systsFR[var]][npair] = 0.0
+                                elif ret["hasTF"]:
+                                    prev = 1.0
+                                    if var not in _probs: _probs[var]=[]
+                                    for x in _probs[var]:
+                                        prev *= (1-x)
+                                    prob = self.FRprob(leps[i2],ht,var)
+                                    transf = self.FRtransfer_fromprob(prob)
+                                    _probs[var].append(prob)
+                                    ret["appWeight"+systsFR[var]][npair] = prev * transf
+                                elif ret["hasFF"]:
+                                    ret["appWeight"+systsFR[var]][npair] = -self.FRtransfer(leps[i1],ht,var)*self.FRtransfer(leps[i2],ht,var) if len(choice)<2 else 0.0 # throw away events with three FO non Tight
+                            elif self.lepChoiceMethod==self.style_sort_FO:
+                                if ret["hasTT"]:
+                                    ret["appWeight"+systsFR[var]][npair] = 0.0
+                                elif ret["hasTF"]:
+                                    ret["appWeight"+systsFR[var]][npair] = self.FRtransfer(leps[i2 if tt_sort_FO[0] else i1],ht,var)
+                                elif ret["hasFF"]:
+                                    ret["appWeight"+systsFR[var]][npair] = -self.FRtransfer(leps[i1],ht,var)*self.FRtransfer(leps[i2],ht,var)
                     elif self.whichApplication == self.appl_Flips:
-                        ret["appWeight"][npair] = 0.0 # TODO
+                        ret["appWeight"][npair] = self.flipRate(leps[i1])+self.flipRate(leps[i2])
 
         ### attach labels and return
         fullret = {}
@@ -164,22 +181,78 @@ class LeptonChoiceRA5:
         return fullret
 
     def initFRhistos(self,FRFileName):
-        self.FRfile = ROOT.TFile(FRFileName,"read")
-        self.FR_mu = (self.FRfile.Get("FRMuPtCorr_ETH_non"),self.FRfile.Get("FRMuPtCorr_ETH_iso"))
-        self.FR_el = (self.FRfile.Get("FRElPtCorr_ETH_non"),self.FRfile.Get("FRElPtCorr_ETH_iso"))
-    def initFlipAppHistos(self,filenames):
-        return # TODO
+        self.useFakesHardCodedInSitu = False
+        if FRFileName=="InSituHardCoded":
+            self.useFakesHardCodedInSitu = True
+        else:    
+            self.FRfile = ROOT.TFile(FRFileName,"read")
+#            self.FR_mu = (self.FRfile.Get("FRMuPtCorr_ETH_non"),self.FRfile.Get("FRMuPtCorr_ETH_iso"))
+#            self.FR_el = (self.FRfile.Get("FRElPtCorr_ETH_non"),self.FRfile.Get("FRElPtCorr_ETH_iso"))
+            self.FR_mu={}
+            self.FR_el={}
+            self.FR_mu[0] = (self.FRfile.Get("FRMuPtCorr_UCSX_non"),self.FRfile.Get("FRMuPtCorr_UCSX_iso"))
+            self.FR_el[0] = (self.FRfile.Get("FRElPtCorr_UCSX_non"),self.FRfile.Get("FRElPtCorr_UCSX_iso"))
+            self.FR_mu[1] = (self.FRfile.Get("FRMuPtCorr_UCSX_HI_non"),self.FRfile.Get("FRMuPtCorr_UCSX_HI_iso"))
+            self.FR_el[1] = (self.FRfile.Get("FRElPtCorr_UCSX_HI_non"),self.FRfile.Get("FRElPtCorr_UCSX_HI_iso"))
+            self.FR_mu[-1] = (self.FRfile.Get("FRMuPtCorr_UCSX_LO_non"),self.FRfile.Get("FRMuPtCorr_UCSX_LO_iso"))
+            self.FR_el[-1] = (self.FRfile.Get("FRElPtCorr_UCSX_LO_non"),self.FRfile.Get("FRElPtCorr_UCSX_LO_iso"))
+    def initFlipAppHistos(self,FRFileName):
+        self.flipRate_file = ROOT.TFile(FRFileName,"read")
+        self.flipRate_histo = self.flipRate_file.Get("flipMapUCSX")
 
-    def FRprob(self,lep,ht):
-        isiso = (ht<=300)
-        h = self.FR_el[isiso] if abs(lep.pdgId)==11 else self.FR_mu[isiso]
+    def flipRate(self,lep):
+        if abs(lep.pdgId)!=11: return 0
+        h = self.flipRate_histo
         ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(lep.conePt)))
         etabin = max(1,min(h.GetNbinsY(),h.GetYaxis().FindBin(abs(lep.eta))))
-        return h.GetBinContent(ptbin,etabin)
+        res = h.GetBinContent(ptbin,etabin)
+        sf = 3.6 if (lep.eta<-1.5 and lep.eta>-2) else 1.15
+        return res*sf
+
+    def FRprob(self,lep,ht,var):
+        FR_mu=self.FR_mu[var]
+        FR_el=self.FR_el[var]
+        isiso = (ht<=300)
+        if not self.useFakesHardCodedInSitu:
+            h = FR_el[isiso] if abs(lep.pdgId)==11 else FR_mu[isiso]
+            ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(lep.conePt)))
+            etabin = max(1,min(h.GetNbinsY(),h.GetYaxis().FindBin(abs(lep.eta))))
+            return h.GetBinContent(ptbin,etabin)
+        else:
+            pt = lep.conePt
+            if abs(lep.pdgId)==11:
+                if not isiso:
+                    if (pt>=10 and pt<15): return 0.584615
+                    if (pt>=15 and pt<25): return 0.386667
+                    if (pt>=25 and pt<35): return 0.27027
+                    if (pt>=35 and pt<50): return 0.166667
+                    if (pt>=50 and pt<70): return 0.36
+                else:
+                    if (pt>=10 and pt<15): return 0.7 
+                    if (pt>=15 and pt<25): return 0.516129
+                    if (pt>=25 and pt<35): return 0.439024
+                    if (pt>=35 and pt<50): return 0.513514
+                    if (pt>=50 and pt<70): return 0.37931 
+            elif abs(lep.pdgId)==13:
+                if not isiso:
+                    if (pt>=10 and pt<15): return 0.584906
+                    if (pt>=15 and pt<25): return 0.351064
+                    if (pt>=25 and pt<35): return 0.27027 
+                    if (pt>=35 and pt<50): return 0.217391
+                    if (pt>=50 and pt<70): return 0.130435
+                else:
+                    if (pt>=10 and pt<15): return 0.652174
+                    if (pt>=15 and pt<25): return 0.403042
+                    if (pt>=25 and pt<35): return 0.213675
+                    if (pt>=35 and pt<50): return 0.166667
+                    if (pt>=50 and pt<70): return 0.181818
+            return 0
+
+
     def FRtransfer_fromprob(self,prob):
         return prob/(1-prob)
-    def FRtransfer(self,lep,ht):
-        return self.FRtransfer_fromprob(self.FRprob(lep,ht))
+    def FRtransfer(self,lep,ht,var):
+        return self.FRtransfer_fromprob(self.FRprob(lep,ht,var))
 
     def bestZ1TL(self,lepsl,lepst,cut=lambda lep:True):
           pairs = []
@@ -225,7 +298,8 @@ class LeptonChoiceRA5:
             pairs.sort()
             ret = [(pair[2],pair[3]) for pair in pairs]
         return ret
-    def SR(self, l1pt, l2pt, ht, met, nj, nb, mtw):
+    def SR(self, _l1pt, _l2pt, ht, met, nj, nb, mtw):
+        l1pt, l2pt = (_l1pt,_l2pt) if _l1pt>=_l2pt else (_l2pt,_l1pt)
         if l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 1
         elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 2
         elif l1pt > 25 and l2pt > 25 and ht < 300 and nb == 0 and ((met > 50 and met < 200 and nj >= 5 and mtw < 120) or (met > 200 and met < 300 and nj >= 2 and mtw < 120) or (met > 50 and met < 300 and nj >= 2 and mtw > 120))   : SR = 3
@@ -287,14 +361,14 @@ class LeptonChoiceRA5:
         elif l1pt > 25 and l2pt < 25 and ht > 300 and met > 300 and nj >= 2 : SR = 57 #25B
         elif l1pt > 25 and l2pt < 25 and ht > 1125 and met > 50 and met < 300 and nj >= 2 : SR = 58 #26B
         ####
-        elif l1pt < 25 and l2pt < 25 and  met > 50 and met < 200 and nb == 0 and mtw < 120 : SR = 59 #C1 
-        elif l1pt < 25 and l2pt < 25 and  met > 200 and nb == 0 and mtw < 120 : SR = 60 #C2 
-        elif l1pt < 25 and l2pt < 25 and  met > 50 and met < 200 and nb == 1 and mtw < 120 : SR = 61 #C3 
-        elif l1pt < 25 and l2pt < 25 and  met > 200 and nb == 1 and mtw < 120 : SR = 62 #C4 
-        elif l1pt < 25 and l2pt < 25 and  met > 50 and met < 200 and nb == 2 and mtw < 120 : SR = 63 #C5 
-        elif l1pt < 25 and l2pt < 25 and  met > 200 and nb == 2 and mtw < 120 : SR = 64 #C6 
-        elif l1pt < 25 and l2pt < 25 and  nb >= 3 and mtw < 120 : SR = 65 #C7 
-        elif l1pt < 25 and l2pt < 25 and  mtw > 120 : SR = 66 #C8 
+        elif l1pt < 25 and l2pt < 25 and ht > 300 and met > 50 and met < 200 and nb == 0 and mtw < 120 : SR = 59 #C1 
+        elif l1pt < 25 and l2pt < 25 and ht > 300 and met > 200 and nb == 0 and mtw < 120 : SR = 60 #C2 
+        elif l1pt < 25 and l2pt < 25 and ht > 300 and met > 50 and met < 200 and nb == 1 and mtw < 120 : SR = 61 #C3 
+        elif l1pt < 25 and l2pt < 25 and ht > 300 and met > 200 and nb == 1 and mtw < 120 : SR = 62 #C4 
+        elif l1pt < 25 and l2pt < 25 and ht > 300 and met > 50 and met < 200 and nb == 2 and mtw < 120 : SR = 63 #C5 
+        elif l1pt < 25 and l2pt < 25 and ht > 300 and met > 200 and nb == 2 and mtw < 120 : SR = 64 #C6 
+        elif l1pt < 25 and l2pt < 25 and ht > 300 and nb >= 3 and mtw < 120 : SR = 65 #C7 
+        elif l1pt < 25 and l2pt < 25 and ht > 300 and mtw > 120 : SR = 66 #C8 
         else : SR = 0 
         return SR
 
