@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
-ODIR="test_ra5plots_nov09_forPAS"
+ODIR="test_ra5plots_nov11_testdcard"
 
 #lumi_unblinded = 0.13314
 lumi_all = 1.28
 
 def base(unbl=False):
 
-    T="-P /data1/p/peruzzi/skimmed_nov06_mix"
-    CORE="%s --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {P}/3_recleanermix/evVarFriend_{cname}.root -F sf/t {P}/4_choicemix/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt"%T
+    T="-P /data1/p/peruzzi/skimmed_nov12"
+    CORE="%s --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {P}/3_recleaner/evVarFriend_{cname}.root -F sf/t {P}/4_choice/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt"%T
     GO="python mcPlots.py %s susy-multilepton/mca-Spring15-analysis-all.txt susy-multilepton/susy_2lss_multiiso.txt -f -j 8 --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.35 --showRatio --maxRatioRange 0 2 susy-multilepton/susy_2lss_selplots.txt"%CORE
 #    GO="%s -A alwaystrue trig_ll '(abs(LepGood1_pdgId) != 11 || abs(LepGood2_pdgId) != 11 || Triggers_ee) && (abs(LepGood1_pdgId) != 13 || abs(LepGood2_pdgId) != 13 || Triggers_mm) && (abs(LepGood1_pdgId)==abs(LepGood2_pdgId) || Triggers_em)'"%GO
 
@@ -16,7 +16,7 @@ def base(unbl=False):
 #    mydata = []
 #    PU_ALL = " --FMC sf/t {P}/1_puWeights_v3_run2015D_upto258750/evVarFriend_{cname}.root -W 'vtxWeight*btagMediumSF_Mini' -l %f "%lumi_all +" ".join(["--pgroup data:='data','_blinded_data'"]+["--pgroup %s:='%s','_blinded%s'"%(m,m,m) for m in mydata])
 
-    PU_ALL = " --FMC sf/t {P}/1_puWeights_v3_run2015D_upto258750/evVarFriend_{cname}.root -W 'vtxWeight*btagMediumSF_Mini' -l %f "%lumi_all
+    PU_ALL = " --FMC sf/t {P}/1_pu_runD_258750/evVarFriend_{cname}.root -W 'vtxWeight*btagMediumSF_Mini' -l %f "%lumi_all
 
     if unbl: return GO+PU_ALL
     else: raise RuntimeError
@@ -104,45 +104,48 @@ if __name__ == '__main__':
 
 
 
-##    for LPt in ['ii','hh','hl','ll']:
-#    for LPt in ['ii']:
-#        # BR/SR data / fakes prediction - prompt rate + flips prediction + MC prompt
-#        x = base(True)
-#        x = procs(x,['data','_fakesappl_data','_promptratesub_.*','_flipsappl_data','_standard_prompt_.*'])
-##        x = sigprocs(x,['_sig_.*'])
-#        x = add(x,"--plotgroup _fakesappl_data+='_promptratesub_.*'")
-#        x = x.replace('susy_2lss_selplots.txt','susy_2lss_coarse_selplots.txt')
-#        x1 = BRptreg(x,LPt)
-#        runIt(x1,'dataPrediction_nosig_baseline_'+LPt,[],['SR_.*'])
-#        x1b = add(x1,"-A alwaystrue 1b '(nBJetMedium25==1)'")
-#        runIt(x1b,'dataPrediction_nosig_baseline_1b_'+LPt,[],['BR','SR_.*'])
-#        x1nb = add(x1,"-A alwaystrue not1b '(nBJetMedium25!=1)'")
-#        runIt(x1nb,'dataPrediction_nosig_baseline_not1b_'+LPt,[],['BR','SR_.*'])
-#        x1np = add(x1,"-A alwaystrue lep6090_hh '(LepGood1_conePt>60 && LepGood1_conePt<90 && LepGood2_conePt>25)'")
-#        runIt(x1np,'dataPrediction_nosig_baseline_HH_pt6090_'+LPt,[],['BR','SR_.*'])
-#        x2 = SRptreg(x,LPt)
-#        runIt(x2,'dataPrediction_nosig_SR_'+LPt,[],['BR','SR_.*'])
-#        if LPt=='ii':
-#            x2 = setwide(x2)
-#        runIt(x2,'dataPrediction_nosig_SR_'+LPt,['SR_%s'%LPt])
-
-
-
 #    for LPt in ['ii','hh','hl','ll']:
     for LPt in ['ii']:
-        # BR/SR all json data full prediction / MC (no poisson)
+        # BR/SR data / fakes prediction - prompt rate + flips prediction + MC prompt
         x = base(True)
-        x = procs(x,['data','_promptratesub_.*','_standard_.*'])
-        x = add(x,"--plotgroup data+='_promptratesub_.*'")
-        x = add(x,'--no-poisson')
-        x = x.replace('mca-Spring15-analysis-all.txt','mca-Spring15-analysis-dataPrediction.txt')
+        x = procs(x,['data','_fakesappl_data','_promptratesub_.*','_flipsappl_data','_standard_prompt_.*'])
+        x = add(x,"--plotgroup _fakesappl_data+='_promptratesub_.*'")
+        x = x.replace('susy_2lss_selplots.txt','susy_2lss_coarse_selplots.txt')
         x1 = BRptreg(x,LPt)
-        runIt(x1,'MCvsDataDriven_baseline_'+LPt,['SR_.*'])
+#        runIt(x1,'dataPrediction_nosig_baseline_'+LPt,[],['SR_.*'])
+        x1b = add(x1,"-A alwaystrue 1b '(nBJetMedium25==1)'")
+#        runIt(x1b,'dataPrediction_nosig_baseline_1b_'+LPt,[],['BR','SR_.*'])
+        x1nb = add(x1,"-A alwaystrue not1b '(nBJetMedium25!=1)'")
+#        runIt(x1nb,'dataPrediction_nosig_baseline_not1b_'+LPt,[],['BR','SR_.*'])
+        x1np = add(x1,"-A alwaystrue lep6090_hh '(LepGood1_conePt>60 && LepGood1_conePt<90 && LepGood2_conePt>25)'")
+#        runIt(x1np,'dataPrediction_nosig_baseline_HH_pt6090_'+LPt,[],['BR','SR_.*'])
         x2 = SRptreg(x,LPt)
+#        runIt(x2,'dataPrediction_nosig_SR_'+LPt,[],['BR','SR_.*'])
         if LPt=='ii':
             x2 = setwide(x2)
-        runIt(x2,'MCvsDataDriven_SR_'+LPt,['SR_%s'%LPt])
+        runIt(x2,'dataPrediction_nosig_SR_'+LPt,['SR_%s'%LPt])
+        x2s = x2
+        x2s = sigprocs(x2s,['_sig_.*'])
+#        runIt(x2s,'dataPrediction_withsig_SR_'+LPt,['SR_%s'%LPt])
 
+
+
+##    for LPt in ['ii','hh','hl','ll']:
+#    for LPt in ['ii']:
+#        # BR/SR all json data full prediction / MC (no poisson)
+#        x = base(True)
+#        x = procs(x,['data','_promptratesub_.*','_standard_.*'])
+#        x = add(x,"--plotgroup data+='_promptratesub_.*'")
+#        x = add(x,'--no-poisson')
+#        x = x.replace('mca-Spring15-analysis-all.txt','mca-Spring15-analysis-dataPrediction.txt')
+#        x1 = BRptreg(x,LPt)
+#        runIt(x1,'MCvsDataDriven_baseline_'+LPt,[],['SR_.*'])
+#        x2 = SRptreg(x,LPt)
+#        if LPt=='ii':
+#            x2 = setwide(x2)
+#        runIt(x2,'MCvsDataDriven_SR_'+LPt,['SR_%s'%LPt])
+#        runIt(x2,'MCvsDataDriven_SR_'+LPt,[],['BR','SR_.*'])
+#
 #
 ##    for LPt in ['ii','hh','hl','ll']:
 #    for LPt in ['ii']:

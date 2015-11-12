@@ -12,7 +12,7 @@ CORE="${CORE} -p 'data' --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A a
 
 #CORE="${CORE} -p data_forflips --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A alwaystrue onlyTF 'hasTF' -A alwaystrue SR 'SR>0' -A alwaystrue nomumu '(abs(LepGood1_pdgId)!=13 || abs(LepGood2_pdgId)!=13)' -A alwaystrue etares '(abs(LepGood1_eta)>0.8 && abs(LepGood2_eta)>0.8)'" #-A alwaystrue weightnon0 'appWeight!=0'"
 #FMT='"{evt:1d}\t{LepGood1_pt:5.2f}\t{LepGood2_pt:5.2f}\t{LepGood2_conePt:5.2f}\t{LepGood2_jetPtRelv2:5.2f}\t{LepGood2_pt/LepGood2_jetPtRatiov2:5.2f}\t{SR:2d}"' # formato matthieu
-FMT='"{run:1d} {lumi:9d} {evt:12d}\t{nLepLoose_Mini:2d}\t{LepGood1_pdgId:+2d} {LepGood1_pt:5.1f}\t{LepGood2_pdgId:+2d} {LepGood2_pt:5.1f}\t{nJet40}\t{nBJetMedium25:2d}\t{met_pt:5.1f}\t{htJet40j:6.1f}\t{SR:2d}"' # formato ttW
+FMT='"{run:1d} {lumi:9d} {evt:12d}\t{nLepLoose_Mini:2d}\t{LepGood1_pdgId:+2d} {LepGood1_conePt:5.1f}\t{LepGood2_pdgId:+2d} {LepGood2_conePt:5.1f}\t{nJet40}\t{nBJetMedium25:2d}\t{met_pt:5.1f}\t{htJet40j:6.1f}\t{SR:2d}"' # formato ttW
 
 #FMT='"{evt:1d}\t{LepGood1_pdgId:d} {LepGood2_pdgId:d}\t\t{LepGood1_pt:7.4f}\t{LepGood1_eta:7.4f}\t{LepGood1_miniRelIso:7.4f}\t{LepGood1_jetPtRelv2:7.4f}\t{LepGood1_jetPtRatiov2:7.4f}\t\t{LepGood2_pt:7.4f}\t{LepGood2_eta:7.4f}\t{LepGood2_miniRelIso:7.4f}\t{LepGood2_jetPtRelv2:7.4f}\t{LepGood2_jetPtRatiov2:7.4f}\t\t{nJet40_Mini:d} {nBJetMedium25_Mini:d} {htJet40j_Mini:.1f} {met_pt:.1f}"' # formato debug 2 leg
 
