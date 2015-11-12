@@ -53,6 +53,7 @@ systs = {}
 systsEnv = {}
 for sysfile in args[4:]:
     for line in open(sysfile, 'r'):
+        print 'processing line',line
         if re.match("\s*#.*", line): continue
         line = re.sub("#.*","",line).strip()
         if len(line) == 0: continue
@@ -67,12 +68,14 @@ for sysfile in args[4:]:
         elif field[4] in ["envelop","shapeOnly","templates","alternateShapeOnly"]:
             (name, procmap, binmap, amount) = field[:4]
             if re.match(binmap,binname) == None: continue
-            if name not in systs: systsEnv[name] = []
+            if name not in systsEnv: systsEnv[name] = []
             systsEnv[name].append((re.compile(procmap),amount,field[4]))
         elif field[4] in ["lnN_in_shape_bins","stat_foreach_shape_bins"]:
+            (name, procmap, binmap, amount) = field[:4]
+            print (name, procmap, binmap, amount)
             if re.match(binmap,binname) == None: continue
-            if name not in systs: systsEnv[name] = []
-            systsEnv[name].append((re.compile(procmap),amount,field[4],[float(x) for x in field[5].split(',')]))
+            if name not in systsEnv: systsEnv[name] = []
+            systsEnv[name].append((re.compile(procmap),amount,field[4],field[5].split(',')))
         else:
             raise RuntimeError, "Unknown systematic type %s" % field[4]
     if options.verbose > 0:
@@ -89,6 +92,9 @@ for name in systs.keys():
         effmap[p] = effect
     systs[name] = effmap
 
+print 'procs',procs
+print 'systsEnv',systsEnv
+
 for name in systsEnv.keys():
     effmap0  = {}
     effmap12 = {}
@@ -96,8 +102,10 @@ for name in systsEnv.keys():
         effect = "-"
         effect0  = "-"
         effect12 = "-"
-        for (procmap,amount,mode) in systsEnv[name][:3]:
+        for entry in systsEnv[name]:
+            (procmap,amount,mode) = entry[:3]
             if re.match(procmap, p): effect = float(amount) if mode not in ["templates","alternateShape", "alternateShapeOnly"] else amount
+            morefields=entry[3:]
         if mca._projection != None and effect not in ["-","0","1",1.0,0.0] and type(effect) == type(1.0):
             effect = mca._projection.scaleSyst(name, effect)
         if effect == "-" or effect == "0": 
@@ -153,18 +161,20 @@ for name in systsEnv.keys():
                 mca._projection.scaleSystTemplate(name,nominal,p0Up)
                 mca._projection.scaleSystTemplate(name,nominal,p0Dn)
         elif mode in ["lnN_in_shape_bins"]:
+            print 'processing lnN_in_shape_bins for',p
             nominal = report[p]
             p0Up = nominal.Clone("%s_%sUp"% (nominal.GetName(),name))
             p0Dn = nominal.Clone("%s_%sDn"% (nominal.GetName(),name))
-            binlist=systsEnv[name][4]
             for bin in xrange(1,nominal.GetNbinsX()+1):
-                for binmatch in systsEnv[name][4]:
+                for binmatch in morefields[0]:
                     if re.match(binmatch,'%d'%bin):
-                        p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)*amount)
-                        p0Up.SetBinError(bin,p0Up.GetBinError(bin)*amount)
-                        p0Dn.SetBinContent(bin,p0Down.GetBinContent(bin)/amount)
-                        p0Dn.SetBinError(bin,p0Down.GetBinError(bin)/amount)
+                        p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)*effect)
+                        p0Up.SetBinError(bin,p0Up.GetBinError(bin)*effect)
+                        p0Dn.SetBinContent(bin,p0Dn.GetBinContent(bin)/effect)
+                        p0Dn.SetBinError(bin,p0Dn.GetBinError(bin)/effect)
                         break # otherwise you apply more than once to the same bin if more regexps match
+            p0Up.SetName("%s_%sUp"   % (nominal.GetName(),name))
+            p0Dn.SetName("%s_%sDown" % (nominal.GetName(),name))
             report[str(p0Up.GetName())[2:]] = p0Up
             report[str(p0Dn.GetName())[2:]] = p0Dn
             effect0  = "1"
@@ -174,16 +184,15 @@ for name in systsEnv.keys():
                 mca._projection.scaleSystTemplate(name,nominal,p0Dn)
         elif mode in ["stat_foreach_shape_bins"]:
             nominal = report[p]
-            binlist=systsEnv[name][4]
             for bin in xrange(1,nominal.GetNbinsX()+1):
-                for binmatch in systsEnv[name][4]:
+                for binmatch in morefields[0]:
                     if re.match(binmatch,'%d'%bin):
                         p0Up = nominal.Clone("%s_%s_%s_bin%dUp"% (nominal.GetName(),name,p,bin))
-                        p0Dn = nominal.Clone("%s_%s_%s_bin%dDn"% (nominal.GetName(),name,p,bin))
-                        p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)+amount*p0Up.GetBinError(bin))
-                        p0Up.SetBinError(bin,p0Up.GetBinError(bin)*p0Up.GetBinContent(bin)/nominal.GetBinContent(bin))
-                        p0Dn.SetBinContent(bin,p0Down.GetBinContent(bin)-amount*p0Down.GetBinError(bin))
-                        p0Dn.SetBinError(bin,p0Down.GetBinError(bin)*p0Down.GetBinContent(bin)/nominal.GetBinContent(bin))
+                        p0Dn = nominal.Clone("%s_%s_%s_bin%dDown"% (nominal.GetName(),name,p,bin))
+                        p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)+effect*p0Up.GetBinError(bin))
+                        p0Up.SetBinError(bin,p0Up.GetBinError(bin)*(p0Up.GetBinContent(bin)/nominal.GetBinContent(bin) if nominal.GetBinContent(bin)!=0 else 1))
+                        p0Dn.SetBinContent(bin,p0Dn.GetBinContent(bin)-effect*p0Dn.GetBinError(bin))
+                        p0Dn.SetBinError(bin,p0Dn.GetBinError(bin)*(p0Dn.GetBinContent(bin)/nominal.GetBinContent(bin) if nominal.GetBinContent(bin)!=0 else 1))
                         report[str(p0Up.GetName())[2:]] = p0Up
                         report[str(p0Dn.GetName())[2:]] = p0Dn
                         break # otherwise you apply more than once to the same bin if more regexps match
@@ -226,6 +235,8 @@ for name in systsEnv.keys():
         effmap12[p] = effect12 
     systsEnv[name] = (effmap0,effmap12,mode)
 
+print systsEnv
+
 for signal in mca.listSignals():
     myout = outdir
     myout += "%s/" % signal 
@@ -255,10 +266,15 @@ for signal in mca.listSignals():
         datacard.write(('%-12s lnN' % name) + " ".join([kpatt % effmap[p]   for p in myprocs]) +"\n")
     for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
         if mode in ["templates","lnN_in_shape_bins"]:
-            datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in myprocs]) +"\n")
+            datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p] for p in myprocs]) +"\n")
         if mode == "stat_foreach_shape_bins":
-            for myp in myprocs:
-                datacard.write(('%-10s shape' % ("%s_%s_bin%d"%(name,myp,bin))) + " ".join([kpatt % (effmap0[p] if p==myp else '-')  for p in myprocs]) +"\n")
+            nbins = None
+            for p in myprocs:
+                if nbins and nbins!=report[p].GetNbinsX(): raise RuntimeError,'Histos with different number of bins for different processes'
+                nbins = report[p].GetNbinsX()
+                if effmap0[p] in ['-','0']: continue
+                for bin in xrange(1,nbins+1):
+                    datacard.write(('%-10s shape' % ("%s_%s_bin%d"%(name,p,bin))) + " ".join([kpatt % effmap0[_p] for _p in myprocs]) +"\n")
         if mode == "envelop":
             datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in myprocs]) +"\n")
         if mode in ["envelop", "shapeOnly"]:
