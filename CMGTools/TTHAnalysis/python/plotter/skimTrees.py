@@ -76,11 +76,14 @@ if __name__ == "__main__":
                 mytree.SetBranchStatus("run",1)
                 mytree.SetBranchStatus("lumi",1)
                 mytree.SetBranchStatus("evt",1)
+                mytree.SetBranchStatus("isData",1)
                 elistveto = ROOT.TEventList("vetoevents","vetoevents")
                 for ev in xrange(elist.GetN()):
                     tev = elist.GetEntry(ev)
                     mytree.GetEntry(tev)
-                    if not mytree.isData: raise RuntimeError,"You don't want to filter by event number on MC."
+                    if not mytree.isData:
+                        print "You don't want to filter by event number on MC, skipping for this sample"
+                        break
                     for selector in selectors:
                         if not selector.filter(mytree.run,mytree.lumi,mytree.evt):
                             print 'Selector %s rejected tree entry %d (%d among selected): %d:%d:%d'%(selector.name,tev,ev,mytree.run,mytree.lumi,mytree.evt)
