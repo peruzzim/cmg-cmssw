@@ -1,9 +1,15 @@
 BR: if3(nBJetMedium25>3,3,nBJetMedium25) : 4,-0.5,3.5; XTitle="Baseline region", Legend='TR', LegendCutoff=1e-4
+BR_log: if3(nBJetMedium25>3,3,nBJetMedium25) : 4,-0.5,3.5; XTitle="Baseline region", Legend='TR', LegendCutoff=1e-4, Logy
 
 SR_hh: SR : 32,0.5,32.5; XTitle="HH signal region", Legend='TR', LegendCutoff=1e-4
 SR_hl: SR-32 : 26,0.5,26.5; XTitle="HL signal region", Legend='TR', LegendCutoff=1e-4
 SR_ll: SR-58 : 8,0.5,8.5; XTitle="LL signal region", Legend='TR', LegendCutoff=1e-4
 SR_ii: SR: 66,0.5,66.5; XTitle="Signal region", Legend='TR', LegendCutoff=1e-4
+
+SR_hh_log: SR : 32,0.5,32.5; XTitle="HH signal region", Legend='TR', LegendCutoff=1e-4, Logy
+SR_hl_log: SR-32 : 26,0.5,26.5; XTitle="HL signal region", Legend='TR', LegendCutoff=1e-4, Logy
+SR_ll_log: SR-58 : 8,0.5,8.5; XTitle="LL signal region", Legend='TR', LegendCutoff=1e-4, Logy
+SR_ii_log: SR: 66,0.5,66.5; XTitle="Signal region", Legend='TR', LegendCutoff=1e-4, Logy
 
 htJet40j:   htJet40j: 40,0,800    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]"
 met:   met_pt: 35,0,700    ; XTitle="E_{T}^{miss}  [GeV]"
