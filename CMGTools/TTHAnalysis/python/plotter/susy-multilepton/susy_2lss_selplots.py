@@ -104,29 +104,35 @@ if __name__ == '__main__':
 
 
 
-#    for LPt in ['ii','hh','hl','ll']:
+##    for LPt in ['ii','hh','hl','ll']:
+#    for LPt in ['ii']:
+#        # BR/SR data / fakes prediction - prompt rate + flips prediction + MC prompt
+#        x = base(True)
+#        x = procs(x,['data','_fakesappl_data','_promptratesub','_flipsappl_data','_standard_prompt_.*'])
+#        x = add(x,"--plotgroup _fakesappl_data+=_promptratesub --plotgroup _fakesappl_data_ewk_Up+=_promptratesub_ewk_Up --plotgroup _fakesappl_data_ewk_Dn+=_promptratesub_ewk_Dn")
+#        x = x.replace('susy_2lss_selplots.txt','susy_2lss_coarse_selplots.txt')
+#        x1 = BRptreg(x,LPt)
+##        runIt(x1,'dataPrediction_nosig_baseline_'+LPt,[],['SR_.*'])
+##        x1b = add(x1,"-A alwaystrue 1b '(nBJetMedium25==1)'")
+##        runIt(x1b,'dataPrediction_nosig_baseline_1b_'+LPt,[],['BR','SR_.*'])
+##        x1nb = add(x1,"-A alwaystrue not1b '(nBJetMedium25!=1)'")
+##        runIt(x1nb,'dataPrediction_nosig_baseline_not1b_'+LPt,[],['BR','SR_.*'])
+##        x1np = add(x1,"-A alwaystrue lep6090_hh '(LepGood1_conePt>60 && LepGood1_conePt<90 && LepGood2_conePt>25)'")
+##        runIt(x1np,'dataPrediction_nosig_baseline_HH_pt6090_'+LPt,[],['BR','SR_.*'])
+#        x2 = SRptreg(x,LPt)
+##        runIt(x2,'dataPrediction_nosig_SR_'+LPt,[],['BR','SR_.*'])
+#        if LPt=='ii':
+#            x2 = setwide(x2)
+#        runIt(x2,'dataPrediction_nosig_SR_'+LPt,['SR_%s'%LPt])
+
     for LPt in ['ii']:
-        # BR/SR data / fakes prediction - prompt rate + flips prediction + MC prompt
         x = base(True)
-        x = procs(x,['data','_fakesappl_data','_promptratesub_.*','_flipsappl_data','_standard_prompt_.*'])
-        x = add(x,"--plotgroup _fakesappl_data+='_promptratesub_.*'")
-        x = x.replace('susy_2lss_selplots.txt','susy_2lss_coarse_selplots.txt')
-        x1 = BRptreg(x,LPt)
-#        runIt(x1,'dataPrediction_nosig_baseline_'+LPt,[],['SR_.*'])
-        x1b = add(x1,"-A alwaystrue 1b '(nBJetMedium25==1)'")
-#        runIt(x1b,'dataPrediction_nosig_baseline_1b_'+LPt,[],['BR','SR_.*'])
-        x1nb = add(x1,"-A alwaystrue not1b '(nBJetMedium25!=1)'")
-#        runIt(x1nb,'dataPrediction_nosig_baseline_not1b_'+LPt,[],['BR','SR_.*'])
-        x1np = add(x1,"-A alwaystrue lep6090_hh '(LepGood1_conePt>60 && LepGood1_conePt<90 && LepGood2_conePt>25)'")
-#        runIt(x1np,'dataPrediction_nosig_baseline_HH_pt6090_'+LPt,[],['BR','SR_.*'])
-        x2 = SRptreg(x,LPt)
-#        runIt(x2,'dataPrediction_nosig_SR_'+LPt,[],['BR','SR_.*'])
-        if LPt=='ii':
-            x2 = setwide(x2)
-        runIt(x2,'dataPrediction_nosig_SR_'+LPt,['SR_%s'%LPt])
-        x2s = x2
-        x2s = sigprocs(x2s,['_sig_.*'])
-#        runIt(x2s,'dataPrediction_withsig_SR_'+LPt,['SR_%s'%LPt])
+        x = procs(x,['data','_fakesappl_data.*','_promptratesub.*','_flipsappl_data.*','_standard_prompt_.*'])
+        x = sigprocs(x,['_sig_.*'])
+        x = add(x,"--plotgroup _fakesappl_data+=_promptratesub --plotgroup _fakesappl_data_ewk_Up+=_promptratesub_ewk_Up --plotgroup _fakesappl_data_ewk_Dn+=_promptratesub_ewk_Dn")
+        x = SRptreg(x,LPt)
+        x = add(x,"--AP --doPrintOutNev 'SR'")
+        runIt(x,'dataPrediction_withsig_allprocesses_SR_'+LPt,['SR_%s'%LPt])
 
 
 
