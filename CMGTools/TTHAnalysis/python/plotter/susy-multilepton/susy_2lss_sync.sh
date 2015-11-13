@@ -1,8 +1,8 @@
 #!/bin/bash
 
-T="/data1/p/peruzzi/skimmed_nov06_mix"
+T="/data1/p/peruzzi/skimmed_nov12"
 CORE="-P $T --s2v --tree treeProducerSusyMultilepton"
-CORE="${CORE} -F sf/t {P}/3_recleanermix/evVarFriend_{cname}.root -F sf/t {P}/4_choicemix/evVarFriend_{cname}.root"
+CORE="${CORE} -F sf/t {P}/3_recleaner/evVarFriend_{cname}.root -F sf/t {P}/4_choice/evVarFriend_{cname}.root"
 
 #CORE="${CORE} -p TTWv2_RA5_sync --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A alwaystrue TT 'hasTT'"
 #FMT='"{run:1d} {lumi:9d} {evt:12d}\t{nLepLoose_Mini:2d}\t{LepGood1_pdgId:+2d} {LepGood1_pt:5.1f}\t{LepGood2_pdgId:+2d} {LepGood2_pt:5.1f}\t{nJet40}\t{nBJetMedium25:2d}\t{met_pt:5.1f}\t{htJet40j:6.1f}\t{SR:2d}"'
