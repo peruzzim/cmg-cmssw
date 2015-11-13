@@ -11,12 +11,14 @@ class LeptonChoiceRA5:
     # enum
     appl_Fakes = 0
     appl_Flips = 1
+    appl_WZ    = 2
 
     def __init__(self,label,inputlabel,whichApplication,lepChoiceMethod=None,FRFileName=None):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.inputlabel = '_'+inputlabel
         if whichApplication=="Fakes": self.whichApplication = self.appl_Fakes
         elif whichApplication=="Flips": self.whichApplication = self.appl_Flips
+        elif whichApplication=="WZ": self.whichApplication = self.appl_WZ
         else: raise RuntimeError, 'Unknown whichApplication'
         self.lepChoiceMethod = None
         self.apply = False
@@ -47,6 +49,7 @@ class LeptonChoiceRA5:
             ("SR_jecUp"+label,"I",20,"nPairs"+label),
             ("SR_jecDown"+label,"I",20,"nPairs"+label),
             ("hasTT"+label, "I"), ("hasTF"+label, "I"), ("hasFF"+label, "I"),
+            ("mZ1"+label,"F"), ("mZ1cut10TL"+label,"F"),("minMllAFAS"+label,"F"),("minMllAFASTT"+label,"F"), ("minMllAFASTL"+label,"F"), ("minMllSFOS"+label,"F"), ("minMllSFOSTL"+label,"F"), ("minMllSFOSTT"+label,"F"),
             ]
         return biglist
 
@@ -75,18 +78,18 @@ class LeptonChoiceRA5:
 
         ret = {};
 
-#        ### 2lss specific things - still useful?
-#        ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
-#        ret['mZ1cut10TL'] = self.bestZ1TL(lepsl, lepst, cut=lambda l:l.conePt>(10 if abs(l.pdgId)==13 else 15))
-#        ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
+        ### 2lss specific things - still useful?
+        ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
+        ret['mZ1cut10TL'] = self.bestZ1TL(lepsl, lepst, cut=lambda l:l.conePt>(10 if abs(l.pdgId)==13 else 15))
+        ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
 #        ret['minMllAFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-#        ret['minMllSFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-#        ret['minMllAFASTL'] = self.minMllTL(lepsl, lepst) 
-#        ret['minMllAFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-#        ret['minMllSFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-#        ret['minMllAFASTT'] = self.minMllTL(lepst, lepst)
+        ret['minMllSFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
+        ret['minMllAFASTL'] = self.minMllTL(lepsl, lepst) 
+ #       ret['minMllAFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
+        ret['minMllSFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
+        ret['minMllAFASTT'] = self.minMllTL(lepst, lepst)
 #        ret['minMllAFOSTT'] = self.minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-#        ret['minMllSFOSTT'] = self.minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
+        ret['minMllSFOSTT'] = self.minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
         ret["nPairs"]=0
         ret["i1"] = [0]*20
@@ -136,7 +139,16 @@ class LeptonChoiceRA5:
                 if choice:
                     ret["hasTF"]=True
                     choice=choice[:1]
-            
+        elif self.whichApplication == self.appl_WZ:
+            choice = self.findPairs(lepst,lepst,byflav=True,bypassMV=True,choose_SS_else_OS=True)
+            if choice:
+                ret["hasTT"]=True
+            else:
+                choice = self.findPairs(lepst,lepst,byflav=True,bypassMV=True,choose_SS_else_OS=False)
+                if choice:
+                    ret["hasTF"]=True
+                    choice=choice[:1]
+
         if choice:
             ret["nPairs"] = len(choice)
             for npair in xrange(len(choice)):
