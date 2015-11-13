@@ -32,7 +32,6 @@ TTTT : TTTT : xsec
 #TToLeptons_tch: TToLeptons_tch:     xsec 
 #TbarToLeptons_tch: TbarToLeptons_tch:     xsec 
 #TToLeptons_sch_amcatnlo: TToLeptons_sch_amcatnlo:     xsec 
-#TToLeptons_sch_amcatnlo: TToLeptons_sch_amcatnlo:     xsec 
 #TBar_tWch: TBar_tWch:     xsec 
 #T_tWch: T_tWch:     xsec 
 #WWTo2L2Nu: WWTo2L2Nu: xsec 
