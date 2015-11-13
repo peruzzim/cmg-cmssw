@@ -321,7 +321,7 @@ def _runIt(myargs):
         ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
         ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
         ROOT.gEnv.SetValue("XrdClientDebug.kUSERDEBUG", -1); # suppress output about opening connections
-        fb   = ROOT.TXNetFile(fin+"?cachesz=1844567432")
+        fb   = ROOT.TXNetFile(fin+"?readaheadsz=65535")
     else:
         fb = ROOT.TFile(fin)
 
