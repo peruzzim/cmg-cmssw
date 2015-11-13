@@ -388,21 +388,27 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-    # Oct05 rereco of Run2015C, Oct19 JSON
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-    processing = "Run2015C_25ns-05Oct2015-v1"; short = "Run2015C_Oct05"; run_ranges = [ (254231,254914) ]; useAAA=False;
-    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
-    dataChunks.append((json,processing,short,run_ranges,useAAA))
+#    # Oct05 rereco of Run2015C, Oct19 JSON
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+#    processing = "Run2015C_25ns-05Oct2015-v1"; short = "Run2015C_Oct05"; run_ranges = [ (254231,254914) ]; useAAA=False;
+#    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+#
+#    # Oct05 rereco of Run2015D-PromptReco-v3 (up to run 258158), Oct19 JSON
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+#    processing = "Run2015D-05Oct2015-v1"; short = "Run2015D_Oct05"; run_ranges = [ (256630,258158) ]; useAAA=False;
+#    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+#
+#    # Run2015D PromptReco-v4 (from run 258159), Oct19 JSON (up to run 258750) - WARNING: beware of CACHING in .cmgdataset
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+#    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_PromptV4"; run_ranges = [ (258159,258750) ]; useAAA=False;
+#    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
 
-    # Oct05 rereco of Run2015D-PromptReco-v3 (up to run 258158), Oct19 JSON
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-    processing = "Run2015D-05Oct2015-v1"; short = "Run2015D_Oct05"; run_ranges = [ (256630,258158) ]; useAAA=False;
-    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
-    dataChunks.append((json,processing,short,run_ranges,useAAA))
-
-    # Run2015D PromptReco-v4 (from run 258159), Oct19 JSON (up to run 258750) - WARNING: beware of CACHING in .cmgdataset
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_PromptV4"; run_ranges = [ (258159,258750) ]; useAAA=False;
+    # Run2015D PromptReco-v4 (from run 258751), final chunk - WARNING: beware of CACHING in .cmgdataset
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_PromptV4"; run_ranges = [ (258751,260627) ]; useAAA=False;
     if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
