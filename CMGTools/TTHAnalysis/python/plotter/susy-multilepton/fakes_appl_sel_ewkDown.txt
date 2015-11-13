@@ -1,4 +1,4 @@
-weight: appWeight_Loop*(!hasTT_Loop)*(LepGood_charge[i1_Loop[]]*LepGood_charge[i2_Loop[]]>0)
+weight: appWeight_ewkDown_Loop*(!hasTT_Loop)*(LepGood_charge[i1_Loop[]]*LepGood_charge[i2_Loop[]]>0)
 
 change: LepGood1_(\w+) : LepGood_\1[i1_Loop[]]
 change: LepGood2_(\w+) : LepGood_\1[i2_Loop[]]
