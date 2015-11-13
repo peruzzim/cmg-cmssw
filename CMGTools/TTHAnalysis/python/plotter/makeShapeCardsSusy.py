@@ -10,11 +10,27 @@ parser.add_option("-o",   "--out",    dest="outname", type="string", default=Non
 parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None, help="output name") 
 parser.add_option("-v", "--verbose",  dest="verbose",  default=0,  type="int",    help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
+parser.add_option("--postfix-pred",dest="postfixmap", type="string", default=[], action="append", help="Function to apply to prediction, to correct it before running limits")
 
 (options, args) = parser.parse_args()
 options.weight = True
 options.final  = True
 options.allProcesses  = True
+
+def cutCentralValueAtZero(mca,cut,pname,oldplot):
+    for b in xrange(1,oldplot.GetNbinsX()+1):
+        if oldplot.GetBinContent(b)<=0:
+            oldplot.SetBinContent(b,1e-5)
+            oldplot.SetBinError(b,1e-6)
+
+def compilePostFixMap(inlist,relist):
+    for m in inlist:
+        dset,function = m.split("=")
+        if dset[-1] == "*": dset = dset[:-1]
+        else: raise RuntimeError, 'Incorrect plotscalemap format: %s'%m
+        relist.append((re.compile(dset.strip()+"$"),globals()[function]))
+postfixes = []
+compilePostFixMap(options.postfixmap,postfixes)
 
 mca  = MCAnalysis(args[0],options)
 cuts = CutsFile(args[1],options)
@@ -23,7 +39,21 @@ binname = os.path.basename(args[1]).replace(".txt","") if options.outname == Non
 outdir  = options.outdir+"/" if options.outdir else ""
 
 report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
-print report
+
+
+for post in postfixes:
+    for rep in report:
+        if re.match(post[0],rep): post[1](mca,cuts.allCuts(),rep,report[rep])
+
+#def fixClopperPearsonForXG0b(mca,cut,pname,oldplot):
+#    for b in xrange(1,oldplot.GetNbinsX()+1):
+#        cut_b = CutsFile([['mymergedcuts',cut]],ignoreEmptyOptionsEnforcement=True)
+#        cut_b.add('bin%d'%(b+1),"((%s)==%d)"%(options.doPrintOutNev,(b+1)))
+#        eventcounts = mca.getYields(cut_b,makeSummary=True)
+#        for p in eventcounts: eventcounts[p] = dict(eventcounts[p])['all']
+#        nev = eventcounts[pname][2]
+#        if nev>1: nulla
+        
 
 if options.asimov:
     tomerge = []
@@ -45,15 +75,10 @@ for i,b in enumerate(mca.listBackgrounds()):
     backgrounds.append(b)
     procs.append(b); iproc[b] = i+1
 
-print 'signals',signals
-print 'backgrounds',backgrounds
-print 'procs',procs
-
 systs = {}
 systsEnv = {}
 for sysfile in args[4:]:
     for line in open(sysfile, 'r'):
-        print 'processing line',line
         if re.match("\s*#.*", line): continue
         line = re.sub("#.*","",line).strip()
         if len(line) == 0: continue
@@ -72,7 +97,6 @@ for sysfile in args[4:]:
             systsEnv[name].append((re.compile(procmap),amount,field[4]))
         elif field[4] in ["lnN_in_shape_bins","stat_foreach_shape_bins"]:
             (name, procmap, binmap, amount) = field[:4]
-            print (name, procmap, binmap, amount)
             if re.match(binmap,binname) == None: continue
             if name not in systsEnv: systsEnv[name] = []
             systsEnv[name].append((re.compile(procmap),amount,field[4],field[5].split(',')))
@@ -91,9 +115,6 @@ for name in systs.keys():
             if re.match(procmap, p): effect = amount
         effmap[p] = effect
     systs[name] = effmap
-
-print 'procs',procs
-print 'systsEnv',systsEnv
 
 for name in systsEnv.keys():
     effmap0  = {}
@@ -161,7 +182,6 @@ for name in systsEnv.keys():
                 mca._projection.scaleSystTemplate(name,nominal,p0Up)
                 mca._projection.scaleSystTemplate(name,nominal,p0Dn)
         elif mode in ["lnN_in_shape_bins"]:
-            print 'processing lnN_in_shape_bins for',p
             nominal = report[p]
             p0Up = nominal.Clone("%s_%sUp"% (nominal.GetName(),name))
             p0Dn = nominal.Clone("%s_%sDn"% (nominal.GetName(),name))
@@ -191,7 +211,7 @@ for name in systsEnv.keys():
                         p0Dn = nominal.Clone("%s_%s_%s_bin%dDown"% (nominal.GetName(),name,p,bin))
                         p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)+effect*p0Up.GetBinError(bin))
                         p0Up.SetBinError(bin,p0Up.GetBinError(bin)*(p0Up.GetBinContent(bin)/nominal.GetBinContent(bin) if nominal.GetBinContent(bin)!=0 else 1))
-                        p0Dn.SetBinContent(bin,p0Dn.GetBinContent(bin)-effect*p0Dn.GetBinError(bin))
+                        p0Dn.SetBinContent(bin,max(1e-5,p0Dn.GetBinContent(bin)-effect*p0Dn.GetBinError(bin)))
                         p0Dn.SetBinError(bin,p0Dn.GetBinError(bin)*(p0Dn.GetBinContent(bin)/nominal.GetBinContent(bin) if nominal.GetBinContent(bin)!=0 else 1))
                         report[str(p0Up.GetName())[2:]] = p0Up
                         report[str(p0Dn.GetName())[2:]] = p0Dn
@@ -235,7 +255,6 @@ for name in systsEnv.keys():
         effmap12[p] = effect12 
     systsEnv[name] = (effmap0,effmap12,mode)
 
-print systsEnv
 
 for signal in mca.listSignals():
     myout = outdir
