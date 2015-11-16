@@ -1,53 +1,61 @@
-T1tttt_mGo1200_mChi800 : T1tttt_mGo1200_mChi800 : xsec
-T1tttt_mGo1500_mChi100 : T1tttt_mGo1500_mChi100 : xsec
-T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep : T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep : xsec
-T5qqqqWW_mGo1200_mCh1000_mChi800_dilep : T5qqqqWW_mGo1200_mCh1000_mChi800_dilep : xsec
-T5ttttDeg_mGo1000_mStop300_mCh285_mChi280 : T5ttttDeg_mGo1000_mStop300_mCh285_mChi280 : xsec
-T6ttWW_mSbot600_mCh425_mChi50 : T6ttWW_mSbot600_mCh425_mChi50 : xsec
-T6ttWW_mSbot650_mCh150_mChi50 : T6ttWW_mSbot650_mCh150_mChi50 : xsec
-TTWToLNu : TTWToLNu : xsec 
-TTZToLLNuNu : TTZToLLNuNu : xsec 
-TTLLJets_m1to10 : TTLLJets_m1to10 : xsec 
-TTHnobb : TTHnobb : xsec
-WZTo3LNu: WZTo3LNu: xsec 
-WWDouble : WWDouble : xsec
-WpWpJJ : WpWpJJ : xsec
-TTGJets : TTGJets : xsec
-TGJets : TGJets : xsec
-WGToLNuG : WGToLNuG : xsec
-ZGTo2LG : ZGTo2LG : xsec
-ZZTo4L: ZZTo4L: xsec 
-tZqll : tZqll : xsec 
-GGHZZ4L : GGHZZ4L : xsec 
-VHToNonbb : VHToNonbb : xsec 
-WWZ : WWZ : xsec 
-ZZZ : ZZZ : xsec
-WZZ : WZZ : xsec
-TTTT : TTTT : xsec
+#T1tttt_mGo1200_mChi800 : T1tttt_mGo1200_mChi800 : xsec
+#T1tttt_mGo1500_mChi100 : T1tttt_mGo1500_mChi100 : xsec
+#T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep : T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep : xsec
+#T5qqqqWW_mGo1200_mCh1000_mChi800_dilep : T5qqqqWW_mGo1200_mCh1000_mChi800_dilep : xsec
+#T5ttttDeg_mGo1000_mStop300_mCh285_mChi280 : T5ttttDeg_mGo1000_mStop300_mCh285_mChi280 : xsec
+#T6ttWW_mSbot600_mCh425_mChi50 : T6ttWW_mSbot600_mCh425_mChi50 : xsec
+#T6ttWW_mSbot650_mCh150_mChi50 : T6ttWW_mSbot650_mCh150_mChi50 : xsec
+#TTWToLNu : TTWToLNu : xsec 
+#TTZToLLNuNu : TTZToLLNuNu : xsec 
+#TTLLJets_m1to10 : TTLLJets_m1to10 : xsec 
+#TTHnobb : TTHnobb : xsec
+#WZTo3LNu: WZTo3LNu: xsec 
+#WWDouble : WWDouble : xsec
+#WpWpJJ : WpWpJJ : xsec
+#TTGJets : TTGJets : xsec
+#TGJets : TGJets : xsec
+#WGToLNuG : WGToLNuG : xsec
+#ZGTo2LG : ZGTo2LG : xsec
+#ZZTo4L: ZZTo4L: xsec 
+#tZqll : tZqll : xsec 
+#GGHZZ4L : GGHZZ4L : xsec 
+#VHToNonbb : VHToNonbb : xsec 
+#WWZ : WWZ : xsec 
+#ZZZ : ZZZ : xsec
+#WZZ : WZZ : xsec
+#TTTT : TTTT : xsec
+#
+##TTJets: TTJets: xsec 
+##DYJetsToLL_M10to50: DYJetsToLL_M10to50: xsec 
+##DYJetsToLL_M50: DYJetsToLL_M50: xsec 
+##WJetsToLNu : WJetsToLNu :  xsec
+##TToLeptons_tch: TToLeptons_tch:     xsec 
+##TbarToLeptons_tch: TbarToLeptons_tch:     xsec 
+##TToLeptons_sch_amcatnlo: TToLeptons_sch_amcatnlo:     xsec 
+##TBar_tWch: TBar_tWch:     xsec 
+##T_tWch: T_tWch:     xsec 
+##WWTo2L2Nu: WWTo2L2Nu: xsec 
+#
+#data:DoubleEG_Run2015C_Oct05_runs_254231_254914
+#data:DoubleEG_Run2015D_Oct05_runs_256630_258158
+#data:DoubleEG_Run2015D_PromptV4_runs_258159_258750
+#data:DoubleMuon_Run2015C_Oct05_runs_254231_254914
+#data:DoubleMuon_Run2015D_Oct05_runs_256630_258158
+#data:DoubleMuon_Run2015D_PromptV4_runs_258159_258750
+#data:MuonEG_Run2015C_Oct05_runs_254231_254914
+#data:MuonEG_Run2015D_Oct05_runs_256630_258158
+#data:MuonEG_Run2015D_PromptV4_runs_258159_258750
+#data:SingleElectron_Run2015C_Oct05_runs_254231_254914
+#data:SingleElectron_Run2015D_Oct05_runs_256630_258158
+#data:SingleElectron_Run2015D_PromptV4_runs_258159_258750
+#data:SingleMuon_Run2015C_Oct05_runs_254231_254914
+#data:SingleMuon_Run2015D_Oct05_runs_256630_258158
+#data:SingleMuon_Run2015D_PromptV4_runs_258159_258750
 
-#TTJets: TTJets: xsec 
-#DYJetsToLL_M10to50: DYJetsToLL_M10to50: xsec 
-#DYJetsToLL_M50: DYJetsToLL_M50: xsec 
-#WJetsToLNu : WJetsToLNu :  xsec
-#TToLeptons_tch: TToLeptons_tch:     xsec 
-#TbarToLeptons_tch: TbarToLeptons_tch:     xsec 
-#TToLeptons_sch_amcatnlo: TToLeptons_sch_amcatnlo:     xsec 
-#TBar_tWch: TBar_tWch:     xsec 
-#T_tWch: T_tWch:     xsec 
-#WWTo2L2Nu: WWTo2L2Nu: xsec 
 
-data:DoubleEG_Run2015C_Oct05_runs_254231_254914
-data:DoubleEG_Run2015D_Oct05_runs_256630_258158
-data:DoubleEG_Run2015D_PromptV4_runs_258159_258750
-data:DoubleMuon_Run2015C_Oct05_runs_254231_254914
-data:DoubleMuon_Run2015D_Oct05_runs_256630_258158
-data:DoubleMuon_Run2015D_PromptV4_runs_258159_258750
-data:MuonEG_Run2015C_Oct05_runs_254231_254914
-data:MuonEG_Run2015D_Oct05_runs_256630_258158
-data:MuonEG_Run2015D_PromptV4_runs_258159_258750
-data:SingleElectron_Run2015C_Oct05_runs_254231_254914
-data:SingleElectron_Run2015D_Oct05_runs_256630_258158
-data:SingleElectron_Run2015D_PromptV4_runs_258159_258750
-data:SingleMuon_Run2015C_Oct05_runs_254231_254914
-data:SingleMuon_Run2015D_Oct05_runs_256630_258158
-data:SingleMuon_Run2015D_PromptV4_runs_258159_258750
+
+data:DoubleEG_Run2015D_PromptV4_runs_258751_260627
+data:DoubleMuon_Run2015D_PromptV4_runs_258751_260627
+data:MuonEG_Run2015D_PromptV4_runs_258751_260627
+data:SingleElectron_Run2015D_PromptV4_runs_258751_260627
+data:SingleMuon_Run2015D_PromptV4_runs_258751_260627
