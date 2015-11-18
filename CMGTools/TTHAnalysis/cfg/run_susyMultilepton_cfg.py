@@ -547,7 +547,7 @@ if doMETpreprocessor:
     # -------------------- Running pre-processor
     import subprocess
     if is50ns: jectag = '50nsV5'
-    else: jectag = '25nsV5' if runData else '25nsV5'
+    else: jectag = '25nsV6' if runData else '25nsV6'
     jecDBFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_%s_%s.db'%(jectag,'DATA' if runData else 'MC')
     jecEra    = 'Summer15_%s_%s'%(jectag, 'DATA'if runData else 'MC')
     tempfile.tempdir=os.environ['CMSSW_BASE']+'/tmp'
