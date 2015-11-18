@@ -334,9 +334,9 @@ triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = True
 triggerFlagsAna.checkL1Prescale = True
 
-from CMGTools.RootTools.samples.samples_13TeV_74X import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring15MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_74X_susySignalsPriv import *
-from CMGTools.RootTools.samples.samples_8TeVReReco_74X import *
+#from CMGTools.RootTools.samples.samples_8TeVReReco_74X import *
 #from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
 selectedComponents = [];
@@ -354,8 +354,22 @@ selectedComponents = [];
 ### ra5 prod
 #selectedComponents = [TTJets, WJetsToLNu, DYJetsToLL_M10to50,  DYJetsToLL_M50, WZTo3LNu, ZZTo4L, WWTo2L2Nu, GGHZZ4L, TTHnobb, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTGJets, T5ttttDeg_mGo1000_mStop300_mCh285_mChi280, T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep, WGToLNuG, ZGTo2LG, WWDouble, VHToNonbb, WpWpJJ] + SingleTop + TopPlusX + T1tttt + T6ttWW + T5qqqqWW + Rares
 #selectedComponents = [WZTo3LNu, ZZTo4L, GGHZZ4L, TTHnobb, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTGJets, T5ttttDeg_mGo1000_mStop300_mCh285_mChi280, T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep, WGToLNuG, ZGTo2LG, WWDouble, VHToNonbb, WpWpJJ] + T1tttt + T6ttWW + T5qqqqWW + Rares + TriBosons + TopPlusX
-#for c in selectedComponents: c.splitFactor = len(c.files)/2
-#selectedComponents = [tZqll,ZZTo4L,ZGTo2LG,GGHZZ4L]
+
+#selectedComponents1 = [TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromTbar_ext,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromT_ext,TTJets_DiLepton,TTJets_DiLepton_ext] + WJetsToLNuHT + [DYJetsToLL_M10to50,DYJetsToLL_M50] # do not reproduce with v6
+selectedComponents2 = [T1tttt_mGo1200_mChi800,T1tttt_mGo1500_mChi100,T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep,T5qqqqWW_mGo1200_mCh1000_mChi800_dilep,T5ttttDeg_mGo1000_mStop300_mCh285_mChi280,T6ttWW_mSbot600_mCh425_mChi50,T6ttWW_mSbot650_mCh150_mChi50]
+selectedComponents3 = [TTWToLNu,TTZToLLNuNu,TTLLJets_m1to10,TTHnobb,WZTo3LNu,WpWpJJ,TTGJets,TGJets,WGToLNuG,WWDouble,VHToNonbb,WWZ,ZZZ,WZZ,TTTT]
+#selectedComponents4 = [TToLeptons_tch_amcatnlo,TToLeptons_tch_amcatnlo_ext,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch,WWTo2L2Nu] # do not reproduce with v6
+#selectedComponents5 = [TbarToLeptons_tch] # where is this??? # do not reproduce with v6
+selectedComponents6 = [tZq_ll,ZZTo4L,ZGTo2LG,GGHZZ4L] # split a lot
+
+for c in selectedComponents2: c.splitFactor = len(c.files)/3
+for c in selectedComponents3: c.splitFactor = len(c.files)/3
+for c in selectedComponents6: c.splitFactor = len(c.files)
+
+selectedComponents = selectedComponents2 + selectedComponents3 + selectedComponents6
+
+
+#selectedComponents = [tZqll,ZZTo4L,ZGTo2LG,GGHZZ4L] # split a lot
 #for c in selectedComponents: c.splitFactor = len(c.files)
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
@@ -388,27 +402,21 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-#    # Oct05 rereco of Run2015C, Oct19 JSON
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-#    processing = "Run2015C_25ns-05Oct2015-v1"; short = "Run2015C_Oct05"; run_ranges = [ (254231,254914) ]; useAAA=False;
-#    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-#
-#    # Oct05 rereco of Run2015D-PromptReco-v3 (up to run 258158), Oct19 JSON
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-#    processing = "Run2015D-05Oct2015-v1"; short = "Run2015D_Oct05"; run_ranges = [ (256630,258158) ]; useAAA=False;
-#    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-#
-#    # Run2015D PromptReco-v4 (from run 258159), Oct19 JSON (up to run 258750) - WARNING: beware of CACHING in .cmgdataset
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-258750_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-#    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_PromptV4"; run_ranges = [ (258159,258750) ]; useAAA=False;
-#    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-
-    # Run2015D PromptReco-v4 (from run 258751), final chunk - WARNING: beware of CACHING in .cmgdataset
+    # Oct05 rereco of Run2015C
     json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
-    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_PromptV4"; run_ranges = [ (258751,260627) ]; useAAA=False;
+    processing = "Run2015C_25ns-05Oct2015-v1"; short = "Run2015C_Oct05"; run_ranges = [ (254231,254914) ]; useAAA=False;
+    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+
+    # Oct05 rereco of Run2015D-PromptReco-v3 (up to run 258158)
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    processing = "Run2015D-05Oct2015-v1"; short = "Run2015D_Oct05"; run_ranges = [ (256630,258158) ]; useAAA=False;
+    if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+
+    # Run2015D PromptReco-v4 (258159-260627) - WARNING: beware of CACHING in .cmgdataset
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_PromptV4"; run_ranges = [ (258159,260627) ]; useAAA=False;
     if old74XMiniAODs: raise RuntimeError, 'Incorrect old74XMiniAODs configuration'
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
@@ -456,8 +464,10 @@ if runData and not isTest: # For running on data
                     (compVeto      and     re.search(compVeto,      compname))):
                         print "Will skip %s" % (compname)
                         continue
+                myprocessing = processing
+                if pd=="MuonEG" and ("Run2015D-05Oct2015" in processing): myprocessing = myprocessing.replace("05Oct2015-v1","05Oct2015-v2")
                 comp = kreator.makeDataComponent(compname, 
-                                                 "/"+pd+"/"+processing+"/MINIAOD", 
+                                                 "/"+pd+"/"+myprocessing+"/MINIAOD", 
                                                  "CMS", ".*root", 
                                                  json=json, 
                                                  run_range=run_range, 
