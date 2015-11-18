@@ -11,6 +11,8 @@ SR_hl_log: SR-32 : 26,0.5,26.5; XTitle="HL signal region", Legend='TR', LegendCu
 SR_ll_log: SR-58 : 8,0.5,8.5; XTitle="LL signal region", Legend='TR', LegendCutoff=1e-4, Logy
 SR_ii_log: SR: 66,0.5,66.5; XTitle="Signal region", Legend='TR', LegendCutoff=1e-4, Logy
 
+flavor: if3(abs(LepGood1_pdgId)!=abs(LepGood2_pdgId),1,abs(LepGood1_pdgId)-11) : 3,-0.5,2.5 ; XTitle="ee/em/mm", Legend='TR', LegendCutoff=1e-4
+
 htJet40j:   htJet40j: 20,0,800    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]"
 met:   met_pt: 35,0,700    ; XTitle="E_{T}^{miss}  [GeV]"
 mll  : mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass): 10,0,200; XTitle="m(ll\,cone) [GeV]"
@@ -18,6 +20,7 @@ mll_wide  : mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepG
 mtWmin: min(mt_2(LepGood1_conePt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_conePt,LepGood2_phi,met_pt,met_phi)) : 20,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]"
 nJet40 : nJet40 : 10,-0.5,9.5 ; XTitle='N(jet\, p_{T} > 40)'
 nBJet25 : nBJetMedium25 : 5,-0.5,4.5 ; XTitle='N(b-jet\, p_{T} > 25\, CSVM)'
+nBJetLoose25 : nBJetLoose25 : 5,-0.5,4.5 ; XTitle='N(b-jet\, p_{T} > 25\, CSVL)'
 
 htJet40j_log:   htJet40j: 20,0,800    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]", Logy
 met_log:   met_pt: 35,0,700    ; XTitle="E_{T}^{miss}  [GeV]", Logy
@@ -26,6 +29,7 @@ mll_wide_log  : mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass, 
 mtWmin_log: min(mt_2(LepGood1_conePt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_conePt,LepGood2_phi,met_pt,met_phi)) : 20,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Logy
 nJet40_log : nJet40 : 10,-0.5,9.5 ; XTitle='N(jet\, p_{T} > 40)', Logy
 nBJet25_log : nBJetMedium25 : 5,-0.5,4.5 ; XTitle='N(b-jet\, p_{T} > 25\, CSVM)', Logy
+nBJetLoose25_log : nBJetLoose25 : 5,-0.5,4.5 ; XTitle='N(b-jet\, p_{T} > 25\, CSVL)', Logy
 
 lep1_pt: LepGood1_conePt : 20,0,200; XTitle="p_{T\,cone}(leading lep.)"
 lep1_pt_coarser: LepGood1_conePt : 14,0,210; XTitle="p_{T\,cone}(leading lep.)"
