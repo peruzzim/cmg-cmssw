@@ -467,6 +467,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
             if mca.getProcessOption(p,'HideInLegend',False): continue
             if p in pmap and pmap[p].Integral() > (cutoff*total if cutoffSignals else 0): 
                 lbl = mca.getProcessOption(p,'Label',p)
+                if options.signalPlotScale!=1: lbl=lbl+" x "+("%d"%options.signalPlotScale if floor(options.signalPlotScale)==options.signalPlotScale else "%.2f"%options.signalPlotScale)
                 sigEntries.append( (pmap[p],lbl,mcStyle) )
         backgrounds = mca.listBackgrounds(allProcs=True)
         for p in backgrounds:
