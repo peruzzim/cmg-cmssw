@@ -35,6 +35,22 @@
 ##TBar_tWch: TBar_tWch:     xsec 
 ##T_tWch: T_tWch:     xsec 
 ##WWTo2L2Nu: WWTo2L2Nu: xsec 
+
+
+TTJets_DiLepton:TTJets_DiLepton:xsec
+TTJets_SingleLeptonFromTbar:TTJets_SingleLeptonFromTbar:xsec
+TTJets_SingleLeptonFromT:TTJets_SingleLeptonFromT:xsec
+WJetsToLNu_HT1200to2500:WJetsToLNu_HT1200to2500:xsec
+WJetsToLNu_HT2500toInf:WJetsToLNu_HT2500toInf:xsec
+WJetsToLNu_HT600to800:WJetsToLNu_HT600to800:xsec
+WJetsToLNu_HT800to1200:WJetsToLNu_HT800to1200:xsec
+WJetsToLNu_HT100to200:WJetsToLNu_HT100to200:xsec
+WJetsToLNu_HT200to400:WJetsToLNu_HT200to400:xsec
+WJetsToLNu_HT400to600:WJetsToLNu_HT400to600:xsec
+WJetsToLNu_HT600toInf:WJetsToLNu_HT600toInf:xsec
+
+
+
 #
 #data:DoubleEG_Run2015C_Oct05_runs_254231_254914
 #data:DoubleEG_Run2015D_Oct05_runs_256630_258158
@@ -54,8 +70,8 @@
 
 
 
-data:DoubleEG_Run2015D_PromptV4_runs_258751_260627
-data:DoubleMuon_Run2015D_PromptV4_runs_258751_260627
-data:MuonEG_Run2015D_PromptV4_runs_258751_260627
-data:SingleElectron_Run2015D_PromptV4_runs_258751_260627
-data:SingleMuon_Run2015D_PromptV4_runs_258751_260627
+#data:DoubleEG_Run2015D_PromptV4_runs_258751_260627
+#data:DoubleMuon_Run2015D_PromptV4_runs_258751_260627
+#data:MuonEG_Run2015D_PromptV4_runs_258751_260627
+#data:SingleElectron_Run2015D_PromptV4_runs_258751_260627
+#data:SingleMuon_Run2015D_PromptV4_runs_258751_260627

@@ -33,10 +33,19 @@ _standard_prompt_Rares: TTTT : xsec; FillColor=ROOT.kMagenta-6, FakeRate="susy-m
 
 # Fakes+flips
 
-_standard_fakes_TT: TTJets: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
+_standard_fakes_TT: TTJets_DiLepton: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
+_standard_fakes_TT: TTJets_SingleLeptonFromT: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
+_standard_fakes_TT: TTJets_SingleLeptonFromTbar: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
 _standard_fakes_DY: DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel.txt", Label="DY (fakes\,flips)"
 _standard_fakes_DY: DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel.txt", Label="DY (fakes\,flips)"
-_standard_fakes_WJets: WJetsToLNu :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
+_standard_fakes_WJets: WJetsToLNu_HT100to200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
+_standard_fakes_WJets: WJetsToLNu_HT1200to2500 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
+_standard_fakes_WJets: WJetsToLNu_HT200to400 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
+_standard_fakes_WJets: WJetsToLNu_HT2500toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
+_standard_fakes_WJets: WJetsToLNu_HT400to600 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
+_standard_fakes_WJets: WJetsToLNu_HT600to800 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
+_standard_fakes_WJets: WJetsToLNu_HT600toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
+_standard_fakes_WJets: WJetsToLNu_HT800to1200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
 _standard_fakes_SingleTop: TToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel.txt", Label="Single top (fakes)"
 _standard_fakes_SingleTop: TbarToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel.txt", Label="Single top (fakes)"
 _standard_fakes_SingleTop: TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel.txt", Label="Single top (fakes)"
