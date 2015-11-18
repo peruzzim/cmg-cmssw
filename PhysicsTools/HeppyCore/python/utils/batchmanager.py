@@ -51,6 +51,9 @@ class BatchManager:
                                 action="append",
                                 default=[],
                                 help="Save one extra option (either a flag, or a key=value pair) that can be then accessed from the job config file")
+        self.parser_.add_option("--url", action="store_true",
+                                dest="convertLocalToUrl", default=False,
+                                help="Replace root file in returned directory by url to open file on EOS (use only with remoteCopy)")
 
     def ParseOptions(self):
         (self.options_,self.args_) = self.parser_.parse_args()
