@@ -23,8 +23,8 @@ from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import LeptonChoiceRA5
 
 
 
-btagSF = os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/CSVv2.csv"
-btagEFF = os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/btageff__ttbar_powheg_pythia8_25ns.root"
+btagSF = "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/CSVv2.csv"
+btagEFF = "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/btageff__ttbar_powheg_pythia8_25ns.root"
 
 #--- Susy multilep instances
 MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini", 
@@ -34,7 +34,7 @@ MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini"
                    lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   isMC = False, # SET TO THE RIGHT THING
+                   isMC = True, # SET TO THE RIGHT THING
                    CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF ) ))
 
 #MODULES.append( ('leptonJetReCleanerSusyInSitu', lambda : LeptonJetReCleaner("MiniInSitu", 
@@ -47,12 +47,12 @@ MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini"
 #                isMC = True, # SET TO THE RIGHT THING
 #                CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF ) ))
 
-FRname="/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/FakeRatesUCSXMethod_021115_withEWKsyst.root"
+FRname="/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/FakeRatesUCSXMethod_021115_withEWKsyst.root"
 MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName=FRname))) 
 #MODULES.append( ('leptonChoiceRA5_FO', lambda : LeptonChoiceRA5("SortFO","Mini",whichApplication="Fakes",lepChoiceMethod="sort_FO",FRFileName=FRname))) 
 #MODULES.append( ('leptonChoiceRA5_InSitu', lambda : LeptonChoiceRA5("InSitu","MiniInSitu",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName="InSituHardCoded"))) 
-MODULES.append( ('leptonChoiceRA5_Flips', lambda : LeptonChoiceRA5("Flips","Mini",whichApplication="Flips",FRFileName="/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/flipMapUCSX.root")))
-MODULES.append( ('leptonChoiceRA5_WZ', lambda : LeptonChoiceRA5("WZ","Mini",whichApplication="WZ")))
+MODULES.append( ('leptonChoiceRA5_Flips', lambda : LeptonChoiceRA5("Flips","Mini",whichApplication="Flips",FRFileName="hardcodedUCSx")))
+#MODULES.append( ('leptonChoiceRA5_WZ', lambda : LeptonChoiceRA5("WZ","Mini",whichApplication="WZ")))
 
 
 #MODULES.append( ('leptonJetReCleanerSusyFO', lambda : LeptonJetReCleaner("FOsel", 
@@ -103,7 +103,7 @@ MODULES.append ( ('leptonFakeRateFO2isoInSitu', lambda : ObjTagger('FO2isoInSitu
 #MODULES.append ( ('leptonIdIsoEmuCuts', lambda : ObjTagger('idIsoEmu','LepGood',[lambda lep: _susy2lss_idIsoEmu_cuts(lep)]) ) )
 
 from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
-pufile="/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots/zjets-4-nvtx_plots.root"
+pufile="TOBEUPDATED/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots/zjets-4-nvtx_plots.root"
 MODULES.append ( ('puWeights', lambda : VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
 
 

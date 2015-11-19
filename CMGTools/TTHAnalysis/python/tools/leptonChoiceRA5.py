@@ -208,11 +208,15 @@ class LeptonChoiceRA5:
             self.FR_el[1] = (self.FRfile.Get("FRElPtCorr_UCSX_HI_non"),self.FRfile.Get("FRElPtCorr_UCSX_HI_iso"))
             self.FR_mu[-1] = (self.FRfile.Get("FRMuPtCorr_UCSX_LO_non"),self.FRfile.Get("FRMuPtCorr_UCSX_LO_iso"))
             self.FR_el[-1] = (self.FRfile.Get("FRElPtCorr_UCSX_LO_non"),self.FRfile.Get("FRElPtCorr_UCSX_LO_iso"))
-    def initFlipAppHistos(self,FRFileName):
-        self.flipRate_file = ROOT.TFile(FRFileName,"read")
-        self.flipRate_histo = self.flipRate_file.Get("flipMapUCSX")
 
-    def flipRate(self,lep):
+    def initFlipAppHistos(self,FRFileName):
+        if FRFileName=="hardcodedUCSx": self.flipRate = self.flipRate_hardcodedUCSx
+        else:
+            self.flipRate_file = ROOT.TFile(FRFileName,"read")
+            self.flipRate_histo = self.flipRate_file.Get("flipMapUCSX")
+            self.flipRate = self.flipRate_fromHistoWithSF
+
+    def flipRate_fromHistoWithSF(self.lep):
         if abs(lep.pdgId)!=11: return 0
         h = self.flipRate_histo
         ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(lep.conePt)))
@@ -220,6 +224,28 @@ class LeptonChoiceRA5:
         res = h.GetBinContent(ptbin,etabin)
         sf = 3.6 if (lep.eta<-1.5 and lep.eta>-2) else 1.15
         return res*sf
+
+    def flipRate_hardcodedUCSx(self.lep):
+        if abs(lep.pdgId)!=11: return 0
+        pt = lep.pt
+        eta = lep.eta
+        scale = 1.35
+        if (pt>=15 && pt<40 && fabs(eta)>=0 && fabs(eta)<0.8 ) return scale*7.36646e-06
+        if (pt>=15 && pt<40 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.000108283
+        if (pt>=15 && pt<40 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.00108401
+        if (pt>=40 && pt<60 && fabs(eta)>=0 && fabs(eta)<0.8 ) return scale*2.34739e-05
+        if (pt>=40 && pt<60 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.000198413
+        if (pt>=40 && pt<60 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.00141664
+        if (pt>=60 && fabs(eta)>=0 && fabs(eta)<0.8 ) return scale*0.00011247
+        if (pt>=60 && pt<80 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.000301189
+        if (pt>=60 && pt<80 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.0020123
+        if (pt>=80 && pt<100 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.000560358
+        if (pt>=80 && pt<100 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.00233948
+        if (pt>=100 && pt<200 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.000295415
+        if (pt>=100 && pt<200 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.00395713
+        if (pt>=200 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.00282565
+        if (pt>=200 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.0127978
+        return 0.
 
     def FRprob(self,lep,ht,var):
         FR_mu=self.FR_mu[var]
