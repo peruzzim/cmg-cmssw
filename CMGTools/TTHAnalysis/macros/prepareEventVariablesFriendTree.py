@@ -23,7 +23,7 @@ from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import LeptonChoiceRA5
 
 
 
-btagSF = "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/CSVv2.csv"
+btagSF = "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/CSVv2_25ns.csv"
 btagEFF = "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/btageff__ttbar_powheg_pythia8_25ns.root"
 
 #--- Susy multilep instances
@@ -47,7 +47,8 @@ MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini"
 #                isMC = True, # SET TO THE RIGHT THING
 #                CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF ) ))
 
-FRname="/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/FakeRatesUCSXMethod_021115_withEWKsyst.root"
+#FRname="/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/FakeRatesUCSXMethod_021115_withEWKsyst.root"
+FRname="hardcodedUCSx"
 MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName=FRname))) 
 #MODULES.append( ('leptonChoiceRA5_FO', lambda : LeptonChoiceRA5("SortFO","Mini",whichApplication="Fakes",lepChoiceMethod="sort_FO",FRFileName=FRname))) 
 #MODULES.append( ('leptonChoiceRA5_InSitu', lambda : LeptonChoiceRA5("InSitu","MiniInSitu",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName="InSituHardCoded"))) 
@@ -103,7 +104,7 @@ MODULES.append ( ('leptonFakeRateFO2isoInSitu', lambda : ObjTagger('FO2isoInSitu
 #MODULES.append ( ('leptonIdIsoEmuCuts', lambda : ObjTagger('idIsoEmu','LepGood',[lambda lep: _susy2lss_idIsoEmu_cuts(lep)]) ) )
 
 from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
-pufile="TOBEUPDATED/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots/zjets-4-nvtx_plots.root"
+pufile="/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots/zjets-4-nvtx_plots.root"
 MODULES.append ( ('puWeights', lambda : VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
 
 
