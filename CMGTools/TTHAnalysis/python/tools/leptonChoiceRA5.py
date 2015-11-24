@@ -1,6 +1,30 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import passMllVeto
 from ROOT import TFile,TH1F
+import os
+
+if "/flip_rates_UCSx_v5_01_cc.so" not in ROOT.gSystem.GetLibraries():
+    ROOT.gROOT.LoadMacro("/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/flip_rates_UCSx_v5_01.cc+");
+if "/fake_rates_UCSx_v5_01_cc.so" not in ROOT.gSystem.GetLibraries():
+    ROOT.gROOT.LoadMacro("/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/fake_rates_UCSx_v5_01.cc+");
+from ROOT import electronFakeRate_UCSx
+from ROOT import electronFakeRate_UCSx_Error
+from ROOT import electronAlternativeFakeRate_UCSx
+from ROOT import electronQCDMCFakeRate_UCSx
+from ROOT import muonFakeRate_UCSx
+from ROOT import muonFakeRate_UCSx_Error
+from ROOT import muonAlternativeFakeRate_UCSx
+from ROOT import muonQCDMCFakeRate_UCSx
+from ROOT import electronFakeRate_UCSx_IsoTrigs
+from ROOT import electronFakeRate_UCSx_Error_IsoTrigs
+from ROOT import electronAlternativeFakeRate_UCSx_IsoTrigs
+from ROOT import electronQCDMCFakeRate_UCSx_IsoTrigs
+from ROOT import muonFakeRate_UCSx_IsoTrigs
+from ROOT import muonFakeRate_UCSx_Error_IsoTrigs
+from ROOT import muonAlternativeFakeRate_UCSx_IsoTrigs
+from ROOT import muonQCDMCFakeRate_UCSx_IsoTrigs
+from ROOT import flipRate_UCSx
+from ROOT import flipRate_UCSx_Error
 
 class LeptonChoiceRA5:
 
@@ -194,8 +218,11 @@ class LeptonChoiceRA5:
 
     def initFRhistos(self,FRFileName):
         self.useFakesHardCodedInSitu = False
+        self.useFakesHardCodedUCSx = False
         if FRFileName=="InSituHardCoded":
             self.useFakesHardCodedInSitu = True
+        elif FRFileName=="hardcodedUCSx":
+            self.useFakesHardCodedUCSx = True
         else:    
             self.FRfile = ROOT.TFile(FRFileName,"read")
 #            self.FR_mu = (self.FRfile.Get("FRMuPtCorr_ETH_non"),self.FRfile.Get("FRMuPtCorr_ETH_iso"))
@@ -210,13 +237,15 @@ class LeptonChoiceRA5:
             self.FR_el[-1] = (self.FRfile.Get("FRElPtCorr_UCSX_LO_non"),self.FRfile.Get("FRElPtCorr_UCSX_LO_iso"))
 
     def initFlipAppHistos(self,FRFileName):
-        if FRFileName=="hardcodedUCSx": self.flipRate = self.flipRate_hardcodedUCSx
+        if FRFileName=="hardcodedUCSx":
+            import os, ROOT
+            self.flipRate = self.flipRate_hardcodedUCSx
         else:
             self.flipRate_file = ROOT.TFile(FRFileName,"read")
             self.flipRate_histo = self.flipRate_file.Get("flipMapUCSX")
             self.flipRate = self.flipRate_fromHistoWithSF
 
-    def flipRate_fromHistoWithSF(self.lep):
+    def flipRate_fromHistoWithSF(self,lep):
         if abs(lep.pdgId)!=11: return 0
         h = self.flipRate_histo
         ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(lep.conePt)))
@@ -225,38 +254,15 @@ class LeptonChoiceRA5:
         sf = 3.6 if (lep.eta<-1.5 and lep.eta>-2) else 1.15
         return res*sf
 
-    def flipRate_hardcodedUCSx(self.lep):
+    def flipRate_hardcodedUCSx(self,lep):
         if abs(lep.pdgId)!=11: return 0
         pt = lep.pt
         eta = lep.eta
-        scale = 1.35
-        if (pt>=15 && pt<40 && fabs(eta)>=0 && fabs(eta)<0.8 ) return scale*7.36646e-06
-        if (pt>=15 && pt<40 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.000108283
-        if (pt>=15 && pt<40 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.00108401
-        if (pt>=40 && pt<60 && fabs(eta)>=0 && fabs(eta)<0.8 ) return scale*2.34739e-05
-        if (pt>=40 && pt<60 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.000198413
-        if (pt>=40 && pt<60 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.00141664
-        if (pt>=60 && fabs(eta)>=0 && fabs(eta)<0.8 ) return scale*0.00011247
-        if (pt>=60 && pt<80 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.000301189
-        if (pt>=60 && pt<80 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.0020123
-        if (pt>=80 && pt<100 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.000560358
-        if (pt>=80 && pt<100 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.00233948
-        if (pt>=100 && pt<200 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.000295415
-        if (pt>=100 && pt<200 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.00395713
-        if (pt>=200 && fabs(eta)>=0.8 && fabs(eta)<1.479 ) return scale*0.00282565
-        if (pt>=200 && fabs(eta)>=1.479 && fabs(eta)<2.5 ) return scale*0.0127978
-        return 0.
+        return flipRate_UCSx(pt,eta)
 
     def FRprob(self,lep,ht,var):
-        FR_mu=self.FR_mu[var]
-        FR_el=self.FR_el[var]
         isiso = (ht<=300)
-        if not self.useFakesHardCodedInSitu:
-            h = FR_el[isiso] if abs(lep.pdgId)==11 else FR_mu[isiso]
-            ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(lep.conePt)))
-            etabin = max(1,min(h.GetNbinsY(),h.GetYaxis().FindBin(abs(lep.eta))))
-            return h.GetBinContent(ptbin,etabin)
-        else:
+        if self.useFakesHardCodedInSitu:
             pt = lep.conePt
             if abs(lep.pdgId)==11:
                 if not isiso:
@@ -285,6 +291,26 @@ class LeptonChoiceRA5:
                     if (pt>=35 and pt<50): return 0.166667
                     if (pt>=50 and pt<70): return 0.181818
             return 0
+        elif self.useFakesHardCodedUCSx:
+            pt = lep.conePt
+            eta = lep.eta
+            if var!=1:
+                if isiso: fr = electronFakeRate_UCSx_IsoTrigs(pt,eta) if abs(lep.pdgId)==11 else muonFakeRate_UCSx_IsoTrigs(pt,eta)
+                else: fr = electronFakeRate_UCSx(pt,eta) if abs(lep.pdgId)==11 else muonFakeRate_UCSx(pt,eta)
+            if var==0: return fr
+            else:
+                if isiso: alt = electronAlternativeFakeRate_UCSx_IsoTrigs(pt,eta) if abs(lep.pdgId)==11 else muonAlternativeFakeRate_UCSx_IsoTrigs(pt,eta)
+                else: alt = electronAlternativeFakeRate_UCSx(pt,eta) if abs(lep.pdgId)==11 else muonAlternativeFakeRate_UCSx(pt,eta)
+            if var==1: return alt
+            elif var==-1: return 2*fr-alt
+            else: raise RuntimeError
+        else:
+            FR_mu=self.FR_mu[var]
+            FR_el=self.FR_el[var]
+            h = FR_el[isiso] if abs(lep.pdgId)==11 else FR_mu[isiso]
+            ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(lep.conePt)))
+            etabin = max(1,min(h.GetNbinsY(),h.GetYaxis().FindBin(abs(lep.eta))))
+            return h.GetBinContent(ptbin,etabin)
 
 
     def FRtransfer_fromprob(self,prob):
