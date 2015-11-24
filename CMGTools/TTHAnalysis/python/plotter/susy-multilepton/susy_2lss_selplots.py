@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 
-ODIR="test_ra5plots_nov13_allplots"
+ODIR="test_ra5plots_nov15"
 
 #lumi_unblinded = 0.13314
-lumi_all = 1.28
+#lumi_all = 1.28
+lumi_all = 2.11
 
 def base(unbl=False):
 
     T="-P /data1/p/peruzzi/skimmed_nov12"
     CORE="%s --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {P}/3_recleaner/evVarFriend_{cname}.root -F sf/t {P}/4_choice/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt"%T
-    GO="python mcPlots.py %s susy-multilepton/mca-Spring15-analysis-all.txt susy-multilepton/susy_2lss_multiiso.txt -f -j 8 --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.35 --showRatio --maxRatioRange 0 2 susy-multilepton/susy_2lss_selplots.txt"%CORE
+    GO="python mcPlots.py %s susy-multilepton/mca-Spring15-analysis-all.txt susy-multilepton/susy_2lss_multiiso.txt -f -j 8 --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.35 --showRatio --maxRatioRange 0 3 susy-multilepton/susy_2lss_selplots.txt"%CORE
 #    GO="%s -A alwaystrue trig_ll '(abs(LepGood1_pdgId) != 11 || abs(LepGood2_pdgId) != 11 || Triggers_ee) && (abs(LepGood1_pdgId) != 13 || abs(LepGood2_pdgId) != 13 || Triggers_mm) && (abs(LepGood1_pdgId)==abs(LepGood2_pdgId) || Triggers_em)'"%GO
 
 #    PU_UNBL = " --FMC sf/t {P}/1_puWeights_v2_run2015D_unblindedjson/evVarFriend_{cname}.root -l %f -W 'vtxWeight*btagMediumSF_Mini' --xp '.*blinded.*'"%lumi_unblinded
@@ -38,7 +39,7 @@ def procs(GO,mylist):
 def sigprocs(GO,mylist):
     return procs(GO,mylist)+' --showIndivSigs --noStackSig'
 def runIt(GO,name,plots=[],noplots=[]):
-#    print GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),"--pdir /afs/cern.ch/user/p/peruzzi/%s/%s"%(ODIR,name) # no www
+#    print GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),"--pdir /afs/cern.ch/user/p/peruzzi/work/forCristina/%s/%s"%(ODIR,name) # no www
     print GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),"--pdir /afs/cern.ch/user/p/peruzzi/www/%s/%s"%(ODIR,name)
 def add(GO,opt):
     return '%s %s'%(GO,opt)
@@ -50,59 +51,78 @@ def setwide(x):
 if __name__ == '__main__':
 
 
-    for LPt in ['ii']:
-        # BR/SR data/MC
-        x = base(True)
-        x = procs(x,['_standard_.*','data'])
-        x1 = BRptreg(x,LPt)
-        runIt(x1,'dataMC_nosig_baseline_'+LPt,['BR.*'])
-        x2 = SRptreg(x,LPt)
-        if LPt=='ii': x2 = setwide(x2)
-        runIt(x2,'dataMC_nosig_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
+#    for LPt in ['ii']:
+#        # BR/SR data/MC
+#        x = base(True)
+#        x = procs(x,['_standard_.*','data'])
+#        x1 = BRptreg(x,LPt)
+##        runIt(x1,'dataMC_nosig_baseline_'+LPt,['BR.*'])
+#        x2 = SRptreg(x,LPt)
+#        runIt(x2,'dataMC_nosig_SR_'+LPt,[],['BR.*','SR_.*'])
+##        x2_1brelaxHT = add(x2,"-A alwaystrue sr_1brelaxHT '(SR==9 || SR==10 || SR==39 || SR==40)'")
+##        x2_1brelaxHT = x2_1brelaxHT.replace('susy_2lss_selplots.txt','susy_2lss_coarse_selplots.txt')
+##        runIt(x2_1brelaxHT,'dataMC_nosig_SR_1brelaxHT_'+LPt,[],['BR.*','SR_.*'])
+#        if LPt=='ii': x2 = setwide(x2)
+#        runIt(x2,'dataMC_nosig_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
 
-    for LPt in ['ii']:
-        # BR/SR data/MC
-        x = base(True)
-        x = procs(x,['_standard_.*','data'])
-        x = sigprocs(x,['_sig_.*'])
-        x1 = BRptreg(x,LPt)
-        runIt(x1,'dataMC_baseline_'+LPt,['BR.*'])
-        x2 = SRptreg(x,LPt)
-        if LPt=='ii': x2 = setwide(x2)
-        runIt(x2,'dataMC_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
-
-    for LPt in ['ii']:
-        # BR/SR data/MC
-        x = base(True)
-        x = procs(x,['_standard_.*'])
-        x = sigprocs(x,['_sig_.*'])
-        x1 = BRptreg(x,LPt)
-        runIt(x1,'dataMC_signodata_baseline_'+LPt,['BR.*'])
-        x2 = SRptreg(x,LPt)
-        if LPt=='ii': x2 = setwide(x2)
-        runIt(x2,'dataMC_signodata_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
-
-
+#    for LPt in ['ii']:
+#        # BR/SR data/MC
+#        x = base(True)
+#        x = procs(x,['_standard_.*','data'])
+#        x = sigprocs(x,['_sig_.*'])
+#        x1 = BRptreg(x,LPt)
+#        runIt(x1,'dataMC_baseline_'+LPt,['BR.*'])
+#        x2 = SRptreg(x,LPt)
+#        if LPt=='ii': x2 = setwide(x2)
+#        runIt(x2,'dataMC_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
+#
+#    for LPt in ['ii']:
+#        # BR/SR data/MC
+#        x = base(True)
+#        x = procs(x,['_standard_.*'])
+#        x = sigprocs(x,['_sig_.*'])
+#        x1 = BRptreg(x,LPt)
+##        runIt(x1,'dataMC_signodata_baseline_'+LPt,['BR.*'])
+#        x2 = SRptreg(x,LPt)
+#        if LPt=='ii': x2 = setwide(x2)
+#        runIt(x2,'dataMC_signodata_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
+#        x2s = add(x2,"--ss 10")
+#        runIt(x2s,'dataMC_signodata_sigtimes10_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
+#
 #    for LPt in ['ii','hh','hl','ll']:
-    for LPt in ['ii']:
-        # BR/SR data / fakes prediction - prompt rate + flips prediction + MC prompt
-        x = base(True)
-        x = procs(x,['data','_fakesappl_data','_promptratesub','_flipsappl_data','_standard_prompt_.*'])
-        x = add(x,"--plotgroup _fakesappl_data+=_promptratesub --plotgroup _fakesappl_data_ewk_Up+=_promptratesub_ewk_Up --plotgroup _fakesappl_data_ewk_Dn+=_promptratesub_ewk_Dn")
-        x = x.replace('susy_2lss_selplots.txt','susy_2lss_coarse_selplots.txt')
-        x1 = BRptreg(x,LPt)
-        runIt(x1,'dataPrediction_nosig_baseline_'+LPt,[],['SR_.*'])
-#        x1b = add(x1,"-A alwaystrue 1b '(nBJetMedium25==1)'")
-#        runIt(x1b,'dataPrediction_nosig_baseline_1b_'+LPt,[],['BR.*','SR_.*'])
-#        x1nb = add(x1,"-A alwaystrue not1b '(nBJetMedium25!=1)'")
-#        runIt(x1nb,'dataPrediction_nosig_baseline_not1b_'+LPt,[],['BR.*','SR_.*'])
-#        x1np = add(x1,"-A alwaystrue lep6090_hh '(LepGood1_conePt>60 && LepGood1_conePt<90 && LepGood2_conePt>25)'")
-#        runIt(x1np,'dataPrediction_nosig_baseline_HH_pt6090_'+LPt,[],['BR.*','SR_.*'])
-        x2 = SRptreg(x,LPt)
-        runIt(x2,'dataPrediction_nosig_SR_'+LPt,[],['BR.*','SR_.*'])
-        if LPt=='ii':
-            x2 = setwide(x2)
-        runIt(x2,'dataPrediction_nosig_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
+#    for LPt in ['ii']:
+#        # BR/SR data / fakes prediction - prompt rate + flips prediction + MC prompt
+#        x = base(True)
+#        x = procs(x,['data','_fakesappl_data','_promptratesub','_flipsappl_data','_standard_prompt_.*'])
+#        x = add(x,"--plotgroup _fakesappl_data+=_promptratesub --plotgroup _fakesappl_data_ewk_Up+=_promptratesub_ewk_Up --plotgroup _fakesappl_data_ewk_Dn+=_promptratesub_ewk_Dn")
+#        x = x.replace('susy_2lss_selplots.txt','susy_2lss_coarse_selplots.txt')
+#        x1 = BRptreg(x,LPt)
+#        runIt(x1,'dataPrediction_nosig_baseline_'+LPt,[],['SR_.*'])
+#        x2 = SRptreg(x,LPt)
+#        runIt(x2,'dataPrediction_nosig_SR_'+LPt,[],['BR.*','SR_.*'])
+#
+#
+#        x2_1b = add(x2,"-A alwaystrue sr_1b '(SR==10 || SR==40)'")
+#        runIt(x2_1b,'dataPrediction_nosig_SR_1b_'+LPt,[],['BR.*','SR_.*'])
+#        x2_1b4j = add(x2,"-A alwaystrue sr_1b '(SR==10 || SR==40)' -A alwaystrue 4j 'nJet40>=4'")
+#        runIt(x2_1b4j,'dataPrediction_nosig_SR_1b4j_'+LPt,[],['BR.*','SR_.*'])
+#
+#        x2_1brelaxHT = add(x2,"-A alwaystrue sr_1brelaxHT '(SR==9 || SR==10 || SR==39 || SR==40)'")
+#        runIt(x2_1brelaxHT,'dataPrediction_nosig_SR_1brelaxHT_'+LPt,[],['BR.*','SR_.*'])
+#        x2_1brelaxHT4j = add(x2,"-A alwaystrue sr_1brelaxHT '(SR==9 || SR==10 || SR==39 || SR==40)' -A alwaystrue 4j 'nJet40>=4'")
+#        runIt(x2_1brelaxHT4j,'dataPrediction_nosig_SR_1brelaxHT4j_'+LPt,[],['BR.*','SR_.*'])
+#
+#
+##        x2_1brelaxHTmm = add(x2,"-A alwaystrue sr_1brelaxHT '(SR==9 || SR==10 || SR==39 || SR==40)' -A alwaystrue mm 'abs(LepGood1_pdgId) == 13 && abs(LepGood2_pdgId) == 13'")
+##        runIt(x2_1brelaxHTmm,'dataPrediction_nosig_SR_1brelaxHT_mm_'+LPt,[],['BR.*','SR_.*'])
+##        x2_1brelaxHTem = add(x2,"-A alwaystrue sr_1brelaxHT '(SR==9 || SR==10 || SR==39 || SR==40)' -A alwaystrue em 'abs(LepGood1_pdgId) != abs(LepGood2_pdgId)'")
+##        runIt(x2_1brelaxHTem,'dataPrediction_nosig_SR_1brelaxHT_em_'+LPt,[],['BR.*','SR_.*'])
+##        x2_1brelaxHTee = add(x2,"-A alwaystrue sr_1brelaxHT '(SR==9 || SR==10 || SR==39 || SR==40)' -A alwaystrue ee 'abs(LepGood1_pdgId) == 11 && abs(LepGood2_pdgId) == 11'")
+##        runIt(x2_1brelaxHTee,'dataPrediction_nosig_SR_1brelaxHT_ee_'+LPt,[],['BR.*','SR_.*'])
+#
+#        if LPt=='ii':
+#            x2 = setwide(x2)
+#        runIt(x2,'dataPrediction_nosig_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
 
 #    for LPt in ['ii']:
 #        x = base(True)
@@ -114,36 +134,40 @@ if __name__ == '__main__':
 #        runIt(x,'dataPrediction_withsig_allprocesses_fordatacard_SR_'+LPt,['SR_%s'%LPt])
 
 
-    for LPt in ['ii']:
-        # BR/SR all json data full prediction / MC (no poisson)
-        x = base(True)
-        x = procs(x,['data','_promptratesub','_standard_.*'])
-        x = add(x,"--plotgroup data+='_promptratesub'")
-        x = add(x,'--no-poisson')
-        x = x.replace('mca-Spring15-analysis-all.txt','mca-Spring15-analysis-dataPrediction.txt')
-        x1 = BRptreg(x,LPt)
-        runIt(x1,'MCvsDataDriven_baseline_'+LPt,[],['SR_.*'])
-        x2 = SRptreg(x,LPt)
-        if LPt=='ii':
-            x2 = setwide(x2)
-        runIt(x2,'MCvsDataDriven_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
-        runIt(x2,'MCvsDataDriven_SR_'+LPt,[],['BR.*','SR_.*'])
-
-
-    for LPt in ['ii']:
-        # kin vars - all json data / MC fakes in application region
-        x = base(True)
-        x = procs(x,['data','_sideband_fakes_.*'])
-        x = x.replace('mca-Spring15-analysis-all.txt','mca-Spring15-analysis-sideband.txt')
-        x = x.replace('susy_2lss_selplots.txt','susy_2lss_coarse_selplots.txt')
-        x = add(x,"-A alwaystrue safety '(!hasTT)'")
-        x1 = BRptreg(x,LPt)
-        runIt(x1,'kin_applicationFakes_baseline_'+LPt,[],['SR_.*'])
+#    for LPt in ['ii']:
+#        # BR/SR all json data full prediction / MC (no poisson)
+#        x = base(True)
+#        x = procs(x,['data','_promptratesub','_standard_.*'])
+#        x = add(x,"--plotgroup data+='_promptratesub'")
+#        x = add(x,'--no-poisson')
+#        x = x.replace('mca-Spring15-analysis-all.txt','mca-Spring15-analysis-dataPrediction.txt')
+#        x1 = BRptreg(x,LPt)
+#        runIt(x1,'MCvsDataDriven_baseline_'+LPt,[],['SR_.*'])
 #        x2 = SRptreg(x,LPt)
-#        runIt(x2,'kin_applicationFakes_SR_'+LPt,[],['BR.*','SR_.*'])
+#        runIt(x2,'MCvsDataDriven_SR_'+LPt,[],['BR.*','SR_.*'])
+#        x2_1brelaxHT = add(x2,"-A alwaystrue sr_1brelaxHT '(SR==9 || SR==10 || SR==39 || SR==40)'")
+#        runIt(x2_1brelaxHT,'MCvsDataDriven_SR_1brelaxHT_'+LPt,[],['BR.*','SR_.*'])
+#        if LPt=='ii':
+#            x2 = setwide(x2)
+#        runIt(x2,'MCvsDataDriven_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
+#
+
+
+#    for LPt in ['ii']:
+#        # kin vars - all json data / MC fakes in application region
+#        x = base(True)
+#        x = procs(x,['data','_sideband_fakes_.*'])
+#        x = x.replace('mca-Spring15-analysis-all.txt','mca-Spring15-analysis-sideband.txt')
+#        x = x.replace('susy_2lss_selplots.txt','susy_2lss_coarse_selplots.txt')
+#        x = add(x,"-A alwaystrue safety '(!hasTT)'")
+##        x1 = BRptreg(x,LPt)
+##        runIt(x1,'kin_applicationFakes_baseline_'+LPt,[],['SR_.*'])
+#        x2 = SRptreg(x,LPt)
+##        runIt(x2,'kin_applicationFakes_SR_'+LPt,[],['BR.*','SR_.*'])
 #        if LPt=='ii': x2 = setwide(x2)
 #        runIt(x2,'kin_applicationFakes_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
-
+##        x2_1brelaxHT = add(x2,"-A alwaystrue sr_1brelaxHT '(SR==9 || SR==10 || SR==39 || SR==40)'")
+##        runIt(x2_1brelaxHT,'kin_applicationFakes_SR_1brelaxHT_'+LPt,[],['BR.*','SR_.*'])
 
     for LPt in ['ii']:
         # kin vars - all json data / MC fakes in application region
@@ -154,11 +178,11 @@ if __name__ == '__main__':
         x = add(x,"-A alwaystrue safety '(!hasTT)'")
         x = add(x,"-A alwaystrue only1fake '(hasTF)'")
         x1 = BRptreg(x,LPt)
-        runIt(x1,'kin_T_FObnT_baseline_'+LPt,[],['SR_.*'])
-#        x2 = SRptreg(x,LPt)
+#        runIt(x1,'kin_T_FObnT_baseline_'+LPt,[],['SR_.*'])
+        x2 = SRptreg(x,LPt)
 #        runIt(x2,'kin_T_FObnT_SR_'+LPt,[],['BR.*','SR_.*'])
-#        if LPt=='ii': x2 = setwide(x2)
-#        runIt(x2,'kin_T_FObnT_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
+        if LPt=='ii': x2 = setwide(x2)
+        runIt(x2,'kin_T_FObnT_SR_'+LPt,['SR_%s'%LPt,'SR_%s_log'%LPt])
 
 
 
