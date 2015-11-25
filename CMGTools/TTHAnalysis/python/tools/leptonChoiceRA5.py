@@ -3,10 +3,10 @@ from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import passMllVeto
 from ROOT import TFile,TH1F
 import os
 
-if "/flip_rates_UCSx_v5_01_cc.so" not in ROOT.gSystem.GetLibraries():
-    ROOT.gROOT.LoadMacro("/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/flip_rates_UCSx_v5_01.cc+");
-if "/fake_rates_UCSx_v5_01_cc.so" not in ROOT.gSystem.GetLibraries():
-    ROOT.gROOT.LoadMacro("/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/fake_rates_UCSx_v5_01.cc+");
+for extlib in ["fake_rates_UCSx_v5_01.cc","flip_rates_UCSx_v5_01.cc","triggerSF_fullsim_UCSx_v5_01.cc"]:
+    if not extlib.endswith(".cc"): raise RuntimeError
+    if "/%s"%extlib.replace(".cc","_cc.so") not in ROOT.gSystem.GetLibraries():
+        ROOT.gROOT.LoadMacro("/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/%s+"%extlib)
 from ROOT import electronFakeRate_UCSx
 from ROOT import electronFakeRate_UCSx_Error
 from ROOT import electronAlternativeFakeRate_UCSx
@@ -25,6 +25,7 @@ from ROOT import muonAlternativeFakeRate_UCSx_IsoTrigs
 from ROOT import muonQCDMCFakeRate_UCSx_IsoTrigs
 from ROOT import flipRate_UCSx
 from ROOT import flipRate_UCSx_Error
+from ROOT import triggerScaleFactorFullSim
 
 class LeptonChoiceRA5:
 
@@ -66,6 +67,7 @@ class LeptonChoiceRA5:
             ("nPairs"+label,"I"),
             ("i1"+label,"I",20,"nPairs"+label),
             ("i2"+label,"I",20,"nPairs"+label),
+            ("whoIsFake"+label,"I",20,"nPairs"+label),
             ("appWeight"+label,"F",20,"nPairs"+label),
             ("appWeight_ewkUp"+label,"F",20,"nPairs"+label),
             ("appWeight_ewkDown"+label,"F",20,"nPairs"+label),
@@ -74,6 +76,7 @@ class LeptonChoiceRA5:
             ("SR_jecDown"+label,"I",20,"nPairs"+label),
             ("hasTT"+label, "I"), ("hasTF"+label, "I"), ("hasFF"+label, "I"),
             ("mZ1"+label,"F"), ("mZ1cut10TL"+label,"F"),("minMllAFAS"+label,"F"),("minMllAFASTT"+label,"F"), ("minMllAFASTL"+label,"F"), ("minMllSFOS"+label,"F"), ("minMllSFOSTL"+label,"F"), ("minMllSFOSTT"+label,"F"),
+            ("triggerSF"+label,"F",20,"nPairs"+label),
             ]
         return biglist
 
@@ -94,11 +97,11 @@ class LeptonChoiceRA5:
         met={}
         metphi={}
         met[0]=event.met_pt
-        met[1]=event.met_jecUp_pt
-        met[-1]=event.met_jecDown_pt
+        met[1]=getattr(event,"met_jecUp_pt",event.met_pt)
+        met[-1]=getattr(event,"met_jecDown_pt",event.met_pt)
         metphi[0]= event.met_phi
-        metphi[1]= event.met_jecUp_phi
-        metphi[-1]= event.met_jecDown_phi
+        metphi[1]= getattr(event,"met_jecUp_phi",event.met_phi)
+        metphi[-1]= getattr(event,"met_jecDown_phi",event.met_phi)
 
         ret = {};
 
@@ -118,6 +121,7 @@ class LeptonChoiceRA5:
         ret["nPairs"]=0
         ret["i1"] = [0]*20
         ret["i2"] = [0]*20
+        ret["whoIsFake"]=[0]*20
         ret["appWeight"] = [0]*20
         ret["appWeight_ewkUp"] = [0]*20
         ret["appWeight_ewkDown"] = [0]*20
@@ -127,6 +131,7 @@ class LeptonChoiceRA5:
         ret["hasTT"]=False
         ret["hasTF"]=False
         ret["hasFF"]=False
+        ret["triggerSF"] = [0]*20
 
         if self.whichApplication == self.appl_Fakes:
             if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
@@ -175,6 +180,7 @@ class LeptonChoiceRA5:
 
         if choice:
             ret["nPairs"] = len(choice)
+            if ret["nPairs"]>20: raise RuntimeError,'Too many lepton pairs'
             for npair in xrange(len(choice)):
                 i1 = leps.index(choice[npair][0])
                 i2 = leps.index(choice[npair][1])
@@ -183,30 +189,33 @@ class LeptonChoiceRA5:
                     mtwmin = min(sqrt(2*leps[i1].conePt*met[var]*(1-cos(leps[i1].phi-metphi[var]))),sqrt(2*leps[i2].conePt*met[var]*(1-cos(leps[i2].phi-metphi[var]))))
                     ret["SR"+systsJEC[var]][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,getattr(event,"htJet40j"+systsJEC[var]+self.inputlabel),met[var],getattr(event,"nJet40"+systsJEC[var]+self.inputlabel),getattr(event,"nBJetMedium25"+systsJEC[var]+self.inputlabel),mtwmin)
                 ht = getattr(event,"htJet40j"+self.inputlabel) # central value
+                ret["triggerSF"][npair] = triggerScaleFactorFullSim(leps[i1].pdgId,leps[i2].pdgId,leps[i1].pt,leps[i2].pt,ht)
                 if self.apply:
                     if self.whichApplication == self.appl_Fakes:
-                        for var in systsFR:
+                        for varFR in systsFR:
                             if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
                                 if ret["hasTT"]:
-                                    ret["appWeight"+systsFR[var]][npair] = 0.0
+                                    ret["appWeight"+systsFR[varFR]][npair] = 0.0
                                 elif ret["hasTF"]:
                                     prev = 1.0
-                                    if var not in _probs: _probs[var]=[]
-                                    for x in _probs[var]:
+                                    if varFR not in _probs: _probs[varFR]=[]
+                                    for x in _probs[varFR]:
                                         prev *= (1-x)
-                                    prob = self.FRprob(leps[i2],ht,var)
+                                    prob = self.FRprob(leps[i2],ht,varFR)
                                     transf = self.FRtransfer_fromprob(prob)
-                                    _probs[var].append(prob)
-                                    ret["appWeight"+systsFR[var]][npair] = prev * transf
+                                    _probs[varFR].append(prob)
+                                    ret["appWeight"+systsFR[varFR]][npair] = prev * transf
+                                    ret["whoIsFake"][npair] = 2 if leps[i1].conePt>=leps[i2].conePt else 1
                                 elif ret["hasFF"]:
-                                    ret["appWeight"+systsFR[var]][npair] = -self.FRtransfer(leps[i1],ht,var)*self.FRtransfer(leps[i2],ht,var) if len(choice)<2 else 0.0 # throw away events with three FO non Tight
+                                    ret["appWeight"+systsFR[varFR]][npair] = -self.FRtransfer(leps[i1],ht,varFR)*self.FRtransfer(leps[i2],ht,varFR) if len(choice)<2 else 0.0 # throw away events with three FO non Tight
                             elif self.lepChoiceMethod==self.style_sort_FO:
                                 if ret["hasTT"]:
-                                    ret["appWeight"+systsFR[var]][npair] = 0.0
+                                    ret["appWeight"+systsFR[varFR]][npair] = 0.0
                                 elif ret["hasTF"]:
-                                    ret["appWeight"+systsFR[var]][npair] = self.FRtransfer(leps[i2 if tt_sort_FO[0] else i1],ht,var)
+                                    ret["appWeight"+systsFR[varFR]][npair] = self.FRtransfer(leps[i2 if tt_sort_FO[0] else i1],ht,varFR)
+                                    ret["whoIsFake"][npair] = (2 if leps[i1].conePt>=leps[i2].conePt else 1) if tt_sort_FO[0] else (1 if leps[i1].conePt>=leps[i2].conePt else 2)
                                 elif ret["hasFF"]:
-                                    ret["appWeight"+systsFR[var]][npair] = -self.FRtransfer(leps[i1],ht,var)*self.FRtransfer(leps[i2],ht,var)
+                                    ret["appWeight"+systsFR[varFR]][npair] = -self.FRtransfer(leps[i1],ht,varFR)*self.FRtransfer(leps[i2],ht,varFR)
                     elif self.whichApplication == self.appl_Flips:
                         ret["appWeight"][npair] = self.flipRate(leps[i1])+self.flipRate(leps[i2])
 
