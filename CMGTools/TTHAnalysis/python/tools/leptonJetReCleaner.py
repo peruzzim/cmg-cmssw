@@ -30,6 +30,8 @@ class LeptonJetReCleaner:
         self.do_btagSF = False
         if (CSVbtagFileName or EFFbtagFileName) and self.isMC: self.init_btagMediumScaleFactor(CSVbtagFileName,EFFbtagFileName)
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
+        self.systsBTAG = {0:"", 1:"_BCUp", -1:"_BCDown", 2:"_LightUp", -2:"_LightDown"}
+        self.debugprinted = False
     def listBranches(self):
         label = self.label
 
@@ -47,9 +49,10 @@ class LeptonJetReCleaner:
             ("LepGood_isCleaning"+label,"I",20,"nLepGood"),("LepGood_isCleaningVeto"+label,"I",20,"nLepGood"),
             ("LepGood_isFO"+label,"I",20,"nLepGood"),("LepGood_isFOVeto"+label,"I",20,"nLepGood"),
             ("LepGood_isTight"+label,"I",20,"nLepGood"),("LepGood_isTightVeto"+label,"I",20,"nLepGood"),
-            ("btagMediumSF"+label, "F"), ("btagMediumSFup"+label, "F"), ("btagMediumSFdown"+label, "F"),
 #            ("LepGood_mcMatchPdgId","F",20,"nLepGood"), # calculate conept and matched charge, now calculated in production
             ]
+        for key in self.systsBTAG:
+            biglist.append(("btagMediumSF"+self.systsBTAG[key]+label, "F"))
         for key in self.systsJEC:
             biglist.extend([
                     ("nJetSel"+self.systsJEC[key]+label, "I"), ("iJ"+self.systsJEC[key]+label,"I",20,"nJetSel"+self.systsJEC[key]+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
@@ -128,20 +131,29 @@ class LeptonJetReCleaner:
         self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "central"))
         self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "up"))
         self.btagEffFile = ROOT.TFile(EFFbtagFileName,"read")
-        self.btagEffHistos = (self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_udsg"),self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_b"))
-    def read_btagMediumScaleFactor(self,jet,isB,shift=0):
+        self.btagEffHistos = (self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_b"),self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_c"),self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_udsg"))
+    def read_btagMediumScaleFactor(self,jet,flavor,shift=0):
+        if abs(shift)>2: raise RuntimeError
         # agreed upon: include jets in under/overflow in last bins
         pt = min(max(jet.pt,30.001),669.999)
         eta = min(max(jet.eta,-2.399),2.399)
+        if abs(flavor)==5: fcode = 0
+        elif abs(flavor)==4: fcode = 1
+        else: fcode = 2
         res = 0
-        if isB:
-            res = self.btagMediumReader[shift+1].eval(0,eta,pt)
+        if fcode<2: # correlate systs of B and C
+            _s = shift if abs(shift)<2 else 0
+            res = self.btagMediumReader[_s+1].eval(fcode,eta,pt)
         else:
-            res = self.btagMediumReaderLight[shift+1].eval(2,eta,pt)
-        if res==0: raise RuntimeError,'Btag SF returned zero, something is not correct: isB=%d, eta=%f, pt=%f'%(isB,jet.eta,jet.pt)
+            _s = shift/2 if abs(shift)!=1 else 0
+            res = self.btagMediumReaderLight[_s+1].eval(fcode,eta,pt)
+        if res==0: raise RuntimeError,'Btag SF returned zero, something is not correct: flavor=%d, eta=%f, pt=%f'%(flavor,jet.eta,jet.pt)
         return res
-    def read_btagMediumEfficiency(self,jet,isB):
-        h = self.btagEffHistos[isB]
+    def read_btagMediumEfficiency(self,jet,flavor):
+        if abs(flavor)==5: fcode = 0
+        elif abs(flavor)==4: fcode = 1
+        else: fcode = 2
+        h = self.btagEffHistos[fcode]
         ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(jet.pt)))
         etabin = max(1,min(h.GetNbinsY(),h.GetYaxis().FindBin(abs(jet.eta))))
         return h.GetBinContent(ptbin,etabin)
@@ -150,11 +162,11 @@ class LeptonJetReCleaner:
         pmc = 1.0; pdata = 1.0
         for j in alljets:
             if j in bjets:
-                pmc = pmc * self.read_btagMediumEfficiency(j,True)
-                pdata = pdata * self.read_btagMediumEfficiency(j,True)*self.read_btagMediumScaleFactor(j,True,shift)
+                pmc = pmc * self.read_btagMediumEfficiency(j,j.mcFlavour)
+                pdata = pdata * self.read_btagMediumEfficiency(j,j.mcFlavour)*self.read_btagMediumScaleFactor(j,j.mcFlavour,shift)
             else:
-                pmc = pmc * (1-self.read_btagMediumEfficiency(j,False))
-                pdata = pdata * (1-self.read_btagMediumEfficiency(j,False)*self.read_btagMediumScaleFactor(j,False,shift))
+                pmc = pmc * (1-self.read_btagMediumEfficiency(j,j.mcFlavour))
+                pdata = pdata * (1-self.read_btagMediumEfficiency(j,j.mcFlavour)*self.read_btagMediumScaleFactor(j,j.mcFlavour,shift))
         res = pdata/pmc if pmc!=0 else 1.
         return res
 
@@ -222,8 +234,16 @@ class LeptonJetReCleaner:
         jetsc={}
         jetsd={}
         for var in self.systsJEC:
-            jetsc[var] = [j for j in Collection(event,"Jet"+self.systsJEC[var],"nJet"+self.systsJEC[var])]
-            jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[var],"nDiscJet"+self.systsJEC[var])]
+            _var = var
+            if not hasattr(event,"nJet"+self.systsJEC[var]):
+                _var = 0
+                if not self.debugprinted:
+                    print '-'*15
+                    print 'WARNING: jet energy scale variation %s not found, will set it to central value'%self.systsJEC[var]
+                    print '-'*15
+            jetsc[var] = [j for j in Collection(event,"Jet"+self.systsJEC[_var],"nJet"+self.systsJEC[_var])]
+            jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
+        self.debugprinted = True
         ret = {}; jetret = {}
 
         lepsl = []; lepslv = [];
@@ -238,9 +258,7 @@ class LeptonJetReCleaner:
             cleanBjets[var]=[]
             cleanjets[var],cleanBjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc,self.systsJEC[var],ret,jetret,(var==0))
 
-        ret["btagMediumSF"] = self.btagMediumScaleFactor(cleanBjets[0],cleanjets[0],0) if self.do_btagSF else 1.0
-        ret["btagMediumSFup"] = self.btagMediumScaleFactor(cleanBjets[0],cleanjets[0],+1) if self.do_btagSF else 1.0
-        ret["btagMediumSFdown"] = self.btagMediumScaleFactor(cleanBjets[0],cleanjets[0],-1) if self.do_btagSF else 1.0
+        for var in self.systsBTAG: ret["btagMediumSF"+self.systsBTAG[var]]=self.btagMediumScaleFactor(cleanBjets[0],cleanjets[0],var) if self.do_btagSF else 1.0
 
         # calculate FOs and tight leptons using the cleaned HT
         lepsf = []; lepsfv = [];
