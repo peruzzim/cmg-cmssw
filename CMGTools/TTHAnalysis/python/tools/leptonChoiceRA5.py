@@ -3,7 +3,7 @@ from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import passMllVeto
 from ROOT import TFile,TH1F
 import os
 
-for extlib in ["fake_rates_UCSx_v5_01.cc","flip_rates_UCSx_v5_01.cc","triggerSF_fullsim_UCSx_v5_01.cc"]:
+for extlib in ["fake_rates_UCSx_v5_03.cc","flip_rates_UCSx_v5_01.cc","triggerSF_fullsim_UCSx_v5_01.cc","lepton_SF_UCSx_v5_03.cc"]:
     if not extlib.endswith(".cc"): raise RuntimeError
     if "/%s"%extlib.replace(".cc","_cc.so") not in ROOT.gSystem.GetLibraries():
         ROOT.gROOT.LoadMacro("/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/%s+"%extlib)
@@ -26,6 +26,10 @@ from ROOT import muonQCDMCFakeRate_UCSx_IsoTrigs
 from ROOT import flipRate_UCSx
 from ROOT import flipRate_UCSx_Error
 from ROOT import triggerScaleFactorFullSim
+from ROOT import electronScaleFactorHighHT_UCSx
+from ROOT import electronScaleFactorLowHT_UCSx
+from ROOT import muonScaleFactor_UCSx
+from ROOT import leptonScaleFactor_UCSx
 
 class LeptonChoiceRA5:
 
@@ -77,6 +81,7 @@ class LeptonChoiceRA5:
             ("hasTT"+label, "I"), ("hasTF"+label, "I"), ("hasFF"+label, "I"),
             ("mZ1"+label,"F"), ("mZ1cut10TL"+label,"F"),("minMllAFAS"+label,"F"),("minMllAFASTT"+label,"F"), ("minMllAFASTL"+label,"F"), ("minMllSFOS"+label,"F"), ("minMllSFOSTL"+label,"F"), ("minMllSFOSTT"+label,"F"),
             ("triggerSF"+label,"F",20,"nPairs"+label),
+            ("leptonSF"+label,"F",20,"nPairs"+label),
             ]
         return biglist
 
@@ -132,6 +137,7 @@ class LeptonChoiceRA5:
         ret["hasTF"]=False
         ret["hasFF"]=False
         ret["triggerSF"] = [0]*20
+        ret["leptonSF"] = [0]*20
 
         if self.whichApplication == self.appl_Fakes:
             if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
@@ -189,7 +195,10 @@ class LeptonChoiceRA5:
                     mtwmin = min(sqrt(2*leps[i1].conePt*met[var]*(1-cos(leps[i1].phi-metphi[var]))),sqrt(2*leps[i2].conePt*met[var]*(1-cos(leps[i2].phi-metphi[var]))))
                     ret["SR"+systsJEC[var]][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,getattr(event,"htJet40j"+systsJEC[var]+self.inputlabel),met[var],getattr(event,"nJet40"+systsJEC[var]+self.inputlabel),getattr(event,"nBJetMedium25"+systsJEC[var]+self.inputlabel),mtwmin)
                 ht = getattr(event,"htJet40j"+self.inputlabel) # central value
-                ret["triggerSF"][npair] = triggerScaleFactorFullSim(leps[i1].pdgId,leps[i2].pdgId,leps[i1].pt,leps[i2].pt,ht)
+                ret["triggerSF"][npair] = triggerScaleFactorFullSim(leps[i1].pdgId,leps[i2].pdgId,leps[i1].pt,leps[i2].pt,ht) if not event.isData else 1
+                lepsf1 = leptonScaleFactor_UCSx(leps[i1].pdgId,leps[i1].pt,leps[i1].eta,ht) if not event.isData else 1
+                lepsf2 = leptonScaleFactor_UCSx(leps[i2].pdgId,leps[i2].pt,leps[i2].eta,ht) if not event.isData else 1
+                ret["leptonSF"][npair] = lepsf1*lepsf2
                 if self.apply:
                     if self.whichApplication == self.appl_Fakes:
                         for varFR in systsFR:
