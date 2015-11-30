@@ -64,7 +64,7 @@ class susyParameterScanAnalyzer( Analyzer ):
                 self.warned_already = True
             return
         lheprod = self.mchandles['lhe'].product()
-        scanline = re.compile(r"#\s*model\s+([A-Za-z0-9]+)_((\d+\.?\d*)(_\d+\.?\d*)*)\s+(\d+\.?\d*)\s*")
+        scanline = re.compile(r"#\s*model\s+([A-Za-z0-9]+)_((\d+\.?\d*)(_\d+\.?\d*)*)(\s+(\d+\.?\d*))*\s*")
         for i in xrange(lheprod.comments_size()):
             comment = lheprod.getComment(i)
             m = re.match(scanline, comment) 

@@ -17,6 +17,7 @@ is50ns = getHeppyOption("is50ns",False)
 runData = getHeppyOption("runData",False)
 runDataQCD = getHeppyOption("runDataQCD",False)
 runFRMC = getHeppyOption("runFRMC",False)
+runSMS = getHeppyOption("runSMS",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 SOS = getHeppyOption("SOS",False) ## switch True to overwrite settings for SOS skim (N.B. default settings are those from multilepton preselection)
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",False)
@@ -233,18 +234,22 @@ treeProducer = cfg.Analyzer(
 )
 
 ## histo counter
-susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
-                        susyCounter)
+if not runSMS:
+    susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
+                            susyCounter)
+else:
+    susyCoreSequence.insert(susyCoreSequence.index(susyScanAna)+1,susyCounter)
 
 # HBHE new filter
 from CMGTools.TTHAnalysis.analyzers.hbheAnalyzer import hbheAnalyzer
 hbheAna = cfg.Analyzer(
     hbheAnalyzer, name="hbheAnalyzer", IgnoreTS4TS5ifJetInLowBVRegion=False
     )
-susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),hbheAna)
-treeProducer.globalVariables.append(NTupleVariable("hbheFilterNew50ns", lambda ev: ev.hbheFilterNew50ns, int, help="new HBHE filter for 50 ns"))
-treeProducer.globalVariables.append(NTupleVariable("hbheFilterNew25ns", lambda ev: ev.hbheFilterNew25ns, int, help="new HBHE filter for 25 ns"))
-treeProducer.globalVariables.append(NTupleVariable("hbheFilterIso", lambda ev: ev.hbheFilterIso, int, help="HBHE iso-based noise filter"))
+if not runSMS:
+    susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),hbheAna)
+    treeProducer.globalVariables.append(NTupleVariable("hbheFilterNew50ns", lambda ev: ev.hbheFilterNew50ns, int, help="new HBHE filter for 50 ns"))
+    treeProducer.globalVariables.append(NTupleVariable("hbheFilterNew25ns", lambda ev: ev.hbheFilterNew25ns, int, help="new HBHE filter for 25 ns"))
+    treeProducer.globalVariables.append(NTupleVariable("hbheFilterIso", lambda ev: ev.hbheFilterIso, int, help="HBHE iso-based noise filter"))
 
 #additional MET quantities
 metAna.doTkMet = True
@@ -334,6 +339,12 @@ triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = True
 triggerFlagsAna.checkL1Prescale = True
 
+if runSMS:
+    susyCoreSequence.remove(triggerFlagsAna)
+    susyCoreSequence.remove(triggerAna)
+    susyCoreSequence.remove(eventFlagsAna)
+    ttHLepSkim.requireSameSignPair = True
+
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring15MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_74X_susySignalsPriv import *
 #from CMGTools.RootTools.samples.samples_8TeVReReco_74X import *
@@ -356,21 +367,17 @@ selectedComponents = [];
 #selectedComponents = [WZTo3LNu, ZZTo4L, GGHZZ4L, TTHnobb, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTGJets, T5ttttDeg_mGo1000_mStop300_mCh285_mChi280, T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep, WGToLNuG, ZGTo2LG, WWDouble, VHToNonbb, WpWpJJ] + T1tttt + T6ttWW + T5qqqqWW + Rares + TriBosons + TopPlusX
 
 #selectedComponents1 = [TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromTbar_ext,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromT_ext,TTJets_DiLepton,TTJets_DiLepton_ext] + WJetsToLNuHT + [DYJetsToLL_M10to50,DYJetsToLL_M50] # do not reproduce with v6
-selectedComponents2 = [T1tttt_mGo1200_mChi800,T1tttt_mGo1500_mChi100,T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep,T5qqqqWW_mGo1200_mCh1000_mChi800_dilep,T5ttttDeg_mGo1000_mStop300_mCh285_mChi280,T6ttWW_mSbot600_mCh425_mChi50,T6ttWW_mSbot650_mCh150_mChi50]
-selectedComponents3 = [TTWToLNu,TTZToLLNuNu,TTLLJets_m1to10,TTHnobb,WZTo3LNu,WpWpJJ,TTGJets,TGJets,WGToLNuG,WWDouble,VHToNonbb,WWZ,ZZZ,WZZ,TTTT]
+#selectedComponents2 = [T1tttt_mGo1200_mChi800,T1tttt_mGo1500_mChi100,T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep,T5qqqqWW_mGo1200_mCh1000_mChi800_dilep,T5ttttDeg_mGo1000_mStop300_mCh285_mChi280,T6ttWW_mSbot600_mCh425_mChi50,T6ttWW_mSbot650_mCh150_mChi50]
+#selectedComponents3 = [TTWToLNu,TTZToLLNuNu,TTLLJets_m1to10,TTHnobb,WZTo3LNu,WpWpJJ,TTGJets,TGJets,WGToLNuG,WWDouble,VHToNonbb,WWZ,ZZZ,WZZ,TTTT]
 #selectedComponents4 = [TToLeptons_tch_amcatnlo,TToLeptons_tch_amcatnlo_ext,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch,WWTo2L2Nu] # do not reproduce with v6
 #selectedComponents5 = [TbarToLeptons_tch] # where is this??? # do not reproduce with v6
-selectedComponents6 = [tZq_ll,ZZTo4L,ZGTo2LG,GGHZZ4L] # split a lot
+#selectedComponents6 = [tZq_ll,ZZTo4L,ZGTo2LG,GGHZZ4L] # split a lot
 
-for c in selectedComponents2: c.splitFactor = len(c.files)/3
-for c in selectedComponents3: c.splitFactor = len(c.files)/3
-for c in selectedComponents6: c.splitFactor = len(c.files)
+#for c in selectedComponents2: c.splitFactor = len(c.files)/3
+#for c in selectedComponents3: c.splitFactor = len(c.files)/3
+#for c in selectedComponents6: c.splitFactor = len(c.files)
 
-selectedComponents = selectedComponents2 + selectedComponents3 + selectedComponents6
-
-
-#selectedComponents = [tZqll,ZZTo4L,ZGTo2LG,GGHZZ4L] # split a lot
-#for c in selectedComponents: c.splitFactor = len(c.files)
+#selectedComponents = selectedComponents2 + selectedComponents3 + selectedComponents6
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -509,6 +516,14 @@ if is50ns:
     jetAnaScaleDown.dataGT   = "Summer15_50nsV5_DATA"
 #    pfChargedCHSjetAna.mcGT     = "Summer15_50nsV5_MC"
 #    pfChargedCHSjetAna.dataGT   = "Summer15_50nsV5_DATA"
+
+if runSMS:
+    jetAna.mcGT = "MCRUN2_74_V9_FASTSIM_291115"
+    jetAnaScaleUp.mcGT = "MCRUN2_74_V9_FASTSIM_291115"
+    jetAnaScaleDown.mcGT = "MCRUN2_74_V9_FASTSIM_291115"
+    jetAna.applyL2L3Residual = False
+    jetAnaScaleUp.applyL2L3Residual = False
+    jetAnaScaleDown.applyL2L3Residual = False
 
 if removeJetReCalibration:
     ## NOTE: jets will still be recalibrated, since calculateSeparateCorrections is True,
