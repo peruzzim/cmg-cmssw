@@ -17,6 +17,7 @@ class PlotFile:
     def __init__(self,fileName,options):
         self._options = options
         self._plots = []
+        defaults = {}
         infile = open(fileName,'r')
         for line in infile:
             if re.match("\s*#.*", line) or len(line.strip())==0: continue
@@ -33,6 +34,16 @@ class PlotFile:
                     else: extra[setting] = True
             line = re.sub("#.*","",line) 
             field = [f.strip().replace(";",":") for f in line.replace("::",";;").replace("\\:",";").split(':')]
+            if len(field) == 1 and field[0] == "*":
+                if len(self._plots): raise RuntimeError, "PlotFile defaults ('*') can be specified only before all plots"
+                print "Setting the following defaults for all plots: "
+                for k,v in extra.iteritems():
+                    print "\t%s: %r" % (k,v)
+                    defaults[k] = v
+                continue
+            else:
+                for k,v in defaults.iteritems():
+                    if k not in extra: extra[k] = v
             if len(field) <= 2: continue
             if len(options.plotselect):
                 skipMe = True
@@ -148,6 +159,28 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0):
         max0 = max2;
         if islog: hist.GetYaxis().SetRangeUser(0.9,max0)
         else:     hist.GetYaxis().SetRangeUser(0,max0)
+
+def doShadedUncertainty(h):
+    xaxis = h.GetXaxis()
+    points = []; errors = []
+    for i in xrange(h.GetNbinsX()):
+        N = h.GetBinContent(i+1); dN = h.GetBinError(i+1);
+        if N == 0 and dN == 0: continue
+        x = xaxis.GetBinCenter(i+1);
+        points.append( (x,N) )
+        EYlow, EYhigh  = dN, min(dN,N);
+        EXhigh, EXlow = (xaxis.GetBinUpEdge(i+1)-x, x-xaxis.GetBinLowEdge(i+1))
+        errors.append( (EXlow,EXhigh,EYlow,EYhigh) )
+    ret = ROOT.TGraphAsymmErrors(len(points))
+    ret.SetName(h.GetName()+"_errors")
+    for i,((x,y),(EXlow,EXhigh,EYlow,EYhigh)) in enumerate(zip(points,errors)):
+        ret.SetPoint(i, x, y)
+        ret.SetPointError(i, EXlow,EXhigh,EYlow,EYhigh)
+    ret.SetFillStyle(3244);
+    ret.SetFillColor(ROOT.kGray+2)
+    ret.SetMarkerStyle(0)
+    ret.Draw("PE2 SAME")
+    return ret
 
 def doDataNorm(pspec,pmap):
     if "data" not in pmap: return None
@@ -269,18 +302,22 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
         hpdf = ROOT.RooHistPdf("pdf_"+p,"",ROOT.RooArgSet(x), rdhs[p])
         pdfs.add(hpdf); dontDelete.append(hpdf)
         if mca.getProcessOption(p,'FreeFloat',False):
-            syst = mca.getProcessOption(p,'NormSystematic',0.0)
-            normterm = w.factory('prod::norm_%s(%g,syst_%s[1,%g,%g])' % (p, pmap[p].Integral(), p, 0.2, 5))
+            normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
+            normterm = w.factory('prod::norm_%s(%g,syst_%s[1,%g,%g])' % (p, pmap[p].Integral(), normTermName, 0.2, 5))
             dontDelete.append((normterm,))
             coeffs.add(normterm)
             procNormMap[p] = normterm
         elif mca.getProcessOption(p,'NormSystematic',0.0) > 0:
             syst = mca.getProcessOption(p,'NormSystematic',0.0)
-            normterm = w.factory('expr::norm_%s("%g*pow(%g,@0)",syst_%s[-5,5])' % (p, pmap[p].Integral(), 1+syst, p))
-            constterm = w.factory('Gaussian::systpdf_%s(syst_%s,0,1)' % (p,p))
-            dontDelete.append((normterm,constterm))
+            normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
+            normterm = w.factory('expr::norm_%s("%g*pow(%g,@0)",syst_%s[-5,5])' % (p, pmap[p].Integral(), 1+syst, normTermName))
+            if not w.pdf("systpdf_%s" % normTermName): 
+                constterm = w.factory('Gaussian::systpdf_%s(syst_%s,0,1)' % (normTermName,normTermName))
+                constraints.add(constterm)
+                dontDelete.append((normterm,constterm))
+            else:
+                dontDelete.append((normterm))
             coeffs.add(normterm)
-            constraints.add(constterm)
             procNormMap[p] = normterm
         else:    
             normterm = w.factory('norm_%s[%g]' % (p, pmap[p].Integral()))
@@ -307,7 +344,8 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
            newscale = procNormMap[p].getVal()/pmap[p].Integral()
            pmap[p].Scale(newscale)
            # now get the 1 sigma
-           nuis = w.var("syst_"+p);
+           normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
+           nuis = w.var("syst_"+normTermName);
            val,err = (nuis.getVal(), nuis.getError())
            v0 =  procNormMap[p].getVal()
            nuis.setVal(val+err)
@@ -484,11 +522,11 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
                 bgEntries.append( (pmap[p],lbl,mcStyle) )
         nentries = len(sigEntries) + len(bgEntries) + ('data' in pmap)
 
-        (x1,y1,x2,y2) = (.93-legWidth, .75 - textSize*max(nentries-3,0), .93, .93)
+        (x1,y1,x2,y2) = (.90-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
         if corner == "TR":
-            (x1,y1,x2,y2) = (.93-legWidth, .75 - textSize*max(nentries-3,0), .93, .93)
+            (x1,y1,x2,y2) = (.90-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
         elif corner == "BR":
-            (x1,y1,x2,y2) = (.93-legWidth, .33 + textSize*max(nentries-3,0), .93, .15)
+            (x1,y1,x2,y2) = (.90-legWidth, .33 + textSize*max(nentries-3,0), .90, .15)
         elif corner == "TL":
             (x1,y1,x2,y2) = (.2, .75 - textSize*max(nentries-3,0), .2+legWidth, .93)
         
@@ -713,8 +751,11 @@ class PlotMaker:
                         stack.Draw("SAME HIST NOSTACK")
                 if pspec.getOption('MoreY',1.0) > 1.0:
                     total.SetMaximum(pspec.getOption('MoreY',1.0)*total.GetMaximum())
+                if options.showMCError:
+                    totalError = doShadedUncertainty(totalSyst)
+                is2D = total.InheritsFrom("TH2")
                 if 'data' in pmap: 
-                    if options.poisson:
+                    if options.poisson and not is2D:
                         pdata = getDataPoissonErrors(pmap['data'], False, True)
                         pdata.Draw("PZ SAME")
                         pmap['data'].poissonGraph = pdata ## attach it so it doesn't get deleted
@@ -853,13 +894,25 @@ class PlotMaker:
                             dump_dcard.close()
                         else:
                             if "TH2" in total.ClassName() or "TProfile2D" in total.ClassName():
-                                for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True) + ["signal", "background", "data"]:
+                                pmap["total"] = total
+                                for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True) + ["signal", "background", "data", "total"]:
                                     if p not in pmap: continue
                                     plot = pmap[p]
+                                    if "TGraph" in plot.ClassName(): continue
                                     c1.SetRightMargin(0.20)
                                     plot.SetContour(100)
-                                    plot.Draw("COLZ TEXT45")
+                                    plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
                                     c1.Print("%s/%s_%s.%s" % (fdir, pspec.name, p, ext))
+                                if "data" in pmap and "TGraph" in pmap["data"].ClassName():
+                                    pmap["data"].SetMarkerSize(pspec.getOption("MarkerSize",1.6))
+                                    for p in ["signal", "background", "total"]:
+                                        if p not in pmap: continue
+                                        plot = pmap[p]
+                                        c1.SetRightMargin(0.20)
+                                        plot.SetContour(100)
+                                        plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
+                                        pmap["data"].Draw("P SAME")
+                                        c1.Print("%s/%s_data_%s.%s" % (fdir, pspec.name, p, ext))
                             else:
                                 c1.Print("%s/%s.%s" % (fdir, pspec.name, ext))
                 c1.Close()
@@ -880,6 +933,7 @@ def addPlotMakerOptions(parser):
     parser.add_option("--noStackSig", dest="noStackSig", action="store_true", default=False, help="Don't add the signal shape to the stack (useful with --showSigShape)")
     parser.add_option("--showDatShape", dest="showDatShape", action="store_true", default=False, help="Stack a normalized data shape")
     parser.add_option("--showSFitShape", dest="showSFitShape", action="store_true", default=False, help="Stack a shape of background + scaled signal normalized to total data")
+    parser.add_option("--showMCError", dest="showMCError", action="store_true", default=False, help="Show a shaded area for MC uncertainty")
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
     parser.add_option("--noErrorBandOnRatio", dest="errorBandOnRatio", action="store_false", default=True, help="Do not show the error band on the reference in the ratio plots")
     parser.add_option("--fitRatio", dest="fitRatio", type="int", default=None, help="Fit the ratio with a polynomial of the specified order")
