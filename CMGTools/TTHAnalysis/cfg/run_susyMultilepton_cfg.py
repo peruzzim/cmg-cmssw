@@ -238,6 +238,7 @@ if not runSMS:
     susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
                             susyCounter)
 else:
+    susyCounter.bypass_trackMass_check = False
     susyCoreSequence.insert(susyCoreSequence.index(susyScanAna)+1,susyCounter)
 
 # HBHE new filter
@@ -347,6 +348,7 @@ if runSMS:
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring15MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_74X_susySignalsPriv import *
+from CMGTools.RootTools.samples.samples_13TeV_signals import *
 #from CMGTools.RootTools.samples.samples_8TeVReReco_74X import *
 #from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
@@ -378,6 +380,9 @@ selectedComponents = [];
 #for c in selectedComponents6: c.splitFactor = len(c.files)
 
 #selectedComponents = selectedComponents2 + selectedComponents3 + selectedComponents6
+
+#selectedComponents = SMS_miniAODv2_T1tttt
+#susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns

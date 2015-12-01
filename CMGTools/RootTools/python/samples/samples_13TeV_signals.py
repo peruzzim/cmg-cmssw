@@ -72,7 +72,7 @@ SignalSUSYFullScan = [ SMS_T1bbbb_mGluino1000_1025_mLSP1to975_1000, SMS_T1bbbb_m
 #
 #SignalSUSYPrivate = [ SMS_T2bb_2J_mStop600_mLSP580, SMS_T2bb_2J_mStop900_mLSP100, SMS_T2qq_2J_mStop1200_mLSP100, SMS_T2qq_2J_mStop600_mLSP550, SMS_T2tt_2J_mStop425_mLSP325, SMS_T2tt_2J_mStop500_mLSP325, SMS_T2tt_2J_mStop650_mLSP325, SMS_T2tt_2J_mStop850_mLSP100 ] 
 
-SMS_miniAODv2_T1ttt=[
+SMS_miniAODv2_T1tttt = [
 kreator.makeMCComponent("SMS_miniAODv2_T1tttt_mGluino_1475to1500_mLSP_1to1250","/SMS-T1tttt_mGluino-1475to1500_mLSP-1to1250_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15MiniAODv2-FastAsympt25ns_74X_mcRun2_asymptotic_v2-v1/MINIAODSIM","CMS",".*root",1),
 kreator.makeMCComponent("SMS_miniAODv2_T1tttt_mGluino_800to825_mLSP_1to575","/SMS-T1tttt_mGluino-800to825_mLSP-1to575_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15MiniAODv2-FastAsympt25ns_74X_mcRun2_asymptotic_v2-v1/MINIAODSIM","CMS",".*root",1),
 kreator.makeMCComponent("SMS_miniAODv2_T1tttt_mGluino_600_mLSP_250to325","/SMS-T1tttt_mGluino-600_mLSP-250to325_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15MiniAODv2-FastAsympt25ns_74X_mcRun2_asymptotic_v2-v1/MINIAODSIM","CMS",".*root",1),
@@ -124,7 +124,7 @@ kreator.makeMCComponent("SMS_miniAODv2_T1tttt_mGluino_700to750_mLSP_200to500","/
 ### ----------------------------- summary ----------------------------------------
 
 
-signalSamples = SignalEXO + SignalSUSY + SignalSUSYFullScan + SMS_miniAODv2_T1ttt#+ SignalSUSYPrivate
+signalSamples = SignalEXO + SignalSUSY + SignalSUSYFullScan + SMS_miniAODv2_T1tttt #+ SignalSUSYPrivate
 
 samples = signalSamples
 
