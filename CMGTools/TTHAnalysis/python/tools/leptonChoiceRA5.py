@@ -43,10 +43,12 @@ class LeptonChoiceRA5:
     appl_Flips = 1
     appl_WZ    = 2
 
-    def __init__(self,label,inputlabel,whichApplication,lepChoiceMethod=None,FRFileName=None,isFastSim=False):
+    def __init__(self,label,inputlabel,whichApplication,lepChoiceMethod=None,FRFileName=None,isFastSim=False,lepSFFileNameFastSim=None):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.inputlabel = '_'+inputlabel
         self.isFastSim = isFastSim
+        self.lepSFFileNameFastSim = lepSFFileNameFastSim # [muons,electrons]
+        self.systsLEPSF={0:"", 1:"_lepSFUp", -1:"_lepSFDown", 2:"_lepSF_FS_Up", -2:"_lepSF_FS_Down"}
         if self.isFastSim:
             print '-'*15
             print 'WARNING: will apply trigger efficiency for FastSim'
@@ -87,13 +89,13 @@ class LeptonChoiceRA5:
             ("hasTT"+label, "I"), ("hasTF"+label, "I"), ("hasFF"+label, "I"),
             ("mZ1"+label,"F"), ("mZ1cut10TL"+label,"F"),("minMllAFAS"+label,"F"),("minMllAFASTT"+label,"F"), ("minMllAFASTL"+label,"F"), ("minMllSFOS"+label,"F"), ("minMllSFOSTL"+label,"F"), ("minMllSFOSTT"+label,"F"),
             ("triggerSF"+label,"F",20,"nPairs"+label),
-            ("leptonSF"+label,"F",20,"nPairs"+label),
             ("maxDeltaPhiLepJet"+label,"F",20,"nPairs"+label),
             ("maxDeltaPhiLepBJet"+label,"F",20,"nPairs"+label),
             ("maxDeltaPhiJetJet"+label,"F",20,"nPairs"+label),
             ("minDeltaRLepJet"+label,"F",20,"nPairs"+label),
             ("minDeltaRLepBJet"+label,"F",20,"nPairs"+label),
             ]
+        for var in self.systsLEPSF: biglist.append(("leptonSF"+self.systsLEPSF[var]+label,"F",20,"nPairs"+label))
         return biglist
 
     def __call__(self,event):
@@ -155,7 +157,7 @@ class LeptonChoiceRA5:
         ret["hasTF"]=False
         ret["hasFF"]=False
         ret["triggerSF"] = [0]*20
-        ret["leptonSF"] = [0]*20
+        for var in self.systsLEPSF: ret["leptonSF"+self.systsLEPSF[var]] = [0]*20
         ret["maxDeltaPhiLepJet"] = [0]*20
         ret["maxDeltaPhiLepBJet"] = [0]*20
         ret["maxDeltaPhiJetJet"] = [0]*20
@@ -220,9 +222,17 @@ class LeptonChoiceRA5:
                 ht = getattr(event,"htJet40j"+self.inputlabel) # central value
                 ret["triggerSF"][npair] = triggerScaleFactorFullSim(leps[i1].pdgId,leps[i2].pdgId,leps[i1].pt,leps[i2].pt,ht) if not event.isData else 1
                 if self.isFastSim: ret["triggerSF"][npair] = ret["triggerSF"][npair] * FastSimTriggerEfficiency(ht,leps[i1].pt,leps[i1].pdgId,leps[i2].pt,leps[i2].pdgId)
-                lepsf1 = leptonScaleFactor_UCSx(leps[i1].pdgId,leps[i1].pt,leps[i1].eta,ht) if not event.isData else 1
-                lepsf2 = leptonScaleFactor_UCSx(leps[i2].pdgId,leps[i2].pt,leps[i2].eta,ht) if not event.isData else 1
-                ret["leptonSF"][npair] = lepsf1*lepsf2
+                for var in self.systsLEPSF:
+                    lepsf=[1]*2
+                    for i,ind in enumerate([i1,i2]):
+                        lepsf[i] = leptonScaleFactor_UCSx(leps[ind].pdgId,leps[ind].pt,leps[ind].eta,ht) if not event.isData else 1
+                        #if abs(var)==1: TO BE IMPLEMENTED, at the moment it's done with a flat uncertainty on the final datacard
+                        if self.isFastSim:
+                            addsf, addsferr = self.read_FastSim_lepSF(leps[ind].pdgId,leps[ind].pt,leps[ind].eta,event.nVert) if not event.isData else 1
+                            if var==2: lepsf[i] *= (addsf*(1+addsferr))
+                            if var==-2: lepsf[i] *= (addsf*(1-addsferr))
+                            else: lepsf[i] *= addsf
+                    ret["leptonSF"+self.systsLEPSF[var]][npair] = lepsf[0]*lepsf[1]
                 ret["maxDeltaPhiLepJet"][npair] = max([abs(deltaPhi(l.phi,j.phi)) for l in [leps[i1],leps[i2]] for j in jets40]+[-999])
                 ret["maxDeltaPhiLepBJet"][npair] = max([abs(deltaPhi(l.phi,j.phi)) for l in [leps[i1],leps[i2]] for j in bjets25]+[-999])
                 ret["maxDeltaPhiJetJet"][npair] = max([(abs(deltaPhi(j1.phi,j2.phi)) if j1!=j2 else -999) for j1 in jets40 for j2 in jets40]+[-999])
@@ -365,6 +375,25 @@ class LeptonChoiceRA5:
         return prob/(1-prob)
     def FRtransfer(self,lep,ht,var):
         return self.FRtransfer_fromprob(self.FRprob(lep,ht,var))
+
+    def read_FastSim_lepSF(self,pdgId,pt,eta,pu):
+        if not hasattr(self,"FastSim_lepSF_histos"):
+            print '-'*15
+            print 'WARNING: will apply additional lepton scale factors for FastSim'
+            print '-'*15
+            self.FastSim_lepSF_histos=[]
+            self._file_lepSF_FS=[]
+            if not len(self.lepSFFileNameFastSim)==2: raise RuntimeError
+            for fname in self.lepSFFileNameFastSim:
+                self._file_lepSF_FS.append(ROOT.TFile(fname,'read'))
+                self.FastSim_lepSF_histos.append(self._file_lepSF_FS[-1].Get("histo3D"))
+        h = self.FastSim_lepSF_histos[1 if abs(pdgId)==11 else 0]
+        sf = h.GetBinContent(h.GetXaxis().FindBin(pt),h.GetYaxis().FindBin(abs(eta)),h.GetZaxis().FindBin(pu))
+        sferr = 0
+        # this would be just stat error, ignored in favor of syst that is applied at datacard level
+        #sferr = h.GetBinError(h.GetXaxis().FindBin(pt),h.GetYaxis().FindBin(eta),h.GetZaxis().FindBin(pu))
+        if sf==0: raise RuntimeError, "Returning null lepton SF for FastSim (%d, %f, %f, %d)"%(pdgId,pt,eta,pu)
+        return sf,(sferr/sf)
 
     def bestZ1TL(self,lepsl,lepst,cut=lambda lep:True):
           pairs = []
