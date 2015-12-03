@@ -18,7 +18,7 @@ class MyVarProxy:
     def pdgId(self): return self._ob.pdgId
 
 class LeptonJetReCleaner:
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,isMC=True,CSVbtagFileName=None,EFFbtagFileName=None):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,CSVbtagFileName=None,EFFbtagFileName=None):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
@@ -26,9 +26,8 @@ class LeptonJetReCleaner:
         self.tightLeptonSel = tightLeptonSel # applied on top of looseLeptonSel
         self.cleanJet = cleanJet
         self.selectJet = selectJet
-        self.isMC = isMC
         self.do_btagSF = False
-        if (CSVbtagFileName or EFFbtagFileName) and self.isMC: self.init_btagMediumScaleFactor(CSVbtagFileName,EFFbtagFileName)
+        if (CSVbtagFileName or EFFbtagFileName): self.init_btagMediumScaleFactor(CSVbtagFileName,EFFbtagFileName)
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
         self.systsBTAG = {0:"", 1:"_BCUp", -1:"_BCDown", 2:"_LightUp", -2:"_LightDown"}
         self.debugprinted = False
@@ -49,7 +48,7 @@ class LeptonJetReCleaner:
             ("LepGood_isCleaning"+label,"I",20,"nLepGood"),("LepGood_isCleaningVeto"+label,"I",20,"nLepGood"),
             ("LepGood_isFO"+label,"I",20,"nLepGood"),("LepGood_isFOVeto"+label,"I",20,"nLepGood"),
             ("LepGood_isTight"+label,"I",20,"nLepGood"),("LepGood_isTightVeto"+label,"I",20,"nLepGood"),
-#            ("LepGood_mcMatchPdgId","F",20,"nLepGood"), # calculate conept and matched charge, now calculated in production
+            ("LepGood_mcMatchPdgId","F",20,"nLepGood"), # calculate conept and matched charge, now calculated in production
             ]
         for key in self.systsBTAG:
             biglist.append(("btagMediumSF"+self.systsBTAG[key]+label, "F"))
@@ -61,10 +60,9 @@ class LeptonJetReCleaner:
                     ])
         for jfloat in "pt eta phi mass btagCSV rawPt".split():
             biglist.append( ("JetSel"+label+"_"+jfloat,"F",20,"nJetSel"+label) )
-        if self.isMC:
-            biglist.append( ("JetSel"+label+"_mcPt",     "F",20,"nJetSel"+label) )
-            biglist.append( ("JetSel"+label+"_mcFlavour","I",20,"nJetSel"+label) )
-            biglist.append( ("JetSel"+label+"_mcMatchId","I",20,"nJetSel"+label) )
+        biglist.append( ("JetSel"+label+"_mcPt",     "F",20,"nJetSel"+label) )
+        biglist.append( ("JetSel"+label+"_mcFlavour","I",20,"nJetSel"+label) )
+        biglist.append( ("JetSel"+label+"_mcMatchId","I",20,"nJetSel"+label) )
         return biglist
 
     def fillCollWithVeto(self,ret,refcollection,leps,lab,labext,selection,lepsforveto,ht=-1):
@@ -86,36 +84,48 @@ class LeptonJetReCleaner:
         return (ret,lepspass,lepspassveto)
 
 
-#    def matchLeptons(self, ret, leps, genleps, genlepsfromtau, event):
-#        allgenleps = genleps+genlepsfromtau
-#        ret["LepGood_mcMatchPdgId"] = [0] * len(leps)
-#
-#        def plausible(rec,gen):
-#            if abs(rec.pdgId()) == 11 and abs(gen.pdgId()) != 11:   return False
-#            if abs(rec.pdgId()) == 13 and abs(gen.pdgId()) != 13:   return False
-#            dr = deltaR(rec.eta(),rec.phi(),gen.eta(),gen.phi())
-#            if dr < 0.3: return True
-#            if rec.pt() < 10 and abs(rec.pdgId()) == 13 and gen.pdgId() != rec.pdgId(): return False
-#            if dr < 0.7: return True
-#            if min(rec.pt(),gen.pt())/max(rec.pt(),gen.pt()) < 0.3: return False
-#            return True
-#
-#        myleps = [MyVarProxy(lep) for lep in leps]
-#        mygenleps = [MyVarProxy(glep) for glep in allgenleps]
-#        match = matchObjectCollection3(myleps,mygenleps, 
-#                                       deltaRMax = 1.2, filter = plausible)
-#
-#        for il,mylep in enumerate(myleps):
-#            mygen = match[mylep]
-#            if mygen:
-#                if (mygen.sourceId != mylep.mcMatchId): raise RuntimeError, "Error in lepton re-matching: sourceId/mcMatchId %d %d"%(mygen.sourceId,mylep.mcMatchId)
-#                ret["LepGood_mcMatchPdgId"][il] = mygen.pdgId()
-#            else:
-#                if mylep.mcMatchId != 0:
-#                    if mylep.mcMatchId == 100:
-#                        print 'Warning (evt. %d): reco lepton which has mcMatchId==100, mcMatchAny==%d had been matched to a prompt lepton that was not included in the genLepton collections. It was not re-matched: assuming correct charge reconstruction in this case!'%(event.evt,mylep.mcMatchAny)
-#                        ret["LepGood_mcMatchPdgId"][il] = mylep.pdgId()
-#                    else: raise RuntimeError, "Error in lepton re-matching: lep.mcMatchId is %d for not matched"%(mylep.mcMatchId)
+    def matchLeptons(self, ret, leps, genleps, genlepsfromtau, event):
+
+        # if precalculated, propagate the value and return
+        if hasattr(event._tree,"LepGood_mcMatchPdgId"):
+            if not hasattr(self,"printed_mcMatch_warning"):
+                print 'Found LepGood_mcMatchPdgId in the event, will use that.'
+                self.printed_mcMatch_warning = True
+            for il,lep in enumerate(leps):
+                ret["LepGood_mcMatchPdgId"][il] = lep.mcMatchPdgId
+            return
+
+        if not hasattr(self,"printed_mcMatch_warning"):
+            print 'Will calculate LepGood_mcMatchPdgId in leptonJetReCleaner, the result will be similar to the precalculated one but not identical.'
+            self.printed_mcMatch_warning = True
+
+        def plausible(rec,gen):
+            if abs(rec.pdgId()) == 11 and abs(gen.pdgId()) != 11:   return False
+            if abs(rec.pdgId()) == 13 and abs(gen.pdgId()) != 13:   return False
+            dr = deltaR(rec.eta(),rec.phi(),gen.eta(),gen.phi())
+            if dr < 0.3: return True
+            if rec.pt() < 10 and abs(rec.pdgId()) == 13 and gen.pdgId() != rec.pdgId(): return False
+            if dr < 0.7: return True
+            if min(rec.pt(),gen.pt())/max(rec.pt(),gen.pt()) < 0.3: return False
+            return True
+
+        allgenleps = genleps+genlepsfromtau
+        myleps = [MyVarProxy(lep) for lep in leps]
+        mygenleps = [MyVarProxy(glep) for glep in allgenleps]
+        match = matchObjectCollection3(myleps,mygenleps, 
+                                       deltaRMax = 1.2, filter = plausible)
+
+        for il,mylep in enumerate(myleps):
+            mygen = match[mylep]
+            if mygen:
+                if (mygen.sourceId != mylep.mcMatchId): raise RuntimeError, "Error in lepton re-matching: sourceId/mcMatchId %d %d"%(mygen.sourceId,mylep.mcMatchId)
+                ret["LepGood_mcMatchPdgId"][il] = mygen.pdgId()
+            else:
+                if mylep.mcMatchId != 0:
+                    if mylep.mcMatchId == 100:
+                        print 'Warning (evt. %d): reco lepton which has mcMatchId==100, mcMatchAny==%d had been matched to a prompt lepton that was not included in the genLepton collections. It was not re-matched: assuming correct charge reconstruction in this case!'%(event.evt,mylep.mcMatchAny)
+                        ret["LepGood_mcMatchPdgId"][il] = mylep.pdgId()
+                    else: raise RuntimeError, "Error in lepton re-matching: lep.mcMatchId is %d for not matched"%(mylep.mcMatchId)
 
 
 
@@ -157,8 +167,8 @@ class LeptonJetReCleaner:
         ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(jet.pt)))
         etabin = max(1,min(h.GetNbinsY(),h.GetYaxis().FindBin(abs(jet.eta))))
         return h.GetBinContent(ptbin,etabin)
-    def btagMediumScaleFactor(self,bjets,alljets,shift=0):
-        if not (self.isMC and self.do_btagSF): return 1.0
+    def btagMediumScaleFactor(self,event,bjets,alljets,shift=0):
+        if event.isData or (not self.do_btagSF): return 1.0
         pmc = 1.0; pdata = 1.0
         for j in alljets:
             if j in bjets:
@@ -199,16 +209,14 @@ class LeptonJetReCleaner:
             if not postfix=="": raise RuntimeError,'Inconsistent usage of postfix in LeptonJetReCleaner'
             for jfloat in "pt eta phi mass btagCSV rawPt".split():
                 jetret[jfloat] = []
-            if self.isMC:
-                for jmc in "mcPt mcFlavour mcMatchId".split():
-                    jetret[jmc] = []
+            for jmc in "mcPt mcFlavour mcMatchId".split():
+                jetret[jmc] = []
             for idx in ret["iJ"+postfix]:
                 jet = jetcollcleaned[idx] if idx >= 0 else jetcolldiscarded[-1-idx]
                 for jfloat in "pt eta phi mass btagCSV rawPt".split():
                     jetret[jfloat].append( getattr(jet,jfloat) )
-                if self.isMC:
-                    for jmc in "mcPt mcFlavour mcMatchId".split():
-                        jetret[jmc].append( getattr(jet,jmc) )
+                for jmc in "mcPt mcFlavour mcMatchId".split():
+                    jetret[jmc].append( getattr(jet,jmc,-999) )
         # 5. compute the sums
         ret["nJet25"+postfix] = 0; ret["htJet25j"+postfix] = 0; ret["nBJetLoose25"+postfix] = 0; ret["nBJetMedium25"+postfix] = 0
         ret["nJet40"+postfix] = 0; ret["htJet40j"+postfix] = 0; ret["nBJetLoose40"+postfix] = 0; ret["nBJetMedium40"+postfix] = 0
@@ -258,7 +266,7 @@ class LeptonJetReCleaner:
             cleanBjets[var]=[]
             cleanjets[var],cleanBjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc,self.systsJEC[var],ret,jetret,(var==0))
 
-        for var in self.systsBTAG: ret["btagMediumSF"+self.systsBTAG[var]]=self.btagMediumScaleFactor(cleanBjets[0],cleanjets[0],var) if self.do_btagSF else 1.0
+        for var in self.systsBTAG: ret["btagMediumSF"+self.systsBTAG[var]]=self.btagMediumScaleFactor(event,cleanBjets[0],cleanjets[0],var) if self.do_btagSF else 1.0
 
         # calculate FOs and tight leptons using the cleaned HT
         lepsf = []; lepsfv = [];
@@ -270,7 +278,8 @@ class LeptonJetReCleaner:
         fullret = {}
         fullret["nLepGood"]=len(leps)
         fullret["LepGood_conePt"] = [lep.conept for lep in leps]
-#        if self.isMC: self.matchLeptons(fullret,leps,[l for l in Collection(event,"genLep","ngenLep")],[l for l in Collection(event,"genLepFromTau","ngenLepFromTau")],event)
+        fullret["LepGood_mcMatchPdgId"] = [0] * len(leps)
+        if not event.isData: self.matchLeptons(fullret,leps,[l for l in Collection(event,"genLep","ngenLep")],[l for l in Collection(event,"genLepFromTau","ngenLepFromTau")],event)
         for k,v in ret.iteritems(): 
             fullret[k+self.label] = v
         for k,v in jetret.iteritems(): 
