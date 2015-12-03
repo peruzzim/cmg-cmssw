@@ -16,7 +16,9 @@ SR_hl_regrouped : regroupSignalRegions(SR)-18 : 36,0.5,36.5; XTitle="HL regroupe
 SR_ll_regrouped : regroupSignalRegions(SR)-33 : 36,0.5,36.5; XTitle="LL regrouped signal region", Legend='TR', LegendCutoff=1e-4
 SR_ii_regrouped : regroupSignalRegions(SR) : 36,0.5,36.5; XTitle="Regrouped signal region", Legend='TR', LegendCutoff=1e-4
 
-flavor: if3(abs(LepGood1_pdgId)!=abs(LepGood2_pdgId),1,abs(LepGood1_pdgId)-11) : 3,-0.5,2.5 ; XTitle="ee/em/mm", Legend='TR', LegendCutoff=1e-4
+appWeight: appWeight : 30,-0.5,1; XTitle = "appWeight", Legend='TL', LegendCutoff=1e-3
+
+flavor: if3(abs(LepGood1_pdgId)!=abs(LepGood2_pdgId),1,abs(LepGood1_pdgId)-11) : 3,-0.5,2.5 ; XTitle="ee/e#mu/#mu#mu", Legend='TL', LegendCutoff=1e-4, MoreY=2.0
 
 htJet40j:   htJet40j: 40,0,800    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]"
 met:   met_pt: 35,0,700    ; XTitle="E_{T}^{miss}  [GeV]"
