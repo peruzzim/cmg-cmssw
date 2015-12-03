@@ -82,6 +82,11 @@ class LeptonChoiceRA5:
             ("mZ1"+label,"F"), ("mZ1cut10TL"+label,"F"),("minMllAFAS"+label,"F"),("minMllAFASTT"+label,"F"), ("minMllAFASTL"+label,"F"), ("minMllSFOS"+label,"F"), ("minMllSFOSTL"+label,"F"), ("minMllSFOSTT"+label,"F"),
             ("triggerSF"+label,"F",20,"nPairs"+label),
             ("leptonSF"+label,"F",20,"nPairs"+label),
+            ("maxDeltaPhiLepJet"+label,"F",20,"nPairs"+label),
+            ("maxDeltaPhiLepBJet"+label,"F",20,"nPairs"+label),
+            ("maxDeltaPhiJetJet"+label,"F",20,"nPairs"+label),
+            ("minDeltaRLepJet"+label,"F",20,"nPairs"+label),
+            ("minDeltaRLepBJet"+label,"F",20,"nPairs"+label),
             ]
         return biglist
 
@@ -96,6 +101,9 @@ class LeptonChoiceRA5:
 #        lepscv = [leps[il] for il in getattr(event,"iCV"+self.inputlabel)]
         lepsfv = [leps[il] for il in getattr(event,"iFV"+self.inputlabel)]
         lepstv = [leps[il] for il in getattr(event,"iTV"+self.inputlabel)]
+
+        bjets25 = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel) if (j.pt>25 and j.btagCSV>0.89)]
+        jets40 = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel) if j.pt>40]
         
         systsFR={0:"", 1:"_ewkUp", -1:"_ewkDown"}
         systsJEC={0:"", 1:"_jecUp", -1:"_jecDown"}
@@ -138,6 +146,11 @@ class LeptonChoiceRA5:
         ret["hasFF"]=False
         ret["triggerSF"] = [0]*20
         ret["leptonSF"] = [0]*20
+        ret["maxDeltaPhiLepJet"] = [0]*20
+        ret["maxDeltaPhiLepBJet"] = [0]*20
+        ret["maxDeltaPhiJetJet"] = [0]*20
+        ret["minDeltaRLepJet"] = [0]*20
+        ret["minDeltaRLepBJet"] = [0]*20
 
         if self.whichApplication == self.appl_Fakes:
             if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
@@ -199,6 +212,12 @@ class LeptonChoiceRA5:
                 lepsf1 = leptonScaleFactor_UCSx(leps[i1].pdgId,leps[i1].pt,leps[i1].eta,ht) if not event.isData else 1
                 lepsf2 = leptonScaleFactor_UCSx(leps[i2].pdgId,leps[i2].pt,leps[i2].eta,ht) if not event.isData else 1
                 ret["leptonSF"][npair] = lepsf1*lepsf2
+                ret["maxDeltaPhiLepJet"][npair] = max([abs(deltaPhi(l.phi,j.phi)) for l in [leps[i1],leps[i2]] for j in jets40]+[-999])
+                ret["maxDeltaPhiLepBJet"][npair] = max([abs(deltaPhi(l.phi,j.phi)) for l in [leps[i1],leps[i2]] for j in bjets25]+[-999])
+                ret["maxDeltaPhiJetJet"][npair] = max([(abs(deltaPhi(j1.phi,j2.phi)) if j1!=j2 else -999) for j1 in jets40 for j2 in jets40]+[-999])
+                ret["minDeltaRLepJet"][npair] = min([abs(deltaR(l,j)) for l in [leps[i1],leps[i2]] for j in jets40]+[999])
+                ret["minDeltaRLepBJet"][npair] = min([abs(deltaR(l,j)) for l in [leps[i1],leps[i2]] for j in bjets25]+[999])
+
                 if self.apply:
                     if self.whichApplication == self.appl_Fakes:
                         for varFR in systsFR:
