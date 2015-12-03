@@ -1,4 +1,4 @@
-weight: 1.0*hasTT_Loop*(LepGood_charge[i1_Loop[]]*LepGood_charge[i2_Loop[]]>0)*btagMediumSFdown_Mini/btagMediumSF_Mini
+weight: 1.0*hasTT_Loop*(LepGood_charge[i1_Loop[]]*LepGood_charge[i2_Loop[]]>0)*btagMediumSF_FS_BCUp_Mini/btagMediumSF_Mini
 
 change: LepGood1_(\w+) : LepGood_\1[i1_Loop[]]
 change: LepGood2_(\w+) : LepGood_\1[i2_Loop[]]

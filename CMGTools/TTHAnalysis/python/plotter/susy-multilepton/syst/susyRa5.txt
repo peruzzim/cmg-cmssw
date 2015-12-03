@@ -15,8 +15,10 @@ trigeff_ht   : _standard_prompt_.* : .* : 1.02	: lnN_in_shape_bins : 2,4,5,6,7,8
 jec	     : _sig_.* : .* : jec	: templates
 jec	     : _standard_prompt_.* : .* : jec	: templates
 
-bTag	     : _sig_.* : .* : bTag	: templates
-bTag	     : _standard_prompt_.* : .* : bTag	: templates
+bTag_BC	     : _sig_.* : .* : bTag_BC	: templates
+bTag_BC	     : _standard_prompt_.* : .* : bTag_BC	: templates
+bTag_Light	     : _sig_.* : .* : bTag_Light	: templates
+bTag_Light	     : _standard_prompt_.* : .* : bTag_Light	: templates
 
 fakesrate    : _fakesappl_data : .* : 1.30
 flipsrate    : _flipsappl_data : .* : 1.26
