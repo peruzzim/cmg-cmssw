@@ -2,6 +2,7 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from CMGTools.TTHAnalysis.tools.conept import conept
 from PhysicsTools.HeppyCore.utils.deltar import matchObjectCollection3
 import ROOT
+from math import copysign
 ROOT.gSystem.Load('libCondFormatsBTauObjects') 
 
 class MyVarProxy:
@@ -18,7 +19,7 @@ class MyVarProxy:
     def pdgId(self): return self._ob.pdgId
 
 class LeptonJetReCleaner:
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,CSVbtagFileName=None,EFFbtagFileName=None):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,CSVbtagFileName=None,EFFbtagFileName=None,CSVbtagFileNameFastSim=None,isFastSim=False):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
@@ -27,9 +28,14 @@ class LeptonJetReCleaner:
         self.cleanJet = cleanJet
         self.selectJet = selectJet
         self.do_btagSF = False
-        if (CSVbtagFileName or EFFbtagFileName): self.init_btagMediumScaleFactor(CSVbtagFileName,EFFbtagFileName)
+        self.isFastSim = isFastSim
+        if self.isFastSim:
+            print '-'*15
+            print 'WARNING: will apply b-tag scale factors for FastSim'
+            print '-'*15
+        if (CSVbtagFileName or EFFbtagFileName or CSVbtagFileNameFastSim): self.init_btagMediumScaleFactor(CSVbtagFileName,EFFbtagFileName,CSVbtagFileNameFastSim)
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
-        self.systsBTAG = {0:"", 1:"_BCUp", -1:"_BCDown", 2:"_LightUp", -2:"_LightDown"}
+        self.systsBTAG = {0:"", 1:"_BCUp", -1:"_BCDown", 2:"_LightUp", -2:"_LightDown", 3:"_FS_BCUp", -3:"_FS_BCDown", 4:"_FS_LightUp", -4:"_FS_LightDown"}
         self.debugprinted = False
     def listBranches(self):
         label = self.label
@@ -129,23 +135,34 @@ class LeptonJetReCleaner:
 
 
 
-    def init_btagMediumScaleFactor(self,CSVbtagFileName,EFFbtagFileName):
+    def init_btagMediumScaleFactor(self,CSVbtagFileName,EFFbtagFileName,CSVbtagFileNameFastSim):
         self.do_btagSF = True
         self.btagMediumCalib = ROOT.BTagCalibration("CSVv2", CSVbtagFileName)
+        if CSVbtagFileNameFastSim: self.btagMediumCalibFastSim = ROOT.BTagCalibration("CSV_FastSim", CSVbtagFileNameFastSim)
         self.btagMediumReader=[]
         self.btagMediumReader.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "mujets", "down"))
         self.btagMediumReader.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "mujets", "central"))
         self.btagMediumReader.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "mujets", "up"))
+        if CSVbtagFileNameFastSim:
+            self.btagMediumReaderFastSim=[]
+            self.btagMediumReaderFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "down"))
+            self.btagMediumReaderFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "central"))
+            self.btagMediumReaderFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "up"))
         self.btagMediumReaderLight=[]
         self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "down"))
         self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "central"))
         self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "up"))
+        if CSVbtagFileNameFastSim:
+            self.btagMediumReaderLightFastSim=[]
+            self.btagMediumReaderLightFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "down"))
+            self.btagMediumReaderLightFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "central"))
+            self.btagMediumReaderLightFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "up"))
         self.btagEffFile = ROOT.TFile(EFFbtagFileName,"read")
         self.btagEffHistos = (self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_b"),self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_c"),self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_udsg"))
-    def read_btagMediumScaleFactor(self,jet,flavor,shift=0):
-        if abs(shift)>2: raise RuntimeError
+    def read_btagMediumScaleFactor(self,readersBC,readersLight,jet,flavor,shift=0,croplowpt=0,crophighpt=1e6):
+        if abs(shift)>2: raise RuntimeError, 'Unsupported b-tag shift value was passed: %d'%shift
         # agreed upon: include jets in under/overflow in last bins
-        pt = min(max(jet.pt,30.001),669.999)
+        pt = min(max(jet.pt,croplowpt+0.001),crophighpt-0.001)
         eta = min(max(jet.eta,-2.399),2.399)
         if abs(flavor)==5: fcode = 0
         elif abs(flavor)==4: fcode = 1
@@ -153,10 +170,10 @@ class LeptonJetReCleaner:
         res = 0
         if fcode<2: # correlate systs of B and C
             _s = shift if abs(shift)<2 else 0
-            res = self.btagMediumReader[_s+1].eval(fcode,eta,pt)
+            res = readersBC[_s+1].eval(fcode,eta,pt)
         else:
             _s = shift/2 if abs(shift)!=1 else 0
-            res = self.btagMediumReaderLight[_s+1].eval(fcode,eta,pt)
+            res = readersLight[_s+1].eval(fcode,eta,pt)
         if res==0: raise RuntimeError,'Btag SF returned zero, something is not correct: flavor=%d, eta=%f, pt=%f'%(flavor,jet.eta,jet.pt)
         return res
     def read_btagMediumEfficiency(self,jet,flavor):
@@ -171,12 +188,15 @@ class LeptonJetReCleaner:
         if event.isData or (not self.do_btagSF): return 1.0
         pmc = 1.0; pdata = 1.0
         for j in alljets:
+            sf = self.read_btagMediumScaleFactor(self.btagMediumReader,self.btagMediumReaderLight,j,j.mcFlavour,shift if abs(shift)<3 else 0,croplowpt=30,crophighpt=670)
+            if self.isFastSim: sf = sf * self.read_btagMediumScaleFactor(self.btagMediumReaderFastSim,self.btagMediumReaderLightFastSim,j,j.mcFlavour,0 if abs(shift)<3 else int(copysign(abs(shift)-2,shift)),croplowpt=20,crophighpt=800)
+            eff = self.read_btagMediumEfficiency(j,j.mcFlavour)
             if j in bjets:
-                pmc = pmc * self.read_btagMediumEfficiency(j,j.mcFlavour)
-                pdata = pdata * self.read_btagMediumEfficiency(j,j.mcFlavour)*self.read_btagMediumScaleFactor(j,j.mcFlavour,shift)
+                pmc = pmc * eff
+                pdata = pdata * eff * sf
             else:
-                pmc = pmc * (1-self.read_btagMediumEfficiency(j,j.mcFlavour))
-                pdata = pdata * (1-self.read_btagMediumEfficiency(j,j.mcFlavour)*self.read_btagMediumScaleFactor(j,j.mcFlavour,shift))
+                pmc = pmc * (1-eff)
+                pdata = pdata * (1-eff*sf)
         res = pdata/pmc if pmc!=0 else 1.
         return res
 

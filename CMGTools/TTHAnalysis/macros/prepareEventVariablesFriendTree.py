@@ -25,6 +25,7 @@ from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import LeptonChoiceRA5
 
 btagSF = "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/CSVv2_25ns.csv"
 btagEFF = "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/btageff__ttbar_powheg_pythia8_25ns.root"
+btagSF_FastSim = "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/CSV_13TEV_Combined_20_11_2015_FullSim_FastSim.csv"
 
 #--- Susy multilep instances
 MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini", 
@@ -34,7 +35,8 @@ MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini"
                    lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF ) ))
+                   isFastSim = False,
+                   CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF, CSVbtagFileNameFastSim = btagSF_FastSim ) ))
 
 #MODULES.append( ('leptonJetReCleanerSusyInSitu', lambda : LeptonJetReCleaner("MiniInSitu", 
 #                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
