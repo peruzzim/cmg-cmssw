@@ -2,6 +2,8 @@
 #include "Math/GenVector/LorentzVector.h"
 #include "Math/GenVector/PtEtaPhiM4D.h"
 #include "Math/GenVector/PxPyPzM4D.h"
+#include "Math/GenVector/Boost.h"
+#include "TLorentzVector.h"
 
 //// UTILITY FUNCTIONS NOT IN TFORMULA ALREADY
 
@@ -143,6 +145,15 @@ float mtop_lvb(float ptl, float etal, float phil, float ml, float met, float met
     return (p4l+p4b+p4v).M();
 }
 
+float DPhi_CMLep_Zboost(float l_pt, float l_eta, float l_phi, float l_M, float l_other_pt, float l_other_eta, float l_other_phi, float l_other_M){
+  typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
+  PtEtaPhiMVector l1(l_pt,l_eta,l_phi,l_M);
+  PtEtaPhiMVector l2(l_other_pt,l_other_eta,l_other_phi,l_other_M);
+  PtEtaPhiMVector Z = l1+l2;
+  ROOT::Math::Boost boost(Z.BoostToCM());
+  l1 = boost*l1;
+  return deltaPhi(l1.Phi(),Z.Phi());
+}
 
 float relax_cut_in_eta_bins(float val, float eta, float eta1, float eta2, float eta3, float val1, float val2, float val3, float val1t, float val2t, float val3t){
 
