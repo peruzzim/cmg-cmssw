@@ -3,7 +3,7 @@ from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import passMllVeto
 from ROOT import TFile,TH1F
 import os
 
-for extlib in ["fake_rates_UCSx_v5_03.cc","flip_rates_UCSx_v5_01.cc","triggerSF_fullsim_UCSx_v5_01.cc","lepton_SF_UCSx_v5_03.cc"]:
+for extlib in ["fake_rates_UCSx_v5_03.cc","flip_rates_UCSx_v5_01.cc","triggerSF_fullsim_UCSx_v5_01.cc","lepton_SF_UCSx_v5_03.cc","FastSimTriggerEff.cc"]:
     if not extlib.endswith(".cc"): raise RuntimeError
     if "/%s"%extlib.replace(".cc","_cc.so") not in ROOT.gSystem.GetLibraries():
         ROOT.gROOT.LoadMacro("/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/%s+"%extlib)
@@ -30,6 +30,7 @@ from ROOT import electronScaleFactorHighHT_UCSx
 from ROOT import electronScaleFactorLowHT_UCSx
 from ROOT import muonScaleFactor_UCSx
 from ROOT import leptonScaleFactor_UCSx
+from ROOT import FastSimTriggerEfficiency
 
 class LeptonChoiceRA5:
 
@@ -42,9 +43,14 @@ class LeptonChoiceRA5:
     appl_Flips = 1
     appl_WZ    = 2
 
-    def __init__(self,label,inputlabel,whichApplication,lepChoiceMethod=None,FRFileName=None):
+    def __init__(self,label,inputlabel,whichApplication,lepChoiceMethod=None,FRFileName=None,isFastSim=False):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.inputlabel = '_'+inputlabel
+        self.isFastSim = isFastSim
+        if self.isFastSim:
+            print '-'*15
+            print 'WARNING: will apply trigger efficiency for FastSim'
+            print '-'*15
         if whichApplication=="Fakes": self.whichApplication = self.appl_Fakes
         elif whichApplication=="Flips": self.whichApplication = self.appl_Flips
         elif whichApplication=="WZ": self.whichApplication = self.appl_WZ
@@ -91,6 +97,10 @@ class LeptonChoiceRA5:
         return biglist
 
     def __call__(self,event):
+
+        if not hasattr(self,"checked_fastsim_data"):
+            if self.isFastSim and event.isData: raise RuntimeError,'Running with isFastSim on data!'
+            self.checked_fastsim_data = True
 
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         lepsl = [leps[il] for il in getattr(event,"iL"+self.inputlabel)]
@@ -209,6 +219,7 @@ class LeptonChoiceRA5:
                     ret["SR"+systsJEC[var]][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,getattr(event,"htJet40j"+systsJEC[var]+self.inputlabel),met[var],getattr(event,"nJet40"+systsJEC[var]+self.inputlabel),getattr(event,"nBJetMedium25"+systsJEC[var]+self.inputlabel),mtwmin)
                 ht = getattr(event,"htJet40j"+self.inputlabel) # central value
                 ret["triggerSF"][npair] = triggerScaleFactorFullSim(leps[i1].pdgId,leps[i2].pdgId,leps[i1].pt,leps[i2].pt,ht) if not event.isData else 1
+                if self.isFastSim: ret["triggerSF"][npair] = ret["triggerSF"][npair] * FastSimTriggerEfficiency(ht,leps[i1].pt,leps[i1].pdgId,leps[i2].pt,leps[i2].pdgId)
                 lepsf1 = leptonScaleFactor_UCSx(leps[i1].pdgId,leps[i1].pt,leps[i1].eta,ht) if not event.isData else 1
                 lepsf2 = leptonScaleFactor_UCSx(leps[i2].pdgId,leps[i2].pt,leps[i2].eta,ht) if not event.isData else 1
                 ret["leptonSF"][npair] = lepsf1*lepsf2

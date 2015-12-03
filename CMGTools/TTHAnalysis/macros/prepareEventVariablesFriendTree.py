@@ -21,7 +21,7 @@ from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import LeptonChoiceRA5
 #                lambda lep : lep.mvaTTH > 0.6 and lep.mediumMuonId,
 #                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
 
-
+isFastSim = False
 
 btagSF = "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/CSVv2_25ns.csv"
 btagEFF = "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/btageff__ttbar_powheg_pythia8_25ns.root"
@@ -35,7 +35,7 @@ MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini"
                    lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   isFastSim = False,
+                   isFastSim = isFastSim,
                    CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF, CSVbtagFileNameFastSim = btagSF_FastSim ) ))
 
 #MODULES.append( ('leptonJetReCleanerSusyInSitu', lambda : LeptonJetReCleaner("MiniInSitu", 
@@ -50,11 +50,11 @@ MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini"
 
 #FRname="/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/FakeRatesUCSXMethod_301115_withEWKsyst_v6.root"
 FRname="hardcodedUCSx"
-MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName=FRname))) 
-#MODULES.append( ('leptonChoiceRA5_FO', lambda : LeptonChoiceRA5("SortFO","Mini",whichApplication="Fakes",lepChoiceMethod="sort_FO",FRFileName=FRname))) 
-#MODULES.append( ('leptonChoiceRA5_InSitu', lambda : LeptonChoiceRA5("InSitu","MiniInSitu",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName="InSituHardCoded"))) 
-MODULES.append( ('leptonChoiceRA5_Flips', lambda : LeptonChoiceRA5("Flips","Mini",whichApplication="Flips",FRFileName="hardcodedUCSx")))
-#MODULES.append( ('leptonChoiceRA5_WZ', lambda : LeptonChoiceRA5("WZ","Mini",whichApplication="WZ")))
+MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName=FRname,isFastSim=isFastSim))) 
+#MODULES.append( ('leptonChoiceRA5_FO', lambda : LeptonChoiceRA5("SortFO","Mini",whichApplication="Fakes",lepChoiceMethod="sort_FO",FRFileName=FRname,isFastSim=isFastSim))) 
+#MODULES.append( ('leptonChoiceRA5_InSitu', lambda : LeptonChoiceRA5("InSitu","MiniInSitu",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName="InSituHardCoded",isFastSim=isFastSim))) 
+MODULES.append( ('leptonChoiceRA5_Flips', lambda : LeptonChoiceRA5("Flips","Mini",whichApplication="Flips",FRFileName="hardcodedUCSx",isFastSim=isFastSim)))
+#MODULES.append( ('leptonChoiceRA5_WZ', lambda : LeptonChoiceRA5("WZ","Mini",whichApplication="WZ",isFastSim=isFastSim)))
 
 
 #MODULES.append( ('leptonJetReCleanerSusyFO', lambda : LeptonJetReCleaner("FOsel", 
