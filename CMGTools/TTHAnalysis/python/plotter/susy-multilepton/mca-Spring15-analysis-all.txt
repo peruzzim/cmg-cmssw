@@ -11,31 +11,31 @@ _sig_T6_650_150+ : T6ttWW_mSbot650_mCh150_mChi50 : xsec; Label="T6 (650\,150)", 
 
 # Prompt backgrounds
 
-_standard_prompt_ttW: TTWToLNu : xsec ; FillColor=ROOT.kAzure-4, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttW (prompt)", NormSystematic=0.2
+_standard_prompt_ttW: TTWToLNu : xsec ; FillColor=ROOT.kGreen+3, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttW (prompt)", NormSystematic=0.2
 _standard_prompt_ttZH: TTZToLLNuNu : xsec ; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", NormSystematic=0.2
 _standard_prompt_ttZH: TTLLJets_m1to10 : xsec ; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", NormSystematic=0.2
 _standard_prompt_ttZH: TTHnobb : xsec; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", NormSystematic=0.2
-_standard_prompt_WZ: WZTo3LNu: xsec ; FillColor=ROOT.kOrange, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WZ (prompt)", NormSystematic=0.3
+_standard_prompt_WZ: WZTo3LNu: 1.22*xsec ; FillColor=ROOT.kOrange, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WZ (prompt)", NormSystematic=0.3
 _standard_prompt_WWss: WpWpJJ : xsec; FillColor=ROOT.kOrange-3, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WWss (prompt)", NormSystematic=0.3
 _standard_prompt_XG: TTGJets : xsec; FillColor=ROOT.kViolet+2, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", NormSystematic=0.5
 _standard_prompt_XG: TGJets : xsec; FillColor=ROOT.kViolet+2, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", NormSystematic=0.5
 _standard_prompt_XG: WGToLNuG : xsec; FillColor=ROOT.kViolet+2, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", NormSystematic=0.5
 _standard_prompt_XG: ZGTo2LG : xsec; FillColor=ROOT.kViolet+2, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", NormSystematic=0.5
-_standard_prompt_Rares: WWDouble : xsec; FillColor=ROOT.kMagenta-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
-_standard_prompt_Rares: ZZTo4L: xsec ; FillColor=ROOT.kMagenta-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
-_standard_prompt_Rares: tZq_ll : xsec ; FillColor=ROOT.kMagenta-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
-_standard_prompt_Rares: GGHZZ4L : xsec ; FillColor=ROOT.kMagenta-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
-_standard_prompt_Rares: VHToNonbb : xsec ; FillColor=ROOT.kMagenta-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
-_standard_prompt_Rares: WWZ : xsec ; FillColor=ROOT.kMagenta-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
-_standard_prompt_Rares: ZZZ : xsec; FillColor=ROOT.kMagenta-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
-_standard_prompt_Rares: WZZ : xsec; FillColor=ROOT.kMagenta-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
-_standard_prompt_Rares: TTTT : xsec; FillColor=ROOT.kMagenta-6, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
+_standard_prompt_Rares: WWDouble : xsec; FillColor=ROOT.kMagenta-7, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
+_standard_prompt_Rares: ZZTo4L: xsec ; FillColor=ROOT.kMagenta-7, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
+_standard_prompt_Rares: tZq_ll : xsec ; FillColor=ROOT.kMagenta-7, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
+_standard_prompt_Rares: GGHZZ4L : xsec ; FillColor=ROOT.kMagenta-7, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
+_standard_prompt_Rares: VHToNonbb : xsec ; FillColor=ROOT.kMagenta-7, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
+_standard_prompt_Rares: WWZ : xsec ; FillColor=ROOT.kMagenta-7, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
+_standard_prompt_Rares: ZZZ : xsec; FillColor=ROOT.kMagenta-7, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
+_standard_prompt_Rares: WZZ : xsec; FillColor=ROOT.kMagenta-7, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
+_standard_prompt_Rares: TTTT : xsec; FillColor=ROOT.kMagenta-7, FakeRate="susy-multilepton/standard_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="Rares", NormSystematic=0.5
 
 # Fakes+flips
 
-_standard_fakes_TT: TTJets_DiLepton: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
-_standard_fakes_TT: TTJets_SingleLeptonFromT: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
-_standard_fakes_TT: TTJets_SingleLeptonFromTbar: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
+_standard_fakes_TT: TTJets_DiLepton: 1.52249*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
+_standard_fakes_TT: TTJets_SingleLeptonFromT: 1.598029*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
+_standard_fakes_TT: TTJets_SingleLeptonFromTbar: 1.58966*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
 _standard_fakes_DY: DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel.txt", Label="DY (fakes\,flips)"
 _standard_fakes_DY: DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel.txt", Label="DY (fakes\,flips)"
 _standard_fakes_WJets: WJetsToLNu_HT100to200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
@@ -52,6 +52,108 @@ _standard_fakes_SingleTop: TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.k
 _standard_fakes_SingleTop: TBar_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel.txt", Label="Single top (fakes)"
 _standard_fakes_SingleTop: T_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel.txt", Label="Single top (fakes)"
 _standard_fakes_WW: WWTo2L2Nu: xsec ; FillColor=ROOT.kGray+1, FakeRate="susy-multilepton/standard_sel.txt", Label="WW (fakes\,flips)"
+
+# splitted by flavor
+_standard_fakes_TT_fromB: TTJets_DiLepton: 1.52249*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="TT\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_TT_fromB: TTJets_SingleLeptonFromT: 1.598029*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="TT\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_TT_fromB: TTJets_SingleLeptonFromTbar: 1.58966*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="TT\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_DY_fromB: DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="DY\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_DY_fromB: DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="DY\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_WJets_fromB: WJetsToLNu_HT100to200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="WJets\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_WJets_fromB: WJetsToLNu_HT1200to2500 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="WJets\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_WJets_fromB: WJetsToLNu_HT200to400 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="WJets\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_WJets_fromB: WJetsToLNu_HT2500toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="WJets\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_WJets_fromB: WJetsToLNu_HT400to600 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="WJets\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_WJets_fromB: WJetsToLNu_HT600to800 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="WJets\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_WJets_fromB: WJetsToLNu_HT600toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="WJets\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_WJets_fromB: WJetsToLNu_HT800to1200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="WJets\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_SingleTop_fromB: TToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="Single top\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_SingleTop_fromB: TbarToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="Single top\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_SingleTop_fromB: TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="Single top\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_SingleTop_fromB: TBar_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="Single top\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_SingleTop_fromB: T_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="Single top\, b  \#rightarrow l", SkipMe=True
+_standard_fakes_WW_fromB: WWTo2L2Nu: xsec ; FillColor=ROOT.kGray+1, FakeRate="susy-multilepton/standard_sel_fromB.txt", Label="WW\, b  \#rightarrow l", SkipMe=True
+
+_standard_fakes_TT_fromC: TTJets_DiLepton: 1.52249*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="TT\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_TT_fromC: TTJets_SingleLeptonFromT: 1.598029*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="TT\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_TT_fromC: TTJets_SingleLeptonFromTbar: 1.58966*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="TT\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_DY_fromC: DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="DY\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_DY_fromC: DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="DY\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_WJets_fromC: WJetsToLNu_HT100to200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="WJets\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_WJets_fromC: WJetsToLNu_HT1200to2500 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="WJets\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_WJets_fromC: WJetsToLNu_HT200to400 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="WJets\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_WJets_fromC: WJetsToLNu_HT2500toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="WJets\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_WJets_fromC: WJetsToLNu_HT400to600 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="WJets\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_WJets_fromC: WJetsToLNu_HT600to800 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="WJets\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_WJets_fromC: WJetsToLNu_HT600toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="WJets\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_WJets_fromC: WJetsToLNu_HT800to1200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="WJets\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_SingleTop_fromC: TToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="Single top\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_SingleTop_fromC: TbarToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="Single top\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_SingleTop_fromC: TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="Single top\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_SingleTop_fromC: TBar_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="Single top\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_SingleTop_fromC: T_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="Single top\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+_standard_fakes_WW_fromC: WWTo2L2Nu: xsec ; FillColor=ROOT.kGray+1, FakeRate="susy-multilepton/standard_sel_fromC.txt", Label="WW\, c  \#rightarrow l", SkipMe=True, FillStyle=3006
+
+_standard_fakes_TT_fromLight: TTJets_DiLepton: 1.52249*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="TT\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_TT_fromLight: TTJets_SingleLeptonFromT: 1.598029*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="TT\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_TT_fromLight: TTJets_SingleLeptonFromTbar: 1.58966*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="TT\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_DY_fromLight: DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="DY\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_DY_fromLight: DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="DY\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_WJets_fromLight: WJetsToLNu_HT100to200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="WJets\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_WJets_fromLight: WJetsToLNu_HT1200to2500 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="WJets\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_WJets_fromLight: WJetsToLNu_HT200to400 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="WJets\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_WJets_fromLight: WJetsToLNu_HT2500toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="WJets\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_WJets_fromLight: WJetsToLNu_HT400to600 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="WJets\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_WJets_fromLight: WJetsToLNu_HT600to800 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="WJets\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_WJets_fromLight: WJetsToLNu_HT600toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="WJets\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_WJets_fromLight: WJetsToLNu_HT800to1200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="WJets\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_SingleTop_fromLight: TToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="Single top\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_SingleTop_fromLight: TbarToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="Single top\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_SingleTop_fromLight: TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="Single top\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_SingleTop_fromLight: TBar_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="Single top\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_SingleTop_fromLight: T_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="Single top\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+_standard_fakes_WW_fromLight: WWTo2L2Nu: xsec ; FillColor=ROOT.kGray+1, FakeRate="susy-multilepton/standard_sel_fromLight.txt", Label="WW\, udsg \#rightarrow l", SkipMe=True, FillStyle=3005
+
+_standard_fakes__from2Prompts: TTJets_DiLepton: 1.52249*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: TTJets_SingleLeptonFromT: 1.598029*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: TTJets_SingleLeptonFromTbar: 1.58966*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: WJetsToLNu_HT100to200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: WJetsToLNu_HT1200to2500 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: WJetsToLNu_HT200to400 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: WJetsToLNu_HT2500toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: WJetsToLNu_HT400to600 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: WJetsToLNu_HT600to800 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: WJetsToLNu_HT600toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: WJetsToLNu_HT800to1200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: TToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: TbarToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: TBar_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: T_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+_standard_fakes__from2Prompts: WWTo2L2Nu: xsec ; FillColor=ROOT.kGray+1, FakeRate="susy-multilepton/standard_sel_from2Prompts.txt", Label="2 prompts", SkipMe=True, FillStyle=3017
+
+_standard_fakes__from2Fakes: TTJets_DiLepton: 1.52249*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: TTJets_SingleLeptonFromT: 1.598029*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: TTJets_SingleLeptonFromTbar: 1.58966*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: WJetsToLNu_HT100to200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: WJetsToLNu_HT1200to2500 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: WJetsToLNu_HT200to400 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: WJetsToLNu_HT2500toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: WJetsToLNu_HT400to600 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: WJetsToLNu_HT600to800 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: WJetsToLNu_HT600toInf :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: WJetsToLNu_HT800to1200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: TToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: TbarToLeptons_tch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: TToLeptons_sch_amcatnlo:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: TBar_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: T_tWch:     xsec ;  FillColor=ROOT.kGray+2, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+_standard_fakes__from2Fakes: WWTo2L2Nu: xsec ; FillColor=ROOT.kGray+1, FakeRate="susy-multilepton/standard_sel_from2Fakes.txt", Label="2 fakes", SkipMe=True, FillStyle=3018
+
 
 # 2015D 25ns data
 
@@ -86,7 +188,7 @@ _promptratesub: TTWToLNu : xsec ;  FakeRate="susy-multilepton/mc_promptrate_subt
 _promptratesub: TTZToLLNuNu : xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H", FillColor=18, NormSystematic=0.4
 _promptratesub: TTLLJets_m1to10 : xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H", FillColor=18, NormSystematic=0.4
 _promptratesub: TTHnobb : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H", FillColor=18, NormSystematic=0.4
-_promptratesub: WZTo3LNu: xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WZ", FillColor=18, NormSystematic=0.4
+_promptratesub: WZTo3LNu: 1.22*xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WZ", FillColor=18, NormSystematic=0.4
 _promptratesub: WpWpJJ : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WWss", FillColor=18, NormSystematic=0.4
 _promptratesub: TTGJets : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR X+G", FillColor=18, NormSystematic=0.4
 _promptratesub: TGJets : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR X+G", FillColor=18, NormSystematic=0.4
@@ -147,7 +249,7 @@ _standard_prompt_ttW_jec_Up: TTWToLNu : xsec ; FillColor=ROOT.kAzure+2, FakeRate
 _standard_prompt_ttZH_jec_Up: TTZToLLNuNu : xsec ; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_jecUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
 _standard_prompt_ttZH_jec_Up: TTLLJets_m1to10 : xsec ; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_jecUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
 _standard_prompt_ttZH_jec_Up: TTHnobb : xsec; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_jecUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
-_standard_prompt_WZ_jec_Up: WZTo3LNu: xsec ; FillColor=ROOT.kOrange, FakeRate="susy-multilepton/standard_sel_jecUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WZ (prompt)", SkipMe=True
+_standard_prompt_WZ_jec_Up: WZTo3LNu: 1.22*xsec ; FillColor=ROOT.kOrange, FakeRate="susy-multilepton/standard_sel_jecUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WZ (prompt)", SkipMe=True
 _standard_prompt_WWss_jec_Up: WpWpJJ : xsec; FillColor=ROOT.kGreen+2, FakeRate="susy-multilepton/standard_sel_jecUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WWss (prompt)", SkipMe=True
 _standard_prompt_XG_jec_Up: TTGJets : xsec; FillColor=ROOT.kOrange-3, FakeRate="susy-multilepton/standard_sel_jecUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", SkipMe=True
 _standard_prompt_XG_jec_Up: TGJets : xsec; FillColor=ROOT.kOrange-3, FakeRate="susy-multilepton/standard_sel_jecUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", SkipMe=True
@@ -178,7 +280,7 @@ _standard_prompt_ttW_jec_Dn: TTWToLNu : xsec ; FillColor=ROOT.kAzure+2, FakeRate
 _standard_prompt_ttZH_jec_Dn: TTZToLLNuNu : xsec ; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_jecDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
 _standard_prompt_ttZH_jec_Dn: TTLLJets_m1to10 : xsec ; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_jecDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
 _standard_prompt_ttZH_jec_Dn: TTHnobb : xsec; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_jecDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
-_standard_prompt_WZ_jec_Dn: WZTo3LNu: xsec ; FillColor=ROOT.kOrange, FakeRate="susy-multilepton/standard_sel_jecDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WZ (prompt)", SkipMe=True
+_standard_prompt_WZ_jec_Dn: WZTo3LNu: 1.22*xsec ; FillColor=ROOT.kOrange, FakeRate="susy-multilepton/standard_sel_jecDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WZ (prompt)", SkipMe=True
 _standard_prompt_WWss_jec_Dn: WpWpJJ : xsec; FillColor=ROOT.kGreen+2, FakeRate="susy-multilepton/standard_sel_jecDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WWss (prompt)", SkipMe=True
 _standard_prompt_XG_jec_Dn: TTGJets : xsec; FillColor=ROOT.kOrange-3, FakeRate="susy-multilepton/standard_sel_jecDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", SkipMe=True
 _standard_prompt_XG_jec_Dn: TGJets : xsec; FillColor=ROOT.kOrange-3, FakeRate="susy-multilepton/standard_sel_jecDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", SkipMe=True
@@ -229,7 +331,7 @@ _promptratesub_ewk_Up: TTWToLNu : xsec ;  FakeRate="susy-multilepton/mc_promptra
 _promptratesub_ewk_Up: TTZToLLNuNu : xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
 _promptratesub_ewk_Up: TTLLJets_m1to10 : xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
 _promptratesub_ewk_Up: TTHnobb : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
-_promptratesub_ewk_Up: WZTo3LNu: xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WZ", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
+_promptratesub_ewk_Up: WZTo3LNu: 1.22*xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WZ", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
 _promptratesub_ewk_Up: WpWpJJ : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WWss", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
 _promptratesub_ewk_Up: TTGJets : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR X+G", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
 _promptratesub_ewk_Up: TGJets : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR X+G", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
@@ -249,7 +351,7 @@ _promptratesub_ewk_Dn: TTWToLNu : xsec ;  FakeRate="susy-multilepton/mc_promptra
 _promptratesub_ewk_Dn: TTZToLLNuNu : xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
 _promptratesub_ewk_Dn: TTLLJets_m1to10 : xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
 _promptratesub_ewk_Dn: TTHnobb : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
-_promptratesub_ewk_Dn: WZTo3LNu: xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WZ", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
+_promptratesub_ewk_Dn: WZTo3LNu: 1.22*xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WZ", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
 _promptratesub_ewk_Dn: WpWpJJ : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WWss", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
 _promptratesub_ewk_Dn: TTGJets : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR X+G", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
 _promptratesub_ewk_Dn: TGJets : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR X+G", FillColor=ROOT.kBlack, FillStyle=3005, SkipMe=True
@@ -276,7 +378,7 @@ _standard_prompt_ttW_bTag_Up: TTWToLNu : xsec ; FillColor=ROOT.kAzure+2, FakeRat
 _standard_prompt_ttZH_bTag_Up: TTZToLLNuNu : xsec ; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_btagUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
 _standard_prompt_ttZH_bTag_Up: TTLLJets_m1to10 : xsec ; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_btagUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
 _standard_prompt_ttZH_bTag_Up: TTHnobb : xsec; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_btagUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
-_standard_prompt_WZ_bTag_Up: WZTo3LNu: xsec ; FillColor=ROOT.kOrange, FakeRate="susy-multilepton/standard_sel_btagUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WZ (prompt)", SkipMe=True
+_standard_prompt_WZ_bTag_Up: WZTo3LNu: 1.22*xsec ; FillColor=ROOT.kOrange, FakeRate="susy-multilepton/standard_sel_btagUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WZ (prompt)", SkipMe=True
 _standard_prompt_WWss_bTag_Up: WpWpJJ : xsec; FillColor=ROOT.kGreen+2, FakeRate="susy-multilepton/standard_sel_btagUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WWss (prompt)", SkipMe=True
 _standard_prompt_XG_bTag_Up: TTGJets : xsec; FillColor=ROOT.kOrange-3, FakeRate="susy-multilepton/standard_sel_btagUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", SkipMe=True
 _standard_prompt_XG_bTag_Up: TGJets : xsec; FillColor=ROOT.kOrange-3, FakeRate="susy-multilepton/standard_sel_btagUp.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", SkipMe=True
@@ -303,7 +405,7 @@ _standard_prompt_ttW_bTag_Dn: TTWToLNu : xsec ; FillColor=ROOT.kAzure+2, FakeRat
 _standard_prompt_ttZH_bTag_Dn: TTZToLLNuNu : xsec ; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_btagDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
 _standard_prompt_ttZH_bTag_Dn: TTLLJets_m1to10 : xsec ; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_btagDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
 _standard_prompt_ttZH_bTag_Dn: TTHnobb : xsec; FillColor=ROOT.kGreen-6, FakeRate="susy-multilepton/standard_sel_btagDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="ttZ/H (prompt)", SkipMe=True
-_standard_prompt_WZ_bTag_Dn: WZTo3LNu: xsec ; FillColor=ROOT.kOrange, FakeRate="susy-multilepton/standard_sel_btagDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WZ (prompt)", SkipMe=True
+_standard_prompt_WZ_bTag_Dn: WZTo3LNu: 1.22*xsec ; FillColor=ROOT.kOrange, FakeRate="susy-multilepton/standard_sel_btagDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WZ (prompt)", SkipMe=True
 _standard_prompt_WWss_bTag_Dn: WpWpJJ : xsec; FillColor=ROOT.kGreen+2, FakeRate="susy-multilepton/standard_sel_btagDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="WWss (prompt)", SkipMe=True
 _standard_prompt_XG_bTag_Dn: TTGJets : xsec; FillColor=ROOT.kOrange-3, FakeRate="susy-multilepton/standard_sel_btagDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", SkipMe=True
 _standard_prompt_XG_bTag_Dn: TGJets : xsec; FillColor=ROOT.kOrange-3, FakeRate="susy-multilepton/standard_sel_btagDown.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="X+G (conv.)", SkipMe=True

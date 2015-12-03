@@ -2,9 +2,9 @@
 
 # Fakes+flips
 
-_standard_fakes_TT: TTJets_DiLepton: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
-_standard_fakes_TT: TTJets_SingleLeptonFromT: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
-_standard_fakes_TT: TTJets_SingleLeptonFromTbar: xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
+_standard_fakes_TT: TTJets_DiLepton: 1.52249*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
+_standard_fakes_TT: TTJets_SingleLeptonFromT: 1.598029*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
+_standard_fakes_TT: TTJets_SingleLeptonFromTbar: 1.58966*xsec ;  FillColor=ROOT.kGray, FakeRate="susy-multilepton/standard_sel.txt", Label="TT (fakes\,flips)"
 _standard_fakes_DY: DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel.txt", Label="DY (fakes\,flips)"
 _standard_fakes_DY: DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan, FakeRate="susy-multilepton/standard_sel.txt", Label="DY (fakes\,flips)"
 _standard_fakes_WJets: WJetsToLNu_HT100to200 :  xsec; FillColor=ROOT.kCyan+2, FakeRate="susy-multilepton/standard_sel.txt", Label="WJets (fakes)"
@@ -43,7 +43,7 @@ _promptratesub_ttW: TTWToLNu : xsec ;  FakeRate="susy-multilepton/mc_promptrate_
 _promptratesub_ttZH: TTZToLLNuNu : xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H"
 _promptratesub_ttZH: TTLLJets_m1to10 : xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H"
 _promptratesub_ttZH: TTHnobb : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR ttZ/H"
-_promptratesub_WZ: WZTo3LNu: xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WZ"
+_promptratesub_WZ: WZTo3LNu: 1.22*xsec ;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WZ"
 _promptratesub_WWss: WpWpJJ : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR WWss"
 _promptratesub_XG: TTGJets : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR X+G"
 _promptratesub_XG: TGJets : xsec;  FakeRate="susy-multilepton/mc_promptrate_subtr_sel.txt\,susy-multilepton/load_is_2_prompt_loop.txt", Label="PR X+G"

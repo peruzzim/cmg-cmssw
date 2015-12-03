@@ -25,8 +25,8 @@
 #TTGJets: TTGJets: xsec
 #TTHnobb: TTHnobb: xsec
 #TTJets: TTJets: xsec
-#TTJets_DiLepton: TTJets_DiLepton: xsec
-#TTJets_SingleLeptonFromT: TTJets_SingleLeptonFromT: xsec
+#TTJets_DiLepton: TTJets_DiLepton: 1.52249*xsec
+#TTJets_SingleLeptonFromT: TTJets_SingleLeptonFromT: 1.598029*xsec
 
 
 #TTLLJets_m1to10: TTLLJets_m1to10: xsec
@@ -37,7 +37,7 @@
 #WGToLNuG: WGToLNuG: xsec
 #WWDouble: WWDouble: xsec
 #WWZ: WWZ: xsec
-#WZTo3LNu: WZTo3LNu: xsec
+#WZTo3LNu: WZTo3LNu: 1.22*xsec
 #WZZ: WZZ: xsec
 #WpWpJJ: WpWpJJ: xsec
 #ZGTo2LG: ZGTo2LG: xsec
@@ -45,7 +45,7 @@
 #ZZZ: ZZZ: xsec
 tZq_ll: tZq_ll: xsec
 #
-#TTJets_SingleLeptonFromTbar: TTJets_SingleLeptonFromTbar: xsec
+#TTJets_SingleLeptonFromTbar: TTJets_SingleLeptonFromTbar: 1.58966*xsec
 #TToLeptons_sch_amcatnlo: TToLeptons_sch_amcatnlo: xsec
 #TToLeptons_tch: TToLeptons_tch: xsec
 #T_tWch: T_tWch: xsec
