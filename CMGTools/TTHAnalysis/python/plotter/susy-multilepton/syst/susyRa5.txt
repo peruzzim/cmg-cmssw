@@ -19,7 +19,7 @@ bTag	     : _sig_.* : .* : bTag	: templates
 bTag	     : _standard_prompt_.* : .* : bTag	: templates
 
 fakesrate    : _fakesappl_data : .* : 1.30
-flipsrate    : _flipsappl_data : .* : 1.35
+flipsrate    : _flipsappl_data : .* : 1.26
 
 ewk_sub	     : _fakesappl_data : .* : ewk : templates
 
