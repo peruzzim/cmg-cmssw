@@ -36,26 +36,28 @@ def haddPck(file, odir, idirs):
     txtFile.close()
     
 
-def hadd(file, odir, idirs):
+def hadd(file, odir, idirs, eosmountpoint=None):
     if file.endswith('.pck'):
         try:
             haddPck( file, odir, idirs)
         except ImportError:
             pass
         return
-    elif not file.endswith('.root'):
-        return
-    haddCmd = ['hadd']
-    haddCmd.append( file.replace( idirs[0], odir ) )
-    for dir in idirs:
-        haddCmd.append( file.replace( idirs[0], dir ) )
-    # import pdb; pdb.set_trace()
-    cmd = ' '.join(haddCmd)
-    print cmd
-    os.system(cmd)
+    elif (file.endswith('.root') or file.endswith('.root.url')):
+        haddCmd = ['hadd']
+        haddCmd.append( file.replace( idirs[0], odir ).rstrip('.url') )
+        for dir in idirs:
+            fname = file.replace( idirs[0], dir ).rstrip('.url')
+            if os.path.exists(fname) and os.path.exists(fname+'.url'): raise RuntimeError, 'Both .root and .root.url files are present for %s!'%fname
+            if (not os.path.exists(fname)) and os.path.exists(fname+'.url'): fname = open(fname+'.url','r').readline().strip().replace('root://eoscms.cern.ch/',eosmountpoint)
+            haddCmd.append( fname )
+        cmd = ' '.join(haddCmd)
+        print cmd
+        os.system(cmd)
+    else: return
 
 
-def haddRec(odir, idirs):
+def haddRec(odir, idirs, eosmountpoint=None):
     print 'adding', idirs
     print 'to', odir 
 
@@ -79,9 +81,9 @@ def haddRec(odir, idirs):
             # os.system(cmd)
             os.mkdir(dir)
         for file in files:
-            hadd('/'.join([root, file]), odir, idirs)
+            hadd('/'.join([root, file]), odir, idirs, eosmountpoint)
 
-def haddChunks(idir, removeDestDir, cleanUp=False, odir_cmd='./'):
+def haddChunks(idir, removeDestDir, cleanUp=False, eosmountpoint=None, odir_cmd='./'):
     chunks = {}
     for file in sorted(os.listdir(idir)):
         filepath = '/'.join( [idir, file] )
@@ -104,7 +106,7 @@ def haddChunks(idir, removeDestDir, cleanUp=False, odir_cmd='./'):
         if removeDestDir:
             if os.path.isdir( odir ):
                 shutil.rmtree(odir)
-        haddRec(odir, cchunks)
+        haddRec(odir, cchunks, eosmountpoint)
     if cleanUp:
         chunkDir = 'Chunks'
         if os.path.isdir('Chunks'):
@@ -132,10 +134,13 @@ if __name__ == '__main__':
     """
     parser.add_option("-r","--remove", dest="remove",
                       default=False,action="store_true",
-                      help="remove existing destination directories.")
+                      help="remove existing destination directories."
     parser.add_option("-c","--clean", dest="clean",
                       default=False,action="store_true",
                       help="move chunks to Chunks/ after processing.")
+    parser.add_option("--eos", dest="eosmountpoint",
+                      default=None,
+                      help="read trees from this EOS mount point, if not present locally")
 
     (options,args) = parser.parse_args()
 
@@ -149,5 +154,5 @@ if __name__ == '__main__':
     else:
       odir='./'
 
-    haddChunks(dir, options.remove, options.clean, odir)
+    haddChunks(dir, options.remove, options.clean, options.eosmountpoint, odir)
 
