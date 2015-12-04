@@ -1,20 +1,21 @@
 #!/bin/bash
 
 if [[ "$1" == "afs" ]]; then
-    T="~/work/ra5trees/skimmed_nov12";
+    T="~/work/ra5trees/skimmed_mix_nov22";
     J=4;
 elif [[ "$HOSTNAME" == "cmsphys10" ]]; then
-    T="/data1/p/peruzzi/skimmed_nov12";
+    T="/data1/p/peruzzi/skimmed_mix_nov22";
     J=8;
 else
-    T="~/work/ra5trees/skimmed_nov12";
+    T="~/work/ra5trees/skimmed_mix_nov22";
     J=4;
 fi
 
-LUMI=1.28
+LUMI=2.11
 OUTDIR="susy_cards"
-OPTIONS=" -P $T --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {P}/3_recleaner/evVarFriend_{cname}.root -F sf/t {P}/4_choice/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -f -j $J --od $OUTDIR --FMC sf/t {P}/1_pu_runD_258750/evVarFriend_{cname}.root -W vtxWeight*btagMediumSF_Mini -l $LUMI --plotgroup _fakesappl_data+=_promptratesub --plotgroup _fakesappl_data_ewk_Up+=_promptratesub_ewk_Up --plotgroup _fakesappl_data_ewk_Dn+=_promptratesub_ewk_Dn  -X lep1_pt25 -X lep2_pt25 -A alwaystrue SR_ii SR>0 --xp _standard_fakes_.*"
-OPTIONS="$OPTIONS --postfix-pred .**=cutCentralValueAtZero"
+OPTIONS=" -P $T --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {P}/5_allnewfriends_v7/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -f -j $J --od $OUTDIR --FMC sf/t {P}/1_purew_mix_true_nvtx/evVarFriend_{cname}.root -W vtxWeight*btagMediumSF_Mini*triggerSF_Loop*leptonSF_Loop -l $LUMI --plotgroup _fakesappl_data+=_promptratesub --plotgroup _fakesappl_data_ewk_Up+=_promptratesub_ewk_Up --plotgroup _fakesappl_data_ewk_Dn+=_promptratesub_ewk_Dn  -X lep1_pt25 -X lep2_pt25 -A alwaystrue SR_ii SR>0 --xp _standard_fakes_.* --xp _sig_SMS_.*"
+OPTIONS="$OPTIONS --postfix-pred (?!_fakesappl_data).**=cutCentralValueAtZero --postfix-pred _fakesappl_data*=takeFakesPredictionFromMC"
+
 
 function makeCard_2lss {
     local EXPR=$1; local BINS=$2; local SYSTS=$3; local OUT=$4; local GO=$5
@@ -55,6 +56,18 @@ if [[ "$1" == "ra5" ]]; then
 
     makeCard_2lss $CnC_expr $CnC_bins $SYSTS SR "$OPTIONS";
 
+    echo "Done at $(date)";
+
+elif [[ "$1" == "ra5_MI_highHT" ]]; then
+    SYSTS="susy-multilepton/syst/susyRa5_MI_highHT.txt"
+    CnC_expr="1"
+    CnC_bins="1,0.5,1.5"
+
+    if [[ "$3" == "HT" ]]; then
+    makeCard_2lss $CnC_expr $CnC_bins $SYSTS SR_$2_HT$4 "$OPTIONS -A alwaystrue HT300 htJet40j_Mini>300 -A alwaystrue SR_$2 SR==$2 --postfix-pred _sig_.**=normTo1Observed -A alwaystrue HT_$4 htJet40j_Mini>$4";
+    elif [[ "$3" == "MET" ]]; then
+    makeCard_2lss $CnC_expr $CnC_bins $SYSTS SR_$2_MET$4 "$OPTIONS -A alwaystrue HT300 htJet40j_Mini>300 -A alwaystrue SR_$2 SR==$2 --postfix-pred _sig_.**=normTo1Observed -A alwaystrue MET_$4 met_pt>$4";
+    fi
     echo "Done at $(date)";
 
 #elif [[ "$1" == "2lss-2012" ]]; then

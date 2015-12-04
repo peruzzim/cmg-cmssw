@@ -17,11 +17,33 @@ options.weight = True
 options.final  = True
 options.allProcesses  = True
 
-def cutCentralValueAtZero(mca,cut,pname,oldplot):
+def cutCentralValueAtZero(mca,cut,pname,oldplots):
+    if pname=='data': return
+    oldplot = oldplots[pname]
     for b in xrange(1,oldplot.GetNbinsX()+1):
         if oldplot.GetBinContent(b)<=0:
+            old = oldplot.GetBinContent(b),oldplot.GetBinError(b)
             oldplot.SetBinContent(b,1e-5)
             oldplot.SetBinError(b,1e-6)
+            if old!=(0,0): print 'cutCentralValueAtZero: Fixing bin %d in %s: set to %f +/- %f (was %f +/- %f)'%(b,pname,oldplot.GetBinContent(b),oldplot.GetBinError(b),old[0],old[1])
+
+def takeFakesPredictionFromMC(mca,cut,pname,oldplots):
+    if pname=='data': return
+    oldplot = oldplots[pname]
+    for b in xrange(1,oldplot.GetNbinsX()+1):
+        if oldplot.GetBinContent(b)<=0:
+            old= oldplot.GetBinContent(b),oldplot.GetBinError(b)
+            oldplot.SetBinContent(b,1e-5)
+            new = oldplots['_special_TT_foremptybins'].GetBinContent(b)
+            oldplot.SetBinError(b,new if new>1e-4 else 1e-6)
+            print 'takeFakesPredictionFromMC: Fixing bin %d in %s: set to %f +/- %f (was %f +/- %f)'%(b,pname,oldplot.GetBinContent(b),oldplot.GetBinError(b),old[0],old[1])
+
+def normTo1Observed(mca,cut,pname,oldplots):
+    if pname=='data': return
+    oldplot = oldplots[pname]
+    old = oldplot.Integral()
+    oldplot.Scale(1.0/old)
+    print 'normTo1Observed: Normalizing %s to 1 (was %f)'%(pname,old)
 
 def compilePostFixMap(inlist,relist):
     for m in inlist:
@@ -43,7 +65,8 @@ report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.a
 
 for post in postfixes:
     for rep in report:
-        if re.match(post[0],rep): post[1](mca,cuts.allCuts(),rep,report[rep])
+        if re.match(post[0],rep): post[1](mca,cuts.allCuts(),rep,report)
+if '_special_TT_foremptybins' in report: del report['_special_TT_foremptybins']
 
 #def fixClopperPearsonForXG0b(mca,cut,pname,oldplot):
 #    for b in xrange(1,oldplot.GetNbinsX()+1):
