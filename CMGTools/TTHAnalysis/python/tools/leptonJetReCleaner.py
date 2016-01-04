@@ -56,6 +56,7 @@ class LeptonJetReCleaner:
             ("LepGood_isTight"+label,"I",20,"nLepGood"),("LepGood_isTightVeto"+label,"I",20,"nLepGood"),
             ("LepGood_mcMatchPdgId","F",20,"nLepGood"), # calculate conept and matched charge, now calculated in production
             ]
+        if self.isFastSim: biglist.append(("pTGluinoPair","F"))
         for key in self.systsBTAG:
             biglist.append(("btagMediumSF"+self.systsBTAG[key]+label, "F"))
         for key in self.systsJEC:
@@ -89,6 +90,16 @@ class LeptonJetReCleaner:
         lepspassveto = [ refcollection[il] for il in ret['i'+lab+'V']  ]
         return (ret,lepspass,lepspassveto)
 
+    def ptFirstPair(self, parts, pdgId, requireOnePair=False):
+        gluinos = [p for p in parts if abs(p.pdgId)==pdgId]
+        if len(gluinos)<2:
+            if requireOnePair: raise RuntimeError, 'No pair found'
+            return -1
+        elif len(gluinos)>2:
+            if requireOnePair: raise RuntimeError, 'More pairs found'
+            gluinos = sorted(gluinos, key = lambda x : x.pt, reverse=True)[:2]
+        dphi = gluinos[1].phi-gluinos[0].phi
+        return hypot(gluinos[0].pt + (gluinos[1].pt)*cos(dphi), (gluinos[1].pt)*sin(dphi));
 
     def matchLeptons(self, ret, leps, genleps, genlepsfromtau, event):
 
@@ -300,6 +311,7 @@ class LeptonJetReCleaner:
         fullret["LepGood_conePt"] = [lep.conept for lep in leps]
         fullret["LepGood_mcMatchPdgId"] = [0] * len(leps)
         if not event.isData: self.matchLeptons(fullret,leps,[l for l in Collection(event,"genLep","ngenLep")],[l for l in Collection(event,"genLepFromTau","ngenLepFromTau")],event)
+        if self.isFastSim:  fullret["pTGluinoPair"] = self.ptFirstPair(Collection(event,'GenPart','nGenPart'), 1000021, requireOnePair=True)
         for k,v in ret.iteritems(): 
             fullret[k+self.label] = v
         for k,v in jetret.iteritems(): 
