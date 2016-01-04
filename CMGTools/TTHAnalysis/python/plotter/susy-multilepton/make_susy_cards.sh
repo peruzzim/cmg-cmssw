@@ -11,7 +11,7 @@ else
     J=4;
 fi
 
-LUMI=2.11
+LUMI=2.16
 OUTDIR="susy_cards"
 OPTIONS=" -P $T --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {P}/5_allnewfriends_v7/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -f -j $J --od $OUTDIR --FMC sf/t {P}/1_purew_mix_true_nvtx/evVarFriend_{cname}.root -W vtxWeight*btagMediumSF_Mini*triggerSF_Loop*leptonSF_Loop -l $LUMI --plotgroup _fakesappl_data+=_promptratesub --plotgroup _fakesappl_data_ewk_Up+=_promptratesub_ewk_Up --plotgroup _fakesappl_data_ewk_Dn+=_promptratesub_ewk_Dn  -X lep1_pt25 -X lep2_pt25 -A alwaystrue SR_ii SR>0 --xp _standard_fakes_.* --xp _sig_SMS_.*"
 OPTIONS="$OPTIONS --postfix-pred (?!_fakesappl_data).**=cutCentralValueAtZero --postfix-pred _fakesappl_data*=takeFakesPredictionFromMC"
