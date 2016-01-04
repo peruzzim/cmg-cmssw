@@ -1,7 +1,7 @@
 ### experimental uncertainties
 
-lumi         : _sig_.* : .* : 1.12
-lumi         : _standard_prompt_(?!WZ) : .* : 1.12
+lumi         : _sig_.* : .* : 1.046
+lumi         : _standard_prompt_(?!WZ) : .* : 1.046
 
 lepeff	     : _sig_.* : .* : 1.04
 lepeff	     : _standard_prompt_.* : .* : 1.04
