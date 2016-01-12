@@ -21,9 +21,9 @@ from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import LeptonChoiceRA5
 #                lambda lep : lep.mvaTTH > 0.6 and lep.mediumMuonId,
 #                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4)) ))
 from CMGTools.TTHAnalysis.tools.angular_vars import angular_vars 
-MODULES.append( ('angular_vars', angular_vars()) )
+MODULES.append( ('angular_vars', lambda : angular_vars()) )
 from CMGTools.TTHAnalysis.tools.sort_3l import Sort3L 
-MODULES.append( ('sort_3l', Sort3L()) )
+MODULES.append( ('sort_3l', lambda : Sort3L()) )
 
 isFastSim = False
 

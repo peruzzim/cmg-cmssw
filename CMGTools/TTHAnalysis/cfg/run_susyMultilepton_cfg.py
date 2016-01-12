@@ -669,6 +669,15 @@ elif test == '74X-MC':
         if not os.path.exists(tmpfil):
             os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
         comp.files = [ tmpfil ]
+    elif what == "TTLep_V2":
+        selectedComponents = [ TTLep_pow ]
+        comp = selectedComponents[0]
+        comp.files = [ '/store/mc/RunIISpring15MiniAODv2/TTTo2L2Nu_13TeV-powheg/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/10000/004613BA-C46D-E511-9EB6-001E67248732.root' ]
+        if is50ns: raise RuntimeError, 'Incorrect is50ns configuration'
+        tmpfil = os.path.expandvars("/tmp/$USER/004613BA-C46D-E511-9EB6-001E67248732.root")
+        if not os.path.exists(tmpfil):
+            os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
+        comp.files = [ tmpfil ]
     elif what == "TT":
         ttHLepSkim.minLeptons = 0
         selectedComponents = [ TT_bx25 ]
