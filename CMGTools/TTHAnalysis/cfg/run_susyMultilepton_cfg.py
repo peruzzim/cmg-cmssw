@@ -133,7 +133,7 @@ tauAna.loose_etaMax = 2.3
 #tauAna.loose_vetoLeptonsPOG = True
 #tauAna.loose_tauAntiMuonID = "againstMuonTight"
 #tauAna.loose_tauAntiElectronID = "againstElectronLoose"
-if False: #if cleaning jet-loose tau cleaning
+if True: #if cleaning jet-loose tau cleaning
     jetAna.cleanJetsFromTaus = True
     jetAnaScaleUp.cleanJetsFromTaus = True
     jetAnaScaleDown.cleanJetsFromTaus = True
