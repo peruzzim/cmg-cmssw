@@ -62,10 +62,6 @@ case $WHAT in
         $RUN && do_run $DIR -o test=74X-MC -o sample=TTLep -N 2000 -o doT1METCorr -o noMETNoHF;
         do_plot TTLep_pow TTLep_pow
         ;;
-    MCv2)
-        $RUN && do_run $DIR -o test=74X-MC -o sample=TTLep_V2 -N 2000 -o doT1METCorr -o noMETNoHF -o old74XMiniAODs=False;
-        do_plot TTLep_pow TTLep_pow .v2
-        ;;
     MC_PreProc)
         $RUN && do_run $DIR -o test=74X-MC -o sample=TTLep -N 2000 -o doMETpreprocessor;
         do_plot TTLep_pow TTLep_pow
