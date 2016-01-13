@@ -466,10 +466,10 @@ if runData and not isTest: # For running on data
         DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
 
         if runDataQCD: # for fake rate measurements in data
-            lepAna.loose_muon_dxy = 999
-            lepAna.loose_electron_dxy = 999
+#            lepAna.loose_muon_dxy = 999
+#            lepAna.loose_electron_dxy = 999
             ttHLepSkim.minLeptons = 1
-            FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso
+            FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
             for t in FRTrigs:
                 tShort = t.replace("HLT_","FR_").replace("_v*","")
                 triggerFlagsAna.triggerBits[tShort] = [ t ]
@@ -514,11 +514,11 @@ if runData and not isTest: # For running on data
         susyCoreSequence.remove(jsonAna)
 
 if runFRMC: # QCD
-    selectedComponents = QCD_MuX_50ns + QCD_ElX + [DYJetsToLL_M50_50ns, WJetsToLNu_50ns, TTJets_50ns]
-    lepAna.loose_muon_dxy = 999
-    lepAna.loose_electron_dxy = 999
+    selectedComponents = QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE
+#    lepAna.loose_muon_dxy = 999
+#    lepAna.loose_electron_dxy = 999
     ttHLepSkim.minLeptons = 1
-    FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso
+    FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
     for c in selectedComponents:
         c.triggers = [] # FRTrigs
         c.vetoTriggers = [] 
