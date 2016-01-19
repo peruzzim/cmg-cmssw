@@ -32,9 +32,17 @@ class Event(object):
             # check for recursivity
             recursive = False
             if hasattr(value, '__getitem__') and \
-               not isinstance(value, collections.Mapping) and \
-               (len(value)>0 and value[0].__class__ == value.__class__):
+               not isinstance(value, collections.Mapping):
+               try:
+                   if (len(value)>0 and value[0].__class__ == value.__class__):
                     recursive = True
+               except OverflowError as e:
+                   print 'Overflow error occurred in variable %s'%var
+                   print 'iEv', self.iEv
+                   print 'run', self.run
+                   print 'lumi', self.lumi
+                   print 'evt', self.eventId
+                   raise e
             if hasattr(value, '__contains__') and \
                    not isinstance(value, (str,unicode)) and \
                    not isinstance(value, TChain) and \
