@@ -19,7 +19,7 @@ class MyVarProxy:
     def pdgId(self): return self._ob.pdgId
 
 class LeptonJetReCleaner:
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,CSVbtagFileName=None,EFFbtagFileName=None,CSVbtagFileNameFastSim=None,isFastSim=False):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,CSVbtagFileName=None,EFFbtagFileName=None,CSVbtagFileNameFastSim=None,isFastSim=False,cleanWithTaus=False):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
@@ -36,6 +36,7 @@ class LeptonJetReCleaner:
         if (CSVbtagFileName or EFFbtagFileName or CSVbtagFileNameFastSim): self.init_btagMediumScaleFactor(CSVbtagFileName,EFFbtagFileName,CSVbtagFileNameFastSim)
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
         self.systsBTAG = {0:"", 1:"_BCUp", -1:"_BCDown", 2:"_LightUp", -2:"_LightDown", 3:"_FS_BCUp", -3:"_FS_BCDown", 4:"_FS_LightUp", -4:"_FS_LightDown"}
+        self.cleanWithTaus = cleanWithTaus
         self.debugprinted = False
     def listBranches(self):
         label = self.label
@@ -270,6 +271,7 @@ class LeptonJetReCleaner:
     def __call__(self,event):
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         for lep in leps: lep.conept = conept(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)
+        taus_forclean = [t for t in Collection(event,"TauGood","nTauGood")] if self.cleanWithTaus else []
         jetsc={}
         jetsd={}
         for var in self.systsJEC:
@@ -295,7 +297,7 @@ class LeptonJetReCleaner:
         for var in self.systsJEC:
             cleanjets[var]=[]
             cleanBjets[var]=[]
-            cleanjets[var],cleanBjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc,self.systsJEC[var],ret,jetret,(var==0))
+            cleanjets[var],cleanBjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc+taus_forclean,self.systsJEC[var],ret,jetret,(var==0))
 
         for var in self.systsBTAG: ret["btagMediumSF"+self.systsBTAG[var]]=self.btagMediumScaleFactor(event,cleanBjets[0],cleanjets[0],var) if self.do_btagSF else 1.0
 

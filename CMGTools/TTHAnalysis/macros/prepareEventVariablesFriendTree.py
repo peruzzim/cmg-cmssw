@@ -34,14 +34,15 @@ btagSF_FastSim = utility_files_dir+"/CSV_13TEV_Combined_20_11_2015_FullSim_FastS
 
 #--- Susy multilep instances
 MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", 
-                   lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8 and _tthlep_lepId(lep), # cuts applied on top of loose
-                   lambda lep : True, # cuts applied on top of loose
-                   lambda lep,ht : True, # cuts applied on top of loose
-                   lambda lep,ht : (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.6, # cuts applied on top of loose
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8 and _tthlep_lepId(lep),
+                   cleaningLeptonSel = lambda lep : lep.pt>10, # cuts applied on top of loose
+                   FOLeptonSel = lambda lep,ht : lep.pt>10, # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.pt>10 and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.6, # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   isFastSim = isFastSim,
-                   CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF, CSVbtagFileNameFastSim = btagSF_FastSim ) ))
+                   isFastSim = False,
+                   CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
+                   cleanWithTaus = True ) ))
 
 #--- Susy multilep instances
 MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini", 
