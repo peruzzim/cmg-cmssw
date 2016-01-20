@@ -335,12 +335,13 @@ def _tthlep_lepId(lep):
         #if lep.pt <= 10: return False
         if abs(lep.pdgId) == 13:
             if lep.pt <= 5: return False
-            return True #lep.mediumMuonId > 0
+            if not lep.tightCharge >= 1: return False
+            return True
         elif abs(lep.pdgId) == 11:
             if lep.pt <= 7: return False
-            if not (lep.convVeto and lep.lostHits == 0): 
+            if not (lep.convVeto and lep.lostHits == 0 and lep.tightCharge >= 2): 
                 return False
-            return True #lep.mvaIdPhys14 > 0.73+(0.57-0.74)*(abs(lep.eta)>0.8)+(0.05-0.57)*(abs(lep.eta)>1.479)
+            return True
         return False
 
 def _susy2lss_lepId_CBloose(lep):
