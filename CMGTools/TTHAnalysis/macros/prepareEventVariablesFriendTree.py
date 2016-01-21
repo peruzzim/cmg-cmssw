@@ -11,6 +11,7 @@ from CMGTools.TTHAnalysis.tools.susyVars_2lssInc import SusyVars2LSSInc
 MODULES.append( ('susy2lss', lambda : SusyVars2LSSInc()) )
 from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner,_susy2lss_lepId_CB,_susy2lss_lepId_CBloose,_susy2lss_multiIso,_tthlep_lepId,_susy2lss_idEmu_cuts,_susy2lss_idIsoEmu_cuts,_susy2lss_lepId_loosestFO,_susy2lss_lepId_tighterFO,_susy2lss_lepId_IPcuts,_susy2lss_lepConePt1015,_susy2lss_lepId_inSituLoosestFO,_susy2lss_lepId_inSituTighterFO,_susy2lss_multiIso_relaxedForInSituApp
 from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import LeptonChoiceRA5
+from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_TTH
 ##--- TTH instances
 #MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("I03Sip8", 
 #                lambda lep : lep.relIso03 < 0.5 and lep.sip3d < 8 and _tthlep_lepId(lep), 
@@ -34,15 +35,50 @@ btagSF_FastSim = utility_files_dir+"/CSV_13TEV_Combined_20_11_2015_FullSim_FastS
 
 #--- Susy multilep instances
 MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", 
-                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8 and _tthlep_lepId(lep),
-                   cleaningLeptonSel = lambda lep : lep.pt>10, # cuts applied on top of loose
-                   FOLeptonSel = lambda lep,ht : lep.pt>10, # cuts applied on top of loose
-                   tightLeptonSel = lambda lep,ht : lep.pt>10 and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.6, # cuts applied on top of loose
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
+                   cleaningLeptonSel = lambda lep : lep.conept>10, # cuts applied on top of loose
+                   FOLeptonSel = lambda lep,ht : lep.conept>10, # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.6, # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
-                   selectJet = lambda jet: abs(jet.eta)<2.4,
+                   selectJet = lambda jet: abs(jet.eta)<2.4, # also cuts on the discarded jets as calculated by the recleaner
                    isFastSim = False,
                    CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
-                   cleanWithTaus = True ) ))
+                   cleanWithTaus = False,
+                   coneptdef = lambda lep: conept_TTH(lep) ) ))
+
+MODULES.append( ('leptonJetReCleanerTTHbtagTightVeto', lambda : LeptonJetReCleaner("ReclBtagTightVeto", 
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
+                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.97, # cuts applied on top of loose
+                   FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.97, # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.97 and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.6, # cuts applied on top of loose
+                   cleanJet = lambda lep,jet,dr : dr<0.4,
+                   selectJet = lambda jet: abs(jet.eta)<2.4, # also cuts on the discarded jets as calculated by the recleaner
+                   isFastSim = False,
+                   CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
+                   cleanWithTaus = False,
+                   coneptdef = lambda lep: conept_TTH(lep) ) ))
+MODULES.append( ('leptonJetReCleanerTTHbtagMediumVeto', lambda : LeptonJetReCleaner("ReclBtagMediumVeto", 
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
+                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.89, # cuts applied on top of loose
+                   FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89, # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.6, # cuts applied on top of loose
+                   cleanJet = lambda lep,jet,dr : dr<0.4,
+                   selectJet = lambda jet: abs(jet.eta)<2.4, # also cuts on the discarded jets as calculated by the recleaner
+                   isFastSim = False,
+                   CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
+                   cleanWithTaus = False,
+                   coneptdef = lambda lep: conept_TTH(lep) ) ))
+MODULES.append( ('leptonJetReCleanerTTHconept15', lambda : LeptonJetReCleaner("ReclConept15", 
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
+                   cleaningLeptonSel = lambda lep : lep.conept>15, # cuts applied on top of loose
+                   FOLeptonSel = lambda lep,ht : lep.conept>15, # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.conept>15 and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.6, # cuts applied on top of loose
+                   cleanJet = lambda lep,jet,dr : dr<0.4,
+                   selectJet = lambda jet: abs(jet.eta)<2.4, # also cuts on the discarded jets as calculated by the recleaner
+                   isFastSim = False,
+                   CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
+                   cleanWithTaus = False,
+                   coneptdef = lambda lep: conept_TTH(lep) ) ))
 
 #--- Susy multilep instances
 MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini", 
@@ -53,6 +89,8 @@ MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini"
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
                    isFastSim = isFastSim,
+                   cleanWithTaus = False,
+                   coneptdef = lambda lep: conept_RA5(lep),
                    CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF, CSVbtagFileNameFastSim = btagSF_FastSim ) ))
 
 #MODULES.append( ('leptonJetReCleanerSusyInSitu', lambda : LeptonJetReCleaner("MiniInSitu", 
