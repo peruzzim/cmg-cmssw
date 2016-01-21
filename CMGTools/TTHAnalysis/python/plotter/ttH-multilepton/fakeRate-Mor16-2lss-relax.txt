@@ -1,0 +1,3 @@
+cut-change: LepGood_isTight_Recl(\[\w+\]): 1
+cut-change: nLepTight_Recl: 2
+weight: 1
