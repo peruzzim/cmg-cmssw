@@ -4,8 +4,8 @@ metLD: met*0.00397 + mhtJet25*0.00265 : 50,-0.1,1.4 ; XTitle="E_{T}^{miss} LD", 
 metLD_log: met*0.00397 + mhtJet25*0.00265 : 50,-0.1,1.4 ; XTitle="E_{T}^{miss} LD",Logy, LegendCutoff=1e-2,  Legend='TR'
 mZ1_wide_log: mZ1: 60,0,180 ; XTitle="best m(l^{+}l^{-})  [GeV]", Legend='TR',Logy,LegendCutoff=1e-2
 mZ1: mZ1: 60,60,120 ; XTitle="best m(l^{+}l^{-})  [GeV]", Legend='TL'
-lepMVA3: min(min(LepGood1_mvaNew,LepGood2_mvaNew),LepGood3_mvaNew) : 50,-1,1; XTitle="Lepton MVA(l_{1}\,l_{2}\,l_{3})",Legend='TL'
-lepMVA3_log: min(min(LepGood1_mvaNew,LepGood2_mvaNew),LepGood3_mvaNew): 50,-1,1; XTitle="Lepton MVA(l_{1}\,l_{2}\,l_{3})",Legend='TL',Logy, LegendCutoff=1e-2
+#lepMVA3: min(min(LepGood1_mvaNew,LepGood2_mvaNew),LepGood3_mvaNew) : 50,-1,1; XTitle="Lepton MVA(l_{1}\,l_{2}\,l_{3})",Legend='TL'
+#lepMVA3_log: min(min(LepGood1_mvaNew,LepGood2_mvaNew),LepGood3_mvaNew): 50,-1,1; XTitle="Lepton MVA(l_{1}\,l_{2}\,l_{3})",Legend='TL',Logy, LegendCutoff=1e-2
 
 
 

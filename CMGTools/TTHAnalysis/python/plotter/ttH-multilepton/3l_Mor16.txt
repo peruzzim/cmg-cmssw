@@ -1,0 +1,14 @@
+alwaystrue: 1
+3 FO and tight leptons: nLepFO_Recl>=3 && nLepTight_Recl>=3
+cleanup: minMllAFAS > 12
+trigger: Triggers_3l
+pt2010: LepGood1_conePt>20 && LepGood2_conePt>10 && LepGood3_conePt>10
+TTT: LepGood1_isTight_Recl && LepGood2_isTight_Recl && LepGood3_isTight_Recl
+Z veto: abs(mZ1-91.2) > 10
+met LD: nJet25 >= 4 || met*0.00397 + mhtJet25*0.00265 > 0.2 + 0.1*(mZ1 > 0)
+
+ele conv cuts: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0))
+
+2j: nJet25>=2
+2b loose: nBJetLoose25 >= 2 || nBJetMedium25 >= 1
+2B tight: nBJetMedium25 >= 2

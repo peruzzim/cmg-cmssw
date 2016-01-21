@@ -1,7 +1,7 @@
 nBJetLoose25 : nBJetLoose25 : 5,-0.5,4.5 ; XTitle='N(jet\, p_{T} > 25\, CVS Loose)',XNDiv=505
 nBJetMedium25 : nBJetMedium25 : 5,-0.5,4.5 ; XTitle='N(jet\, p_{T} > 25\, CVS Medium)',XNDiv=505
 metLD: met*0.00397 + mhtJet25*0.00265 : 50,-0.1,1.4 ; XTitle="E_{T}^{miss} LD",  Legend='TR'
-lepMVA2: min(LepGood1_mvaNew,LepGood2_mvaNew) : 50,-1,1; XTitle="Lepton MVA(l_{1}\,l_{2})",Legend='TL'
+#lepMVA2: min(LepGood1_mvaNew,LepGood2_mvaNew) : 50,-1,1; XTitle="Lepton MVA(l_{1}\,l_{2})",Legend='TL'
 met: met: 50,0,200    ; XTitle="E_{T}^{miss}  [GeV]",Logy
 #met_zoom: met: 50,0,50    ; XTitle="E_{T}^{miss}  [GeV]",Logy
 #metNoPU_zoom: metNoPU: 50,0,50    ; XTitle="NoPU E_{T}^{miss} [GeV]",Logy
