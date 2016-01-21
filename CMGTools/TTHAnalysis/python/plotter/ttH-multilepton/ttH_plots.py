@@ -7,7 +7,7 @@ lumi = 2.16
 def base(selection='2lss'):
 
     T="-P /data/p/peruzzi/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA"
-    CORE="%s --neg --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt -F sf/t {P}/2_recleaner_v2_variations/evVarFriend_{cname}.root"%T
+    CORE="%s --neg --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt -F sf/t {P}/2_recleaner_v2/evVarFriend_{cname}.root"%T
 
     if selection=='2lss':
         GO="python mcPlots.py %s ttH-multilepton/mca-2lss-Mor16.txt ttH-multilepton/2lss_Mor16.txt -f -j 8 --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3 ttH-multilepton/cr_2lss_lowj_plots.txt --showMCError"%CORE
@@ -36,12 +36,12 @@ def setwide(x):
 if __name__ == '__main__':
 
     x = base('2lss')
-    x = procs(x,['ttH'])
-#    runIt(x,'2lss_SR_ttH')
+#    x = procs(x,['ttH'])
+    runIt(x,'2lss_SR')
 
     x = base('3l')
-    x = procs(x,['ttH'])
-    runIt(x,'3l_SR_ttH')
+#    x = procs(x,['ttH'])
+    runIt(x,'3l_SR')
 
 
 
