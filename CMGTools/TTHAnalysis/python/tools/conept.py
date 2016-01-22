@@ -12,4 +12,7 @@ def conept_RA5(lep):
         return max(lep.pt,lep.pt/lep.jetPtRatiov2*B)
 
 def conept_TTH(lep):
-    return 0.85 * lep.pt / lep.jetPtRatiov2
+    if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13): return lep.pt
+    if (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.6: return lep.pt
+    else: return 0.85 * lep.pt / lep.jetPtRatiov2
+
