@@ -46,7 +46,7 @@ MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl",
                    cleanWithTaus = False,
                    coneptdef = lambda lep: conept_TTH(lep) ) ))
 
-MODULES.append( ('leptonJetReCleanerTTHbtagTightVeto', lambda : LeptonJetReCleaner("ReclBtagTightVeto", 
+MODULES.append( ('leptonJetReCleaner_special_TTHbtagTightVeto', lambda : LeptonJetReCleaner("ReclBtagTightVeto", 
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
                    cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.97, # cuts applied on top of loose
                    FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.97, # cuts applied on top of loose
@@ -57,7 +57,7 @@ MODULES.append( ('leptonJetReCleanerTTHbtagTightVeto', lambda : LeptonJetReClean
                    CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
                    cleanWithTaus = False,
                    coneptdef = lambda lep: conept_TTH(lep) ) ))
-MODULES.append( ('leptonJetReCleanerTTHbtagMediumVeto', lambda : LeptonJetReCleaner("ReclBtagMediumVeto", 
+MODULES.append( ('leptonJetReCleaner_special_TTHbtagMediumVeto', lambda : LeptonJetReCleaner("ReclBtagMediumVeto", 
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
                    cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.89, # cuts applied on top of loose
                    FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89, # cuts applied on top of loose
@@ -68,7 +68,7 @@ MODULES.append( ('leptonJetReCleanerTTHbtagMediumVeto', lambda : LeptonJetReClea
                    CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
                    cleanWithTaus = False,
                    coneptdef = lambda lep: conept_TTH(lep) ) ))
-MODULES.append( ('leptonJetReCleanerTTHconept15', lambda : LeptonJetReCleaner("ReclConept15", 
+MODULES.append( ('leptonJetReCleaner_special_TTHconept15', lambda : LeptonJetReCleaner("ReclConept15", 
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
                    cleaningLeptonSel = lambda lep : lep.conept>15, # cuts applied on top of loose
                    FOLeptonSel = lambda lep,ht : lep.conept>15, # cuts applied on top of loose
@@ -261,6 +261,8 @@ class VariableProducer(Module):
                         self.t.branch(B[0],B[1])
                     elif len(B) == 4:
                         self.t.branch(B[0],B[1],n=B[2],lenVar=B[3])
+                    elif len(B) == 3:
+                        self.t.branch(B[0],B[1],n=B[2],lenVar=None)
                 else:
                     self.t.branch(B ,"F")
     def analyze(self,event):
