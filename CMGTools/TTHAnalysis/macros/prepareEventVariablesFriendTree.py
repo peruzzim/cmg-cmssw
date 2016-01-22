@@ -172,16 +172,16 @@ MODULES.append ( ('recalcLepAwareVars',ObjFloatCalc("recalcLepAwareVars","LepGoo
 #MODULES.append( ('MuMVAId', MuonMVAFriend("BPH",     "/afs/cern.ch/work/g/gpetrucc/TREES_70X_240914/0_muMVAId_v1/train70XBPH_BDTG.weights.xml", label="BPH")) )
 #MODULES.append( ('MuMVAId', MuonMVAFriend("BPHCalo", "/afs/cern.ch/work/g/gpetrucc/TREES_70X_240914/0_muMVAId_v1/train70XBPHCalo_BDTG.weights.xml", label="BPHCalo")) )
 #MODULES.append( ('MuMVAId', MuonMVAFriend("Full",    "/afs/cern.ch/work/g/gpetrucc/TREES_70X_240914/0_muMVAId_v1/train70XFull_BDTG.weights.xml", label="Full")) )
-#from CMGTools.TTHAnalysis.tools.LepMVAFriend import LepMVAFriend
+from CMGTools.TTHAnalysis.tools.LepMVAFriend import LepMVAFriend
 #MODULES.append( ('LepMVAFriend', LepMVAFriend(("/afs/cern.ch/user/g/gpetrucc/w/TREES_72X_171214/0_lepMVA_v1/%s_BDTG.weights.xml",
 #                                               "/afs/cern.ch/user/g/gpetrucc/w/TREES_72X_171214/0_lepMVA_v1/%s_BDTG.weights.xml"))) )
 #MODULES.append( ('LepMVAFriend', LepMVAFriend(("/afs/cern.ch/work/g/gpetrucc/TREES_70X_240914/0_lepMVA_v1/SV_%s_BDTG.weights.xml",
 #                                               "/afs/cern.ch/work/g/gpetrucc/TREES_70X_240914/0_lepMVA_v1/SV_%s_BDTG.weights.xml",),
 #                                               training="muMVAId_SV", label="SV")) )
 
-#MODULES.append( ('LepMVAFriend', lambda: LepMVAFriend(("/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/macros/leptons/weights/forMoriond16%s_BDTG.weights.xml",
-#                                               "/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/macros/leptons/weights/forMoriond16%s_BDTG.weights.xml",),
-#                                               training="forMoriond16", label="TTHMoriond16")) )
+MODULES.append( ('LepMVAFriend', lambda: LepMVAFriend(("/afs/cern.ch/user/p/peruzzi/work/cmgtools/production/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/macros/leptons/weights/forMoriond16%s_BDTG.weights.xml",
+                                               "/afs/cern.ch/user/p/peruzzi/work/cmgtools/production/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/macros/leptons/weights/forMoriond16%s_BDTG.weights.xml",),
+                                               training="forMoriond16", label="TTHMultiClass", nClasses=3)) )
 #MODULES.append( ('LepMVAFriend', lambda: LepMVAFriend(("/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/macros/leptons/weights/forMoriond16%s_BDTG.weights.xml",
 #                                               "/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/macros/leptons/weights/forMoriond16%smvaIdPhys14_BDTG.weights.xml",),
 #                                               training="forMoriond16elmvaIdPhys14", label="TTHMoriond16mvaIdPhys14")) )
@@ -342,15 +342,34 @@ maintimer = ROOT.TStopwatch()
 def _runIt(myargs):
     (name,fin,fout,data,range,chunk) = myargs
     timer = ROOT.TStopwatch()
-    if "root://" in fin:        
+    if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
+        if fin.startswith("root://"):
+            try:
+                tmpdir = os.environ['TMPDIR'] if 'TMPDIR' in os.environ else "/tmp"
+                tmpfile =  "%s/%s" % (tmpdir, os.path.basename(fin))
+                print "xrdcp %s %s" % (fin, tmpfile)
+                os.system("xrdcp %s %s" % (fin, tmpfile))
+                if os.path.exists(tmpfile):
+                    fin = tmpfile 
+                    print "success :-)"
+            except:
+                pass
+        fb = ROOT.TFile.Open(fin)
+    elif "root://" in fin:        
         ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
-        ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
-        ROOT.gEnv.SetValue("XrdClientDebug.kUSERDEBUG", -1); # suppress output about opening connections
-        fb   = ROOT.TXNetFile(fin+"?readaheadsz=65535")
+        ROOT.gEnv.SetValue("XNet.Debug", 0); # suppress output about opening connections
+        ROOT.gEnv.SetValue("XrdClientDebug.kUSERDEBUG", 0); # suppress output about opening connections
+        fb   = ROOT.TXNetFile(fin+"?readaheadsz=65535&DebugLevel=0")
+        os.environ["XRD_DEBUGLEVEL"]="0"
+        os.environ["XRD_DebugLevel"]="0"
+        os.environ["DEBUGLEVEL"]="0"
+        os.environ["DebugLevel"]="0"
     else:
-        fb = ROOT.TFile(fin)
+        fb = ROOT.TFile.Open(fin)
+        print fb
 
     print "getting tree.."
+
     tb = fb.Get(options.tree)
 
     if not tb: tb = fb.Get("tree") # new trees

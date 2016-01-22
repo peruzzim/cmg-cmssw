@@ -85,8 +85,9 @@ _MuonVars = [
 ]
 
 class LeptonMVA:
-    def __init__(self,basepath,training="forMoriond16"):
+    def __init__(self,basepath,training="forMoriond16",nClasses=1):
         global _CommonVars, _CommonSpect, _ElectronVars, _MuonVars, _SVVars
+        self.nClasses = nClasses
         if type(basepath) == tuple: basepathmu, basepathel  = basepath
         else:                       basepathmu, basepathel  = basepath, basepath
         print "Booking %s %s" % (training, basepath)
@@ -100,8 +101,8 @@ class LeptonMVA:
             self.mu = lambda mu, ncorr : -37.0;
         elif "forMoriond16" in training:
             self.mu = CategorizedMVA([
-                ( lambda x: True , MVATool("BDTG",basepathmu%"mu",_CommonSpect,muVars) ),
-            ])
+                ( lambda x: True , MVATool("BDTG",basepathmu%"mu",_CommonSpect,muVars,nClasses) ),
+            ], nClasses)
         else:
             self.mu = CategorizedMVA([
                 ( lambda x: abs(x.eta) <  1.5 , MVATool("BDTG",basepathmu%"mu_eta_b",_CommonSpect,muVars) ),
@@ -111,8 +112,8 @@ class LeptonMVA:
             self.el = lambda el, ncorr : -37.0;
         elif "forMoriond16" in training:
             self.el = CategorizedMVA([
-                ( lambda x: True, MVATool("BDTG",basepathel%"el",_CommonSpect,elVars) ),
-            ])
+                ( lambda x: True, MVATool("BDTG",basepathel%"el",_CommonSpect,elVars,nClasses) ),
+            ], nClasses)
         else:
             self.el = CategorizedMVA([
                 ( lambda x: abs(x.eta) <  0.8                         , MVATool("BDTG",basepathel%"el_eta_cb",_CommonSpect,elVars) ),
@@ -120,24 +121,36 @@ class LeptonMVA:
                 ( lambda x: abs(x.eta) >= 1.479                       , MVATool("BDTG",basepathel%"el_eta_ec",_CommonSpect,elVars) ),
             ])
     def __call__(self,lep,ncorr=0):
-        if   abs(lep.pdgId) == 11: return self.el(lep,ncorr)
-        elif abs(lep.pdgId) == 13: return self.mu(lep,ncorr)
-        else: return -99
+        if   abs(lep.pdgId) == 11: ret = self.el(lep,ncorr)
+        elif abs(lep.pdgId) == 13: ret = self.mu(lep,ncorr)
+        else: ret = -99 if self.nClasses==1 else [-99]*self.nClasses
+        return ret if self.nClasses==1 else [ret[i] for i in xrange(self.nClasses)]
 
 class LepMVAFriend:
-    def __init__(self,path,training="forMoriond16",label="",fast=True):
-        self.mva = LeptonMVA(path+"/%s_BDTG.weights.xml" if type(path) == str else path, training=training)
+    def __init__(self,path,training="forMoriond16",label="",fast=True, nClasses=1):
+        self.mva = LeptonMVA(path+"/%s_BDTG.weights.xml" if type(path) == str else path, training=training, nClasses=nClasses)
         self.fast = fast
         self.label = label
+        self.nClasses = nClasses
     def listBranches(self):
-        return [ ("nLepGood","I"), ("LepGood_mva"+self.label,"F",8,"nLepGood") ]
+        mylist = [ ("nLepGood","I") ]
+        if self.nClasses>1:
+            for i in xrange(self.nClasses): mylist.append(("LepGood_mva"+self.label+"_cl%d"%i,"F",8,"nLepGood"))
+        else: mylist.append(("LepGood_mva"+self.label,"F",8,"nLepGood"))
+        return mylist
     def __call__(self,event):
         lep = Collection(event,"LepGood","nLepGood",8)
         ret = { 'nLepGood' : event.nLepGood }
-        if event.run >= 1: # DATA
-            ret['LepGood_mva'+self.label] = [ self.mva(l, ncorr=0) for l in lep ] 
+        if event.isData: # DATA
+            if self.nClasses>1:
+                allmvas = [self.mva(l, ncorr=0) for l in lep]
+                for i in xrange(self.nClasses): ret['LepGood_mva'+self.label+'_cl%d'%i] = [ x[i] for x in allmvas ]
+            else: ret['LepGood_mva'+self.label] = [ self.mva(l, ncorr=0) for l in lep ]
         else:              # MC
-            ret['LepGood_mva'+self.label] = [ self.mva(l, ncorr=0) for l in lep ] 
+            if self.nClasses>1:
+                allmvas = [self.mva(l, ncorr=0) for l in lep]
+                for i in xrange(self.nClasses): ret['LepGood_mva'+self.label+'_cl%d'%i] = [ x[i] for x in allmvas ]
+            else: ret['LepGood_mva'+self.label] = [ self.mva(l, ncorr=0) for l in lep ]
         return ret
 
 if __name__ == '__main__':
@@ -152,7 +165,7 @@ if __name__ == '__main__':
             self.mvas = {
                 'forMoriond16' : LepMVAFriend(("/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/macros/leptons/weights/forMoriond16%s_BDTG.weights.xml",
                                                "/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/macros/leptons/weights/forMoriond16%s_BDTG.weights.xml",),
-                                              training="forMoriond16"),
+                                              training="forMoriond16", nClasses=3),
 #                'WithPtV2' : LepMVAFriend(("/afs/cern.ch/work/g/gpetrucc/CMSSW_7_4_7/src/CMGTools/TTHAnalysis/macros/leptons/weights/%s_withpt_v2_BDTG.weights.xml",
 #                                           "/afs/cern.ch/work/g/gpetrucc/CMSSW_7_4_7/src/CMGTools/TTHAnalysis/macros/leptons/weights/%s_withpt_v2_BDTG.weights.xml",),
 #                                           training=("WithPtV2_oldTrees" if trees=="old" else 'WithPtV2')),

@@ -24,11 +24,12 @@ class MVAVar:
             for i in range(ncorr):
                 self.var[0] = self.corrfunc(self.var[0], lep.pdgId(),lep.pt(),lep.eta(),lep.mcMatchId,lep.mcMatchAny)
 class MVATool:
-    def __init__(self,name,xml,specs,vars):
+    def __init__(self,name,xml,specs,vars,nClasses=1):
         self.name = name
         self.reader = ROOT.TMVA.Reader("Silent")
         self.specs = specs
         self.vars  = vars
+        self.nClasses = nClasses
         for s in specs: self.reader.AddSpectator(s.name,s.var)
         for v in vars:  self.reader.AddVariable(v.name,v.var)
         #print "Would like to load %s from %s! " % (name,xml)
@@ -36,14 +37,18 @@ class MVATool:
     def __call__(self,lep,ncorr): ## apply correction ncorr times
         for s in self.specs: s.set(lep,ncorr)
         for s in self.vars:  s.set(lep,ncorr)
-        return self.reader.EvaluateMVA(self.name)   
+        return self.reader.EvaluateMVA(self.name) if self.nClasses==1 else self.reader.EvaluateMulticlass(self.name) # returns vector if multiclass
 class CategorizedMVA:
-    def __init__(self,catMvaPairs):
+    def __init__(self,catMvaPairs,nClasses=1):
         self.catMvaPairs = catMvaPairs
+        self.nClasses = nClasses
+        print 'catmva %d'%nClasses
+        if any([(x[1].nClasses!=nClasses) for x in self.catMvaPairs]): raise RuntimeError, 'Wrong multiclass configuration in CategorizedMVA'
+        print 'ready to go'
     def __call__(self,lep,ncorr):
         for c,m in self.catMvaPairs:
             if c(lep): return m(lep,ncorr)
-        return -99.
+        return -99. if self.nClasses==1 else [-99.]*self.nClasses
 
 _CommonSpect = [ 
 ]

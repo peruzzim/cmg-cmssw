@@ -6,7 +6,7 @@ void trainLeptonID(TString name, TString sigfile, TString bkg1file, TString bkg2
     TTree *dBg1 = (TTree*) _f_b1->Get("tree");
     TTree *dBg2 = (_f_b2) ? ((TTree*) _f_b2->Get("tree")) : NULL;
     TFile *fOut = new TFile(name+".root","RECREATE");
-    TMVA::Factory *factory = new TMVA::Factory(name, fOut, "!V:!Color:Transformations=I");
+    TMVA::Factory *factory = new TMVA::Factory(name, fOut, "!V:!Color:Transformations=I:AnalysisType=Multiclass");
     
     if (name.Contains("withpt") || name.Contains("forMoriond16")) {
         factory->AddVariable("LepGood_pt", 'D');
@@ -93,34 +93,41 @@ void trainLeptonID(TString name, TString sigfile, TString bkg1file, TString bkg2
     }
 
     double wSig = 1.0, wBkg = 1.0;
-    factory->AddSignalTree(dSig, wSig);
-    if (!dBg2) factory->AddBackgroundTree(dBg1, wBkg);
+    factory->AddTree(dSig,"signal",wSig, "LepGood_mcMatchId!=0");
+    if (!dBg2) {
+      factory->AddTree(dBg1, "bfake", wBkg, "LepGood_mcMatchId==0 && (abs(LepGood_mcMatchAny)==4 || abs(LepGood_mcMatchAny)==5)");
+      factory->AddTree(dBg1, "light", wBkg, "LepGood_mcMatchId==0 && (abs(LepGood_mcMatchAny)<4 || abs(LepGood_mcMatchAny)>5)");
+    }
     else {
       double int1 = dBg1->GetEntries();
       double int2 = dBg2->GetEntries();
-      factory->AddBackgroundTree(dBg1, wBkg/int1/2.);
-      factory->AddBackgroundTree(dBg2, wBkg/int2/2.);
+      factory->AddTree(dBg1, "bfake", wBkg/int1/2., "LepGood_mcMatchId==0 && (abs(LepGood_mcMatchAny)==4 || abs(LepGood_mcMatchAny)==5)");
+      factory->AddTree(dBg1, "light", wBkg/int1/2., "LepGood_mcMatchId==0 && (abs(LepGood_mcMatchAny)<4 || abs(LepGood_mcMatchAny)>5)");
+      factory->AddTree(dBg2, "bfake", wBkg/int2/2., "LepGood_mcMatchId==0 && (abs(LepGood_mcMatchAny)==4 || abs(LepGood_mcMatchAny)==5)");
+      factory->AddTree(dBg2, "light", wBkg/int2/2., "LepGood_mcMatchId==0 && (abs(LepGood_mcMatchAny)<4 || abs(LepGood_mcMatchAny)>5)");
     }
 
     if (name.Contains("w05")) {
         factory->SetWeightExpression("exp(min(max(LepGood_pt,10),25)/17 * (1 - 2*(LepGood_mcMatchId != 0)))");
     }
 
-    factory->PrepareTrainingAndTestTree( lepton+" LepGood_mcMatchId != 0", lepton+" LepGood_mcMatchId == 0", "" );
+    factory->PrepareTrainingAndTestTree(lepton,"SplitMode=Random:NormMode=NumEvents:!V");
+
+    //    factory->PrepareTrainingAndTestTree( lepton+" LepGood_mcMatchId != 0", lepton+" LepGood_mcMatchId == 0", "" );
     //#factory->PrepareTrainingAndTestTree( lepton+" LepGood_mcMatchId != 0", lepton+" LepGood_mcMatchId == 0", "nTrain_signal=20000:nTest_signal=20000:nTrain_background=20000:nTest_background=20000" );
 
 
-    factory->BookMethod( TMVA::Types::kLD, "LD", "!H:!V:VarTransform=None" );
+    //    factory->BookMethod( TMVA::Types::kLD, "LD", "!H:!V:VarTransform=None" );
     
     // Boosted Decision Trees with gradient boosting
     TString BDTGopt = "!H:!V:NTrees=500:BoostType=Grad:Shrinkage=0.10:!UseBaggedGrad:nCuts=2000:nEventsMin=100:NNodesMax=9:UseNvars=9:MaxDepth=8";
 
-    BDTGopt += ":CreateMVAPdfs"; // Create Rarity distribution
+    //    BDTGopt += ":CreateMVAPdfs"; // Create Rarity distribution
     factory->BookMethod( TMVA::Types::kBDT, "BDTG", BDTGopt);
 
     factory->TrainAllMethods();
-    factory->TestAllMethods();
-    factory->EvaluateAllMethods();
+    //    factory->TestAllMethods();
+    //    factory->EvaluateAllMethods();
 
     fOut->Close();
 }
