@@ -101,8 +101,8 @@ class LeptonJetReCleaner:
         ret['nLep'+labext+'Veto'] = len(ret['i'+lab+'V'])
         ret['LepGood_is'+labext+'Veto'] = [(1 if i in ret['i'+lab+'V'] else 0) for i in xrange(len(refcollection))]
         lepspassveto = [ refcollection[il] for il in ret['i'+lab+'V']  ]
-        ret['i'+lab] + [0]*(pad_zeros_up_to-len(ret['i'+lab]))
-        ret['i'+lab+'V'] + [0]*(pad_zeros_up_to-len(ret['i'+lab+'V']))
+        ret['i'+lab] = ret['i'+lab] + [0]*(pad_zeros_up_to-len(ret['i'+lab]))
+        ret['i'+lab+'V'] = ret['i'+lab+'V'] + [0]*(pad_zeros_up_to-len(ret['i'+lab+'V']))
         return (ret,lepspass,lepspassveto)
 
     def sortIndexListByFunction(self,indexlist,parentcollection,func):
