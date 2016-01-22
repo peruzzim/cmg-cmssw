@@ -43,14 +43,14 @@ class LeptonJetReCleaner:
 
         biglist = [
             ("nLepGood","I"), ("LepGood_conePt","F",20,"nLepGood"),
-            ("nLepLoose"+label, "I"), ("iL"+label,"I",20,"nLepLoose"+label), # passing loose
-            ("nLepLooseVeto"+label, "I"), ("iLV"+label,"I",20,"nLepLooseVeto"+label), # passing loose + veto
-            ("nLepCleaning"+label, "I"), ("iC"+label,"I",20,"nLepCleaning"+label), # passing cleaning
-            ("nLepCleaningVeto"+label, "I"), ("iCV"+label,"I",20,"nLepCleaningVeto"+label), # passing cleaning + veto
-            ("nLepFO"+label, "I"), ("iF"+label,"I",20,"nLepFO"+label), # passing FO, sorted by conept
-            ("nLepFOVeto"+label, "I"), ("iFV"+label,"I",20,"nLepFOVeto"+label), # passing FO + veto, sorted by conept
-            ("nLepTight"+label, "I"), ("iT"+label,"I",20,"nLepTight"+label), # passing tight, sorted by conept
-            ("nLepTightVeto"+label, "I"), ("iTV"+label,"I",20,"nLepTightVeto"+label), # passing tight + veto, sorted by conept
+            ("nLepLoose"+label, "I"), ("iL"+label,"I",20), # passing loose
+            ("nLepLooseVeto"+label, "I"), ("iLV"+label,"I",20), # passing loose + veto
+            ("nLepCleaning"+label, "I"), ("iC"+label,"I",20), # passing cleaning
+            ("nLepCleaningVeto"+label, "I"), ("iCV"+label,"I",20), # passing cleaning + veto
+            ("nLepFO"+label, "I"), ("iF"+label,"I",20), # passing FO, sorted by conept
+            ("nLepFOVeto"+label, "I"), ("iFV"+label,"I",20), # passing FO + veto, sorted by conept
+            ("nLepTight"+label, "I"), ("iT"+label,"I",20), # passing tight, sorted by conept
+            ("nLepTightVeto"+label, "I"), ("iTV"+label,"I",20), # passing tight + veto, sorted by conept
             ("LepGood_isLoose"+label,"I",20,"nLepGood"),("LepGood_isLooseVeto"+label,"I",20,"nLepGood"),
             ("LepGood_isCleaning"+label,"I",20,"nLepGood"),("LepGood_isCleaningVeto"+label,"I",20,"nLepGood"),
             ("LepGood_isFO"+label,"I",20,"nLepGood"),("LepGood_isFOVeto"+label,"I",20,"nLepGood"),
@@ -83,7 +83,7 @@ class LeptonJetReCleaner:
         biglist.append( ("DiscJetSel"+label+"_mcMatchId","I",20,"nDiscJetSel"+label) )
         return biglist
 
-    def fillCollWithVeto(self,ret,refcollection,leps,lab,labext,selection,lepsforveto,ht=-1,sortby=None):
+    def fillCollWithVeto(self,ret,refcollection,leps,lab,labext,selection,lepsforveto,ht=-1,sortby=None,pad_zeros_up_to=20):
         ret['i'+lab] = [];
         ret['i'+lab+'V'] = [];
         for lep in leps:
@@ -101,6 +101,8 @@ class LeptonJetReCleaner:
         ret['nLep'+labext+'Veto'] = len(ret['i'+lab+'V'])
         ret['LepGood_is'+labext+'Veto'] = [(1 if i in ret['i'+lab+'V'] else 0) for i in xrange(len(refcollection))]
         lepspassveto = [ refcollection[il] for il in ret['i'+lab+'V']  ]
+        ret['i'+lab] + [0]*(pad_zeros_up_to-len(ret['i'+lab]))
+        ret['i'+lab+'V'] + [0]*(pad_zeros_up_to-len(ret['i'+lab+'V']))
         return (ret,lepspass,lepspassveto)
 
     def sortIndexListByFunction(self,indexlist,parentcollection,func):
