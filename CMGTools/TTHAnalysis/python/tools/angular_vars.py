@@ -11,14 +11,21 @@ class angular_vars:
                               "L_pt" ]
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
+        self.inputlabel = '_'+recllabel
         self.branches = []
         for var in self.systsJEC: self.branches.extend([br+self.systsJEC[var]+self.label for br in self.namebranches])
-        self.inputlabel = '_'+recllabel
+        self.branches.extend(["iF%s_%d"%(self.inputlabel,i)+self.label for i in xrange(8)])
     def listBranches(self):
         return self.branches[:]	
     def __call__(self,event):
-	leps = [l for l in Collection(event,"LepGood","nLepGood") if getattr(l,'isFO'+self.inputlabel)>0]
+
         allret = {}
+
+        all_leps = [l for l in Collection(event,"LepGood","nLepGood")]
+        nFO = getattr(event,"nLepFO"+self.inputlabel)
+        chosen = getattr(event,"iF"+self.inputlabel)
+        for i in xrange(8): allret["iF%s_%d"%(self.inputlabel,i)+self.label] = chosen[i] if i<nFO else 0
+        leps = [all_leps[chosen[i]] for i in xrange(nFO)]
 
         for var in self.systsJEC:
             _var = var
