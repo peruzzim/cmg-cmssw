@@ -1,7 +1,17 @@
+LepGood1_isTight : LepGood_isTight_Recl[iF_Recl[0]]; AlsoData
+LepGood2_isTight : LepGood_isTight_Recl[iF_Recl[1]]; AlsoData
+LepGood3_isTight : LepGood_isTight_Recl[iF_Recl[2]]; AlsoData
+LepGood4_isTight : LepGood_isTight_Recl[iF_Recl[3]]; AlsoData
+LepGood1_isFO : LepGood_isFO_Recl[iF_Recl[0]]; AlsoData
+LepGood2_isFO : LepGood_isFO_Recl[iF_Recl[1]]; AlsoData
+LepGood3_isFO : LepGood_isFO_Recl[iF_Recl[2]]; AlsoData
+LepGood4_isFO : LepGood_isFO_Recl[iF_Recl[3]]; AlsoData
 LepGood1_(\w+) : LepGood_\1[iF_Recl[0]]; AlsoData
 LepGood2_(\w+) : LepGood_\1[iF_Recl[1]]; AlsoData
 LepGood3_(\w+) : LepGood_\1[iF_Recl[2]]; AlsoData
 LepGood4_(\w+) : LepGood_\1[iF_Recl[3]]; AlsoData
+nLepFO\b : nLepFO_Recl; AlsoData
+nLepTight\b : nLepTight_Recl; AlsoData
 nJet25\b: nJet25_Recl; AlsoData
 htJet25j\b: htJet25j_Recl; AlsoData
 nJet40\b: nJet40_Recl; AlsoData
