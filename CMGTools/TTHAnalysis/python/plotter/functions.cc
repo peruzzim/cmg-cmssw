@@ -256,92 +256,92 @@ int regroupSignalRegions_RA5(int SR){
 
 }
 
-float MVAto1D_6_sorted_ee(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
-    
-    float MVA_binned_6 = 0; 		
-
-    if ((kinMVA_2lss_ttbar > 0.2 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <= 0.1)) MVA_binned_6 += 1;
-
-    if ((kinMVA_2lss_ttbar > 0.2 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.1 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 2;
-
-    if ((kinMVA_2lss_ttbar > 0.2 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 3;
-
-    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 5;
-
-    if ((kinMVA_2lss_ttbar > 0.1 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
-
-    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.1) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
-
-//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 6;
+//float MVAto1D_6_sorted_ee(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
+//    
+//    float MVA_binned_6 = 0; 		
 //
-//    if ((kinMVA_2lss_ttbar > 0.1 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 5;
+//    if ((kinMVA_2lss_ttbar > 0.2 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <= 0.1)) MVA_binned_6 += 1;
+//
+//    if ((kinMVA_2lss_ttbar > 0.2 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.1 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 2;
+//
+//    if ((kinMVA_2lss_ttbar > 0.2 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 3;
+//
+//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 5;
+//
+//    if ((kinMVA_2lss_ttbar > 0.1 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
 //
 //    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.1) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
-
-	
-    return MVA_binned_6;
-
-}
-
-float MVAto1D_6_sorted_em(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
-    
-    float MVA_binned_6 = 0; 		
-
-    if ((kinMVA_2lss_ttbar > 0.4 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <= 0.1)) MVA_binned_6 += 1;
-
-    if ((kinMVA_2lss_ttbar > 0.4 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.1 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 2;
-
-    if ((kinMVA_2lss_ttbar > 0.4 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 3;
-
-    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.4) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.2)) MVA_binned_6 += 6;
-
-    if ((kinMVA_2lss_ttbar > 0.3 && kinMVA_2lss_ttbar <= 0.4) && (kinMVA_2lss_ttV > 0.2 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 5;
-
-    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.3) && (kinMVA_2lss_ttV > 0.2 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
-        
-    return MVA_binned_6;
-
-}
-
-float MVAto1D_6_sorted_mumu(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
-    
-    float MVA_binned_6 = 0; 		
-
-    if ((kinMVA_2lss_ttbar > 0.35 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <= 0.1)) MVA_binned_6 += 1;
-
-    if ((kinMVA_2lss_ttbar > 0.35 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.1 && kinMVA_2lss_ttV <=  0.25)) MVA_binned_6 += 2;
-
-    if ((kinMVA_2lss_ttbar > 0.35 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.25 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 3;
-
-    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.35) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.15)) MVA_binned_6 += 6;
-
-    if ((kinMVA_2lss_ttbar > 0.1 && kinMVA_2lss_ttbar <= 0.35) && (kinMVA_2lss_ttV > 0.15 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 5;
-
-    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.1) && (kinMVA_2lss_ttV > 0.15 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
-	
-    return MVA_binned_6;
-
-}
-
-float MVAto1D_6_sorted_3l(float kinMVA_3l_ttbar, float kinMVA_3l_ttV) {
-    
-    float MVA_binned_6_3l = 0; 		
-
-    if ((kinMVA_3l_ttbar > 0.2 && kinMVA_3l_ttbar <=  1.0) && (kinMVA_3l_ttV > -1.0 && kinMVA_3l_ttV <= 0.0)) MVA_binned_6_3l += 1;
-
-    if ((kinMVA_3l_ttbar > 0.2 && kinMVA_3l_ttbar <=  1.0) && (kinMVA_3l_ttV > 0.0 && kinMVA_3l_ttV <=  0.25)) MVA_binned_6_3l += 2;
-
-    if ((kinMVA_3l_ttbar > 0.2 && kinMVA_3l_ttbar <=  1.0) && (kinMVA_3l_ttV > 0.25 && kinMVA_3l_ttV <=  1.0)) MVA_binned_6_3l += 3;
-
-    if ((kinMVA_3l_ttbar > -1.0 && kinMVA_3l_ttbar <= 0.2) && (kinMVA_3l_ttV > -1.0 && kinMVA_3l_ttV <=  0.25)) MVA_binned_6_3l += 6;
-
-    if ((kinMVA_3l_ttbar > 0.1 && kinMVA_3l_ttbar <= 0.2) && (kinMVA_3l_ttV > 0.25 && kinMVA_3l_ttV <=  1.0)) MVA_binned_6_3l += 5;
-
-    if ((kinMVA_3l_ttbar > -1.0 && kinMVA_3l_ttbar <= 0.1) && (kinMVA_3l_ttV > 0.25 && kinMVA_3l_ttV <=  1.0)) MVA_binned_6_3l += 4;
-	
-    return MVA_binned_6_3l;
-
-}
+//
+////    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 6;
+////
+////    if ((kinMVA_2lss_ttbar > 0.1 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 5;
+////
+////    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.1) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
+//
+//	
+//    return MVA_binned_6;
+//
+//}
+//
+//float MVAto1D_6_sorted_em(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
+//    
+//    float MVA_binned_6 = 0; 		
+//
+//    if ((kinMVA_2lss_ttbar > 0.4 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <= 0.1)) MVA_binned_6 += 1;
+//
+//    if ((kinMVA_2lss_ttbar > 0.4 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.1 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 2;
+//
+//    if ((kinMVA_2lss_ttbar > 0.4 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 3;
+//
+//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.4) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.2)) MVA_binned_6 += 6;
+//
+//    if ((kinMVA_2lss_ttbar > 0.3 && kinMVA_2lss_ttbar <= 0.4) && (kinMVA_2lss_ttV > 0.2 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 5;
+//
+//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.3) && (kinMVA_2lss_ttV > 0.2 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
+//        
+//    return MVA_binned_6;
+//
+//}
+//
+//float MVAto1D_6_sorted_mumu(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
+//    
+//    float MVA_binned_6 = 0; 		
+//
+//    if ((kinMVA_2lss_ttbar > 0.35 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <= 0.1)) MVA_binned_6 += 1;
+//
+//    if ((kinMVA_2lss_ttbar > 0.35 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.1 && kinMVA_2lss_ttV <=  0.25)) MVA_binned_6 += 2;
+//
+//    if ((kinMVA_2lss_ttbar > 0.35 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.25 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 3;
+//
+//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.35) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.15)) MVA_binned_6 += 6;
+//
+//    if ((kinMVA_2lss_ttbar > 0.1 && kinMVA_2lss_ttbar <= 0.35) && (kinMVA_2lss_ttV > 0.15 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 5;
+//
+//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.1) && (kinMVA_2lss_ttV > 0.15 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
+//	
+//    return MVA_binned_6;
+//
+//}
+//
+//float MVAto1D_6_sorted_3l(float kinMVA_3l_ttbar, float kinMVA_3l_ttV) {
+//    
+//    float MVA_binned_6_3l = 0; 		
+//
+//    if ((kinMVA_3l_ttbar > 0.2 && kinMVA_3l_ttbar <=  1.0) && (kinMVA_3l_ttV > -1.0 && kinMVA_3l_ttV <= 0.0)) MVA_binned_6_3l += 1;
+//
+//    if ((kinMVA_3l_ttbar > 0.2 && kinMVA_3l_ttbar <=  1.0) && (kinMVA_3l_ttV > 0.0 && kinMVA_3l_ttV <=  0.25)) MVA_binned_6_3l += 2;
+//
+//    if ((kinMVA_3l_ttbar > 0.2 && kinMVA_3l_ttbar <=  1.0) && (kinMVA_3l_ttV > 0.25 && kinMVA_3l_ttV <=  1.0)) MVA_binned_6_3l += 3;
+//
+//    if ((kinMVA_3l_ttbar > -1.0 && kinMVA_3l_ttbar <= 0.2) && (kinMVA_3l_ttV > -1.0 && kinMVA_3l_ttV <=  0.25)) MVA_binned_6_3l += 6;
+//
+//    if ((kinMVA_3l_ttbar > 0.1 && kinMVA_3l_ttbar <= 0.2) && (kinMVA_3l_ttV > 0.25 && kinMVA_3l_ttV <=  1.0)) MVA_binned_6_3l += 5;
+//
+//    if ((kinMVA_3l_ttbar > -1.0 && kinMVA_3l_ttbar <= 0.1) && (kinMVA_3l_ttV > 0.25 && kinMVA_3l_ttV <=  1.0)) MVA_binned_6_3l += 4;
+//	
+//    return MVA_binned_6_3l;
+//
+//}
 
 float ttH_MVAto1D_6_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2){
 
@@ -363,17 +363,17 @@ float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pd
 
 }
 
-float ttH_MVAto1D_6_2lss_Milos (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2){
-
-  if (abs(pdg1)==11 && abs(pdg2)==11) return MVAto1D_6_sorted_ee(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);
-  else if (abs(pdg1)==13 && abs(pdg2)==13) return MVAto1D_6_sorted_mumu(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);
-  else return MVAto1D_6_sorted_em(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);
-}
-
-float ttH_MVAto1D_6_3l_Milos (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
-
-  return MVAto1D_6_sorted_3l(kinMVA_3l_ttbar,kinMVA_3l_ttV);
-}
+//float ttH_MVAto1D_6_2lss_Milos (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2){
+//
+//  if (abs(pdg1)==11 && abs(pdg2)==11) return MVAto1D_6_sorted_ee(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);
+//  else if (abs(pdg1)==13 && abs(pdg2)==13) return MVAto1D_6_sorted_mumu(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);
+//  else return MVAto1D_6_sorted_em(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);
+//}
+//
+//float ttH_MVAto1D_6_3l_Milos (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
+//
+//  return MVAto1D_6_sorted_3l(kinMVA_3l_ttbar,kinMVA_3l_ttV);
+//}
 
 float _puw_true[50] = {3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 2.1737862420968868, 2.7116925849897364, 3.352556070095877, 3.083015137131128, 2.8824218072960823, 2.6791975503716743, 2.212434153800565, 1.5297063638539434, 0.8762698648562287, 0.41326633649647065, 0.17496252648670657, 0.07484562496757297, 0.038507396968229766, 0.021849761893692053, 0.01140425609526747, 0.005063578526248854, 0.001881351382104846, 0.0006306639125313864, 0.00021708627575927402, 9.42187694469501e-05, 5.146591433045169e-05, 3.326854405002371e-05, 2.426063215708668e-05, 1.8575279862433386e-05, 1.281054551977887e-05, 8.01819566777096e-06, 3.6521122159066883e-06, 1.574921039309069e-06, 5.770182058345157e-07, 2.0862027190449754e-07, 6.946502045299735e-08, 2.032077576113469e-08, 6.417943581326451e-09, 1.5934414668326278e-09, 4.311337237072122e-10, 1.1138367777447038e-10, 2.6925919137965106e-11, 8.08827951069873e-12, 1.3708268591386723e-12, 4.065021195897016e-13, 1.770006195676463e-13, 5.689967214903059e-14, 6.224880123134382e-14, 0.0};
 

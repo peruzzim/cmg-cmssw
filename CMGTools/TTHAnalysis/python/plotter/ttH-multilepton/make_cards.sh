@@ -15,7 +15,8 @@ if [[ "X$1" == "X" ]]; then echo "Provide luminosity!"; exit; fi
 LUMI="$1"; shift
 echo "Normalizing to ${LUMI}/fb";
 OPTIONS=" -P $T --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --asimov "
-#OPTIONS="${OPTIONS --neg " # to be checked!!!
+#OPTIONS="${OPTIONS} --neg " # to be checked!!!
+echo 'WARNING: check usage of --neg!!!'
 if [[ "$SCENARIO" != "" ]]; then
     test -d cards/$SCENARIO || mkdir -p cards/$SCENARIO
     OPTIONS="${OPTIONS} --od cards/$SCENARIO --project $SCENARIO ";
@@ -36,12 +37,12 @@ OPTIONS="${OPTIONS} --asimov --xp data --xp '.*data.*'" # safety!
 
 #OPTIONS="${OPTIONS} -X exclusive " ; echo "!!!!!! TESTING !!!!!!"
 #OPTIONS="${OPTIONS} -E tightMVA080 " ; echo "!!!!!! TESTING !!!!!!"
-OPTIONS="${OPTIONS} -E tightMVA075 " ; echo "!!!!!! TEMPORARY !!!!!!"   
+#OPTIONS="${OPTIONS} -E tightMVA075 " ; echo "!!!!!! TEMPORARY !!!!!!"   
 
 
 FUNCTION_2L="ttH_MVAto1D_6_2lss_Marco(kinMVA_2lss_ttbar,kinMVA_2lss_ttV,LepGood1_pdgId,LepGood2_pdgId) 6,0.5,6.5"
 FUNCTION_3L="ttH_MVAto1D_3_3l_Marco(kinMVA_3l_ttbar,kinMVA_3l_ttV) 3,0.5,3.5"
-#FUNCTION_3L="ttH_MVAto1D_6_flex(kinMVA_3l_ttbar,kinMVA_3l_ttV,LepGood1_pdgId,LepGood2_pdgId,$2,$3,$4) 4,0.5,4.5"
+# for testing different binnings "ttH_MVAto1D_6_flex(kinMVA_3l_ttbar,kinMVA_3l_ttV,LepGood1_pdgId,LepGood2_pdgId,$2,$3,$4) 4,0.5,4.5"
 
 if [[ "$1" == "" || "$1" == "2lss" ]]; then
     OPT_2L="${OPTIONS} "
