@@ -6,19 +6,23 @@ ODIR=sys.argv[1]
 
 lumi = 2.16
 
+doplots=False
+
 def base(selection):
 
     CORE="-P /data/p/peruzzi/skim_2lss_3l_TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA -F sf/t {P}/2_recleaner_v6_vetoCSVM_eleIdEmuPt30_PtRatio030orMVA/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_trainMilosJan31_v3_reclv6/evVarFriend_{cname}.root"
 
-    CORE+=" -l 2.26 --neg --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"
-    CORE+=" -f -j 8 --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 2"
+    CORE+=" -f -j 8 -l 2.26 --neg --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"
+    if doplots: CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 2"
 
     CORE+=" -W 'puw(nTrueInt)' "
 
     if selection=='2lss':
-        GO="%s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt ttH-multilepton/2lss_3l_plots.txt --xP 'lep3_.*' --xP '3lep_.*' --xP 'kinMVA_3l_.*' --xP 'kinMVA_input.*' "%CORE
+        GO="%s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
+        if doplots: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP 'lep3_.*' --xP '3lep_.*' --xP 'kinMVA_3l_.*' --xP 'kinMVA_input.*' "
     elif selection=='3l':
-        GO="%s ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt ttH-multilepton/2lss_3l_plots.txt --xP '2lep_.*' --xP 'kinMVA_2lss_.*' --xP 'kinMVA_input.*' "%CORE
+        GO="%s ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
+        if doplots: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '2lep_.*' --xP 'kinMVA_2lss_.*' --xP 'kinMVA_input.*' "
     else:
         raise RuntimeError, 'Unknown selection'
 
@@ -29,7 +33,8 @@ def procs(GO,mylist):
 def sigprocs(GO,mylist):
     return procs(GO,mylist)+' --showIndivSigs --noStackSig'
 def runIt(GO,name,plots=[],noplots=[]):
-    print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[3:])
+    if doplots: print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[3:])
+    else: print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[3:])
 def add(GO,opt):
     return '%s %s'%(GO,opt)
 def setwide(x):
