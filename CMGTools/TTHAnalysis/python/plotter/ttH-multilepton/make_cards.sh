@@ -40,7 +40,7 @@ OPTIONS="${OPTIONS} -E tightMVA075 " ; echo "!!!!!! TEMPORARY !!!!!!"
 
 
 FUNCTION_2L="ttH_MVAto1D_6_2lss_Marco(kinMVA_2lss_ttbar,kinMVA_2lss_ttV,LepGood1_pdgId,LepGood2_pdgId) 6,0.5,6.5"
-FUNCTION_3L="ttH_MVAto1D_4_3l_Marco(kinMVA_3l_ttbar,kinMVA_3l_ttV) 4,0.5,4.5"
+FUNCTION_3L="ttH_MVAto1D_3_3l_Marco(kinMVA_3l_ttbar,kinMVA_3l_ttV) 3,0.5,3.5"
 #FUNCTION_3L="ttH_MVAto1D_6_flex(kinMVA_3l_ttbar,kinMVA_3l_ttV,LepGood1_pdgId,LepGood2_pdgId,$2,$3,$4) 4,0.5,4.5"
 
 if [[ "$1" == "" || "$1" == "2lss" ]]; then

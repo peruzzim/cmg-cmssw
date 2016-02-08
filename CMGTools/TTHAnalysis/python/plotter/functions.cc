@@ -349,9 +349,11 @@ float ttH_MVAto1D_6_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, 
 
 }
 
-float ttH_MVAto1D_4_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
+float ttH_MVAto1D_3_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
 
-  return 2*(kinMVA_3l_ttbar>=0.3)+(kinMVA_3l_ttV>=-0.1)+1;
+  if (kinMVA_3l_ttbar<0.3 && kinMVA_3l_ttV<-0.1) return 1;
+  else if (kinMVA_3l_ttbar>=0.3 && kinMVA_3l_ttV>=-0.1) return 3;
+  else return 2;
 
 }
 
