@@ -345,15 +345,19 @@ float MVAto1D_6_sorted_3l(float kinMVA_3l_ttbar, float kinMVA_3l_ttV) {
 
 float ttH_MVAto1D_6_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2){
 
-  if (kinMVA_2lss_ttbar<-0.1) return (kinMVA_2lss_ttV>=-0.2)+1;
-  return 2*(kinMVA_2lss_ttbar>=0.30)+(kinMVA_2lss_ttV>=0.15)+3;
+  return 2*((kinMVA_2lss_ttbar>=-0.2)+(kinMVA_2lss_ttbar>=0.3))+(kinMVA_2lss_ttV>=-0.1)+1;
 
 }
 
 float ttH_MVAto1D_4_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
 
-  if (kinMVA_3l_ttV>=-0.1) return (kinMVA_3l_ttbar>=0)+1;
-  return 3+(kinMVA_3l_ttbar>=-0.4);
+  return 2*(kinMVA_3l_ttbar>=0.3)+(kinMVA_3l_ttV>=-0.1)+1;
+
+}
+
+float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2, float ttVcut, float ttcut1, float ttcut2){
+
+  return 2*((kinMVA_2lss_ttbar>=ttcut1)+(kinMVA_2lss_ttbar>=ttcut2)) + (kinMVA_2lss_ttV>=ttVcut)+1;
 
 }
 

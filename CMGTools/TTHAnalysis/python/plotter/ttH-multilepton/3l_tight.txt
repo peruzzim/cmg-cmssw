@@ -23,3 +23,4 @@ BTight: nBJetMedium25 >= 2 ; Disable=True
 Bveto: nBJetMedium25 == 0 ; Disable=True
 0tau: nTauGood==0 ; Disable=True
 1tau: nTauGood>=1 ; Disable=True
+tightMVA075: LepGood1_mvaTTH>0.75 && LepGood2_mvaTTH>0.75 && LepGood3_mvaTTH>0.75 ; Disable=True
