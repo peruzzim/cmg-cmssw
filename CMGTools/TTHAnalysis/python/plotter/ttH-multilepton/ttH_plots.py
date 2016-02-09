@@ -4,8 +4,6 @@ import re
 
 ODIR=sys.argv[1]
 
-lumi = 2.16
-
 doplots=True
 
 def base(selection):
@@ -48,7 +46,7 @@ if __name__ == '__main__':
 
     torun = sys.argv[2]
 
-    if 'data' in torun and not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*']]): raise RuntimeError, 'You are trying to unblind!'
+    if 'data' in torun and not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*','2lss_SR_data_frdata','3l_SR_data_frdata']]): raise RuntimeError, 'You are trying to unblind!'
 
     if '2lss_' in torun:
         x = base('2lss')
@@ -57,6 +55,11 @@ if __name__ == '__main__':
         if '_2fo' in torun: x = add(x,"-A alwaystrue 2FO 'LepGood1_isTight+LepGood2_isTight==0'")
         if '_relax' in torun: x = add(x,'-X TT')
         if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
+        if '_frdata' in torun:
+            if not '_data' in torun: raise RuntimeError
+            x = fulltrees(x) # for the flips
+            x = add(x,"--xp data")
+            x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
 
         if '_closure' in torun:
             x = x.replace("--xP 'kinMVA_input.*'","--sP 'kinMVA_input.*'")
@@ -77,6 +80,10 @@ if __name__ == '__main__':
         if '_appl' in torun: x = add(x,'-I TTT')
         if '_relax' in torun: x = add(x,'-X TTT')
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
+        if '_frdata' in torun:
+            if not '_data' in torun: raise RuntimeError
+            x = add(x,"--xp data")
+            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         runIt(x,'%s'%torun)
 
     if 'cr_3j' in torun:
@@ -97,7 +104,7 @@ if __name__ == '__main__':
     if 'cr_ttbar' in torun:
         x = base('2lss')
         x = fulltrees(x)
-        if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
+        if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata-ttbar.txt')
         if '_appl' in torun: x = add(x,'-I TT')
         if '_1fo' in torun: x = add(x,"-A alwaystrue 1FO 'LepGood1_isTight+LepGood2_isTight==1'")
         if '_leadmupt25' in torun: x = add(x,"-A 'entry point' leadmupt25 'abs(LepGood1_pdgId)==13 && LepGood1_pt>25'")
