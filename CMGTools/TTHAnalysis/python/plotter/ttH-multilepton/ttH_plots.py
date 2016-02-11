@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     torun = sys.argv[2]
 
-    if 'data' in torun and not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*','2lss_SR_data_frdata','3l_SR_data_frdata']]): raise RuntimeError, 'You are trying to unblind!'
+    if 'data' in torun and not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*','2lss_SR_.*_data_frdata','3l_SR_.*_data_frdata']]): raise RuntimeError, 'You are trying to unblind!'
 
     if '2lss_' in torun:
         x = base('2lss')
@@ -124,6 +124,10 @@ if __name__ == '__main__':
     if 'cr_ttz' in torun:
         x = base('3l')
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
+        if '_frdata' in torun:
+            if not '_data' in torun: raise RuntimeError
+            x = add(x,"--xp data")
+            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         plots = ['lep2_pt','met','nJet25','mZ1']
         x = add(x,"-I 'Z veto' -X 2b1B -E 2b -E 1B --rebin 4")
         runIt(x,'%s'%torun,plots)
