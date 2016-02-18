@@ -31,6 +31,13 @@ class BTagWeightCalculator:
         self.btag = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
         self.init(fn_hf, fn_lf)
 
+        # systematic uncertainties for different flavour assignments
+        self.systematics_for_b = ["JESUp", "JESDown", "LFUp", "LFDown",
+                                  "HFStats1Up", "HFStats1Down", "HFStats2Up", "HFStats2Down"]
+        self.systematics_for_c = ["cErr1Up", "cErr1Down", "cErr2Up", "cErr2Down"]
+        self.systematics_for_l = ["JESUp", "JESDown", "HFUp", "HFDown",
+                                  "LFStats1Up", "LFStats1Down", "LFStats2Up", "LFStats2Down"]
+
     def getBin(self, bvec, val):
         return int(bvec.searchsorted(val, side="right")) - 1
 
@@ -72,7 +79,7 @@ class BTagWeightCalculator:
         ret = {}
         tf = ROOT.TFile(fn)
         if not tf or tf.IsZombie():
-            raise FileError("Could not open file {0}".format(fn))
+            raise FileNotFoundError("Could not open file {0}".format(fn))
         ROOT.gROOT.cd()
         for k in tf.GetListOfKeys():
             kn = k.GetName()
@@ -94,9 +101,7 @@ class BTagWeightCalculator:
                     syst = spl[5+is_c]
                 else:
                     syst = "nominal"
-            hist = k.ReadObj().Clone()
-            hist.SetDirectory(None)
-            ret[(ptbin, etabin, kind, syst, is_c)] = hist
+            ret[(is_c, ptbin, etabin, kind, syst)] = k.ReadObj().Clone()
         return ret
 
     def calcJetWeight(self, jet, kind, systematic):
@@ -106,41 +111,36 @@ class BTagWeightCalculator:
              or a Heppy Jet
         kind: string specifying the name of the corrections. Usually "final".
         systematic: the correction systematic, e.g. "nominal", "JESUp", etc
-        returns: a float with the correction
-        """
+     """
         #if jet is a simple class with attributes
-        try:
+        if isinstance(getattr(jet, "pt"), float):
             pt   = getattr(jet, "pt")
             aeta = abs(getattr(jet, "eta"))
-            fl   = abs(getattr(jet, "mcFlavour"))
+            fl   = abs(getattr(jet, "hadronFlavour"))
             csv  = getattr(jet, self.btag)
         #if jet is a heppy Jet object
-        except AttributeError as e:
+        else:
             #print "could not get jet", e
             pt   = jet.pt()
             aeta = abs(jet.eta())
             fl   = abs(jet.hadronFlavour())
             csv  = jet.btag(self.btag)
-        return self._calcJetWeight( pt, aeta, fl, csv, kind, systematic)
+        return self.calcJetWeightImpl(pt, aeta, fl, csv, kind, systematic)
 
-    def _calcJetWeight(self, pt,aeta, fl, csv, kind, systematic):
+    def calcJetWeightImpl(self, pt, aeta, fl, csv, kind, systematic):
+
         is_b = (fl == 5)
         is_c = (fl == 4)
-        is_l = (fl < 4)
+        is_l = not (is_b or is_c)
 
-        if is_b and not (systematic in ["JESUp", "JESDown", "LFUp", "LFDown",
-                                        "Stats1Up", "Stats1Down", "Stats2Up", "Stats2Down",
-                                        "nominal"]):
-            #print "no?"
-            return 1.0
-        if is_c and not (systematic in ["cErr1Up", "cErr1Down", "cErr2Up", "cErr2Down",
-                                        "nominal"]):
-            return 1.0
-        if is_l and not (systematic in ["JESUp", "JESDown", "HFUp", "HFDown",
-                                        "Stats1Up", "Stats1Down", "Stats2Up", "Stats2Down",
-                                        "nominal"]):
-            return 1.0
+        #if evaluating a weight for systematic uncertainties, make sure the jet is affected. If not, return 'nominal' weight
+        if systematic != "nominal":
+            if (is_b and systematic not in self.systematics_for_b) or (is_c and systematic not in self.systematics_for_c) or (is_l and systematic not in self.systematics_for_l):
+                systematic = "nominal"
 
+        #needed because the TH1 names for Stats are same for HF and LF
+        if "Stats" in systematic:
+            systematic = systematic[2:]
 
         if is_b or is_c:
             ptbin = self.getBin(self.pt_bins_hf, pt)
@@ -153,7 +153,7 @@ class BTagWeightCalculator:
             #print "pt or eta bin outside range", pt, aeta, ptbin, etabin
             return 1.0
 
-        k = (ptbin, etabin, kind, systematic, is_c)
+        k = (is_c, ptbin, etabin, kind, systematic)
         hdict = self.pdfs["lf"]
         if is_b or is_c:
             hdict = self.pdfs["hf"]
@@ -162,12 +162,16 @@ class BTagWeightCalculator:
             #print "no histogram", k
             return 1.0
 
+        if csv > 1:
+            csv = 1
+            
         csvbin = 1
         csvbin = h.FindBin(csv)
-
-        if csvbin <= 0 or csvbin > h.GetNbinsX():
-            #print "csv bin outside range", csv, csvbin
-            return 1.0
+        #This is to fix csv=-10 not being accounted for in CSV SF input hists
+        if csvbin <= 0:
+            csvbin = 1
+        if csvbin > h.GetNbinsX():
+            csvbin = h.GetNbinsX()
 
         w = h.GetBinContent(csvbin)
         return w
