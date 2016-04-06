@@ -189,6 +189,11 @@ class LeptonAnalyzer( Analyzer ):
                     self.IsolationComputer.addVetos(lep.physObj)
             for lep in event.inclusiveLeptons:
                 self.attachMiniIsolation(lep)
+                self.attachDirectionalIsolation(lep,0.2)
+                self.attachDirectionalIsolation(lep,0.3)
+                self.attachDirectionalIsolation(lep,0.4)
+                self.attachDirectionalIsolation(lep,0.5)
+                self.attachDirectionalIsolation(lep,0.6)
         
         if self.doIsoAnnulus:
             for lep in event.inclusiveLeptons:
@@ -435,8 +440,10 @@ class LeptonAnalyzer( Analyzer ):
         what = "mu" if (abs(mu.pdgId()) == 13) else ("eleB" if mu.isEB() else "eleE")
         if what == "mu":
             mu.miniAbsIsoCharged = self.IsolationComputer.chargedAbsIso(mu.physObj, mu.miniIsoR, {"mu":0.0001,"eleB":0,"eleE":0.015}[what], 0.0);
+            mu.AbsIsoChargedFix03 = self.IsolationComputer.chargedAbsIso(mu.physObj, 0.3, {"mu":0.0001,"eleB":0,"eleE":0.015}[what], 0.0);
         else:
             mu.miniAbsIsoCharged = self.IsolationComputer.chargedAbsIso(mu.physObj, mu.miniIsoR, {"mu":0.0001,"eleB":0,"eleE":0.015}[what], 0.0,self.IsolationComputer.selfVetoNone);
+            mu.AbsIsoChargedFix03 = self.IsolationComputer.chargedAbsIso(mu.physObj, 0.3, {"mu":0.0001,"eleB":0,"eleE":0.015}[what], 0.0,self.IsolationComputer.selfVetoNone);
 
         if self.miniIsolationPUCorr == None: puCorr = self.cfg_ana.mu_isoCorr if what=="mu" else self.cfg_ana.ele_isoCorr
         else: puCorr = self.miniIsolationPUCorr
@@ -469,8 +476,27 @@ class LeptonAnalyzer( Analyzer ):
             elif puCorr != 'raw':
                 raise RuntimeError, "Unsupported miniIsolationCorr name '" + puCorr +  "'! For now only 'rhoArea', 'deltaBeta', 'raw', 'weights' are supported (and 'weights' is not tested)."
 
+        if what == "mu":
+            mu.AbsIsoNeutralFix03 = self.IsolationComputer.neutralAbsIsoRaw(mu.physObj, 0.3, 0.01, 0.5);
+        else:
+            mu.AbsIsoPhoFix03  = self.IsolationComputer.photonAbsIsoRaw(    mu.physObj, 0.3, 0.08 if what == "eleE" else 0.0, 0.0, self.IsolationComputer.selfVetoNone) 
+            mu.AbsIsoNHadFix03 = self.IsolationComputer.neutralHadAbsIsoRaw(mu.physObj, 0.3, 0.0, 0.0, self.IsolationComputer.selfVetoNone) 
+            mu.AbsIsoNeutralFix03 = mu.AbsIsoPhoFix03 + mu.AbsIsoNHadFix03
+        if puCorr == "rhoArea":
+            mu.AbsIsoNeutralFix03 = max(0.0, mu.AbsIsoNeutralFix03 - mu.rho * mu.EffectiveArea03)
+        elif puCorr == "deltaBeta":
+            if what == "mu":
+                mu.AbsIsoPUFix03 = self.IsolationComputer.puAbsIso(mu.physObj, 0.3, 0.01, 0.5);
+            else:
+                mu.AbsIsoPUFix03 = self.IsolationComputer.puAbsIso(mu.physObj, 0.3, 0.015 if what == "eleE" else 0.0, 0.0,self.IsolationComputer.selfVetoNone);
+            mu.AbsIsoNeutralFix03 = max(0.0, mu.AbsIsoNeutralFix03 - 0.5*mu.AbsIsoPUFix03)
+        elif puCorr != 'raw':
+            raise RuntimeError, "Unsupported isolationCorr name for Fix03 '" + puCorr +  "'! For now only 'rhoArea', 'deltaBeta', 'raw' are supported."
+
         mu.miniAbsIso = mu.miniAbsIsoCharged + mu.miniAbsIsoNeutral
         mu.miniRelIso = mu.miniAbsIso/mu.pt()
+        mu.AbsIsoFix03 = mu.AbsIsoChargedFix03 + mu.AbsIsoNeutralFix03
+        mu.RelIsoFix03 = mu.AbsIsoFix03/mu.pt()
 
 
     def attachIsoAnnulus04(self, mu):  # annulus isolation with outer cone of 0.4 and delta beta PU correction
@@ -516,6 +542,22 @@ class LeptonAnalyzer( Analyzer ):
             mu.ScanAbsIsoNeutral02 = self.IsolationComputer.photonAbsIsoRaw(mu.physObj, 0.2, vetoreg, 0.0, self.IsolationComputer.selfVetoNone)+self.IsolationComputer.neutralHadAbsIsoRaw(mu.physObj, 0.2, 0.0, 0.0, self.IsolationComputer.selfVetoNone)
             mu.ScanAbsIsoNeutral03 = self.IsolationComputer.photonAbsIsoRaw(mu.physObj, 0.3, vetoreg, 0.0, self.IsolationComputer.selfVetoNone)+self.IsolationComputer.neutralHadAbsIsoRaw(mu.physObj, 0.3, 0.0, 0.0, self.IsolationComputer.selfVetoNone)
             mu.ScanAbsIsoNeutral04 = self.IsolationComputer.photonAbsIsoRaw(mu.physObj, 0.4, vetoreg, 0.0, self.IsolationComputer.selfVetoNone)+self.IsolationComputer.neutralHadAbsIsoRaw(mu.physObj, 0.4, 0.0, 0.0, self.IsolationComputer.selfVetoNone)
+
+    def attachDirectionalIsolation(self, mu, conesize=0.3):
+
+        what = "mu" if (abs(mu.pdgId()) == 13) else ("eleB" if mu.isEB() else "eleE")
+        vetoreg = {"mu":0.0001,"eleB":0,"eleE":0.015}[what]
+
+        if what=="mu":
+            setattr(mu,('isoSumRawP4Charged%s'%str(conesize)).replace('.',''),self.IsolationComputer.chargedP4Iso(mu.physObj, conesize, vetoreg, 0.0))
+        else:
+            setattr(mu,('isoSumRawP4Charged%s'%str(conesize)).replace('.',''),self.IsolationComputer.chargedP4Iso(mu.physObj, conesize, vetoreg, 0.0, self.IsolationComputer.selfVetoNone))
+
+        if what=="mu":
+            setattr(mu,('isoSumRawP4Neutral%s'%str(conesize)).replace('.',''),self.IsolationComputer.neutralP4IsoRaw(mu.physObj, conesize,  0.01, 0.5))
+        else:
+            vetoreg = {"eleB":0.0,"eleE":0.08}[what]
+            setattr(mu,('isoSumRawP4Neutral%s'%str(conesize)).replace('.',''),self.IsolationComputer.photonP4IsoRaw(mu.physObj, conesize, vetoreg, 0.0, self.IsolationComputer.selfVetoNone)+self.IsolationComputer.neutralHadP4IsoRaw(mu.physObj, conesize, 0.0, 0.0, self.IsolationComputer.selfVetoNone))
 
 
     def matchLeptons(self, event):
