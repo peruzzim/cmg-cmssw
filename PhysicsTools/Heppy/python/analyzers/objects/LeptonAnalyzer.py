@@ -14,8 +14,8 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 from PhysicsTools.HeppyCore.utils.deltar import * 
 from PhysicsTools.Heppy.physicsutils.genutils import *
 
-
-from ROOT import heppy
+from ROOT import heppy, TLorentzVector
+import math
 cmgMuonCleanerBySegments = heppy.CMGMuonCleanerBySegmentsAlgo()
 
 class LeptonAnalyzer( Analyzer ):
@@ -187,6 +187,7 @@ class LeptonAnalyzer( Analyzer ):
             if self.miniIsolationVetoLeptons == "inclusive":
                 for lep in event.inclusiveLeptons: 
                     self.IsolationComputer.addVetos(lep.physObj)
+            event.LeptonTrackMuPairs = []
             for lep in event.inclusiveLeptons:
                 self.attachMiniIsolation(lep)
                 self.attachDirectionalIsolation(lep,0.2)
@@ -194,7 +195,17 @@ class LeptonAnalyzer( Analyzer ):
                 self.attachDirectionalIsolation(lep,0.4)
                 self.attachDirectionalIsolation(lep,0.5)
                 self.attachDirectionalIsolation(lep,0.6)
-        
+#                self.pairedIsoChargedCandidatesMuHyp = []
+#                for pairedCand in self.IsolationComputer.findPairIsoTrack(lep.physObj, 999, 0.0, 4.0, 1.5, 5.0):
+#                    _lep_p4 = lep.p4()
+#                    _pc_p4 = pairedCand.p4()
+#                    lep_p4 = TLorentzVector(_lep_p4.Px(),_lep_p4.Py(),_lep_p4.Pz(),_lep_p4.E())
+#                    pc_p4 = TLorentzVector(_pc_p4.Px(),_pc_p4.Py(),_pc_p4.Pz(),math.hypot(_pc_p4.P(),0.105))
+#                    self.pairedIsoChargedCandidatesMuHyp.append((pairedCand,(lep_p4+pc_p4).M()))
+#                self.pairedIsoChargedCandidatesMuHyp.sort(key = lambda x : x[1], reverse = True)
+#                event.LeptonTrackMuPairs.extend([(lep,x[0],x[1]) for x in self.pairedIsoChargedCandidatesMuHyp])
+#                event.LeptonTrackMuPairs.sort(key = lambda x : x[2], reverse = True)
+
         if self.doIsoAnnulus:
             for lep in event.inclusiveLeptons:
                 self.attachIsoAnnulus04(lep)
@@ -441,9 +452,11 @@ class LeptonAnalyzer( Analyzer ):
         if what == "mu":
             mu.miniAbsIsoCharged = self.IsolationComputer.chargedAbsIso(mu.physObj, mu.miniIsoR, {"mu":0.0001,"eleB":0,"eleE":0.015}[what], 0.0);
             mu.AbsIsoChargedFix03 = self.IsolationComputer.chargedAbsIso(mu.physObj, 0.3, {"mu":0.0001,"eleB":0,"eleE":0.015}[what], 0.0);
+            mu.AbsIsoChargedFix04 = self.IsolationComputer.chargedAbsIso(mu.physObj, 0.4, {"mu":0.0001,"eleB":0,"eleE":0.015}[what], 0.0);
         else:
             mu.miniAbsIsoCharged = self.IsolationComputer.chargedAbsIso(mu.physObj, mu.miniIsoR, {"mu":0.0001,"eleB":0,"eleE":0.015}[what], 0.0,self.IsolationComputer.selfVetoNone);
             mu.AbsIsoChargedFix03 = self.IsolationComputer.chargedAbsIso(mu.physObj, 0.3, {"mu":0.0001,"eleB":0,"eleE":0.015}[what], 0.0,self.IsolationComputer.selfVetoNone);
+            mu.AbsIsoChargedFix04 = self.IsolationComputer.chargedAbsIso(mu.physObj, 0.4, {"mu":0.0001,"eleB":0,"eleE":0.015}[what], 0.0,self.IsolationComputer.selfVetoNone);
 
         if self.miniIsolationPUCorr == None: puCorr = self.cfg_ana.mu_isoCorr if what=="mu" else self.cfg_ana.ele_isoCorr
         else: puCorr = self.miniIsolationPUCorr
@@ -478,25 +491,35 @@ class LeptonAnalyzer( Analyzer ):
 
         if what == "mu":
             mu.AbsIsoNeutralFix03 = self.IsolationComputer.neutralAbsIsoRaw(mu.physObj, 0.3, 0.01, 0.5);
+            mu.AbsIsoNeutralFix04 = self.IsolationComputer.neutralAbsIsoRaw(mu.physObj, 0.4, 0.01, 0.5);
         else:
             mu.AbsIsoPhoFix03  = self.IsolationComputer.photonAbsIsoRaw(    mu.physObj, 0.3, 0.08 if what == "eleE" else 0.0, 0.0, self.IsolationComputer.selfVetoNone) 
             mu.AbsIsoNHadFix03 = self.IsolationComputer.neutralHadAbsIsoRaw(mu.physObj, 0.3, 0.0, 0.0, self.IsolationComputer.selfVetoNone) 
             mu.AbsIsoNeutralFix03 = mu.AbsIsoPhoFix03 + mu.AbsIsoNHadFix03
+            mu.AbsIsoPhoFix04  = self.IsolationComputer.photonAbsIsoRaw(    mu.physObj, 0.4, 0.08 if what == "eleE" else 0.0, 0.0, self.IsolationComputer.selfVetoNone) 
+            mu.AbsIsoNHadFix04 = self.IsolationComputer.neutralHadAbsIsoRaw(mu.physObj, 0.4, 0.0, 0.0, self.IsolationComputer.selfVetoNone) 
+            mu.AbsIsoNeutralFix04 = mu.AbsIsoPhoFix04 + mu.AbsIsoNHadFix04
         if puCorr == "rhoArea":
             mu.AbsIsoNeutralFix03 = max(0.0, mu.AbsIsoNeutralFix03 - mu.rho * mu.EffectiveArea03)
+            mu.AbsIsoNeutralFix04 = max(0.0, mu.AbsIsoNeutralFix04 - mu.rho * mu.EffectiveArea03 * 16./9.)
         elif puCorr == "deltaBeta":
             if what == "mu":
                 mu.AbsIsoPUFix03 = self.IsolationComputer.puAbsIso(mu.physObj, 0.3, 0.01, 0.5);
+                mu.AbsIsoPUFix04 = self.IsolationComputer.puAbsIso(mu.physObj, 0.4, 0.01, 0.5);
             else:
                 mu.AbsIsoPUFix03 = self.IsolationComputer.puAbsIso(mu.physObj, 0.3, 0.015 if what == "eleE" else 0.0, 0.0,self.IsolationComputer.selfVetoNone);
+                mu.AbsIsoPUFix04 = self.IsolationComputer.puAbsIso(mu.physObj, 0.4, 0.015 if what == "eleE" else 0.0, 0.0,self.IsolationComputer.selfVetoNone);
             mu.AbsIsoNeutralFix03 = max(0.0, mu.AbsIsoNeutralFix03 - 0.5*mu.AbsIsoPUFix03)
+            mu.AbsIsoNeutralFix04 = max(0.0, mu.AbsIsoNeutralFix04 - 0.5*mu.AbsIsoPUFix04)
         elif puCorr != 'raw':
-            raise RuntimeError, "Unsupported isolationCorr name for Fix03 '" + puCorr +  "'! For now only 'rhoArea', 'deltaBeta', 'raw' are supported."
+            raise RuntimeError, "Unsupported isolationCorr name for Fix03/04 '" + puCorr +  "'! For now only 'rhoArea', 'deltaBeta', 'raw' are supported."
 
         mu.miniAbsIso = mu.miniAbsIsoCharged + mu.miniAbsIsoNeutral
         mu.miniRelIso = mu.miniAbsIso/mu.pt()
         mu.AbsIsoFix03 = mu.AbsIsoChargedFix03 + mu.AbsIsoNeutralFix03
         mu.RelIsoFix03 = mu.AbsIsoFix03/mu.pt()
+        mu.AbsIsoFix04 = mu.AbsIsoChargedFix04 + mu.AbsIsoNeutralFix04
+        mu.RelIsoFix04 = mu.AbsIsoFix04/mu.pt()
 
 
     def attachIsoAnnulus04(self, mu):  # annulus isolation with outer cone of 0.4 and delta beta PU correction
