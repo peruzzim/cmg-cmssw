@@ -65,6 +65,7 @@ class QGLikelihoodCalculator:
       for hist in hists :
         pieces = hist.GetName().split("_")
         varName = pieces[0]
+        if varName not in self.varNames.values(): continue
         qgType  = pieces[1]
         etaStr  = pieces[2]
         ptStr   = pieces[3]
