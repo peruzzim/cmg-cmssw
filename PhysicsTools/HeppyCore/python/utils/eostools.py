@@ -8,7 +8,7 @@ import re
 import pprint
 import shutil
 
-eos_select = '/afs/cern.ch/project/eos/installation/cms/bin/eos.select'
+eos_select = 'eos'
     
 def setCAFPath():
     """Hack to get the CAF scripts on the PYTHONPATH"""
